@@ -23,10 +23,10 @@ void loadObject(string line) {
 
 	switch(type) {
 		case 1:
-			Object1 obj;
+			Weapon obj;
 			break;
 
-		case 2:
+		/*case 2:
 			Object2 obj;
 			break;
 
@@ -36,7 +36,7 @@ void loadObject(string line) {
 
 		case 4:
 			Object4 obj;
-			break;
+			break;*/
 
 		default:
 			Object obj;
@@ -95,10 +95,10 @@ void loadMonster(string line) {
 
 	switch(type) {
 		case 1:
-			Monster1 mons;
+			Waste mons;
 			break;
 
-		case 2:
+		/*case 2:
 			Monster2 mons;
 			break;
 
@@ -108,7 +108,7 @@ void loadMonster(string line) {
 
 		case 4:
 			Monster4 mons;
-			break;
+			break;*/
 
 		default:
 			Monster mons;
