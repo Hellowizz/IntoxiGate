@@ -1,14 +1,16 @@
-#include <vector>
-
 #pragma once
+
+#include <vector>
+#include <Weapon.hpp>
+
+using namespace std;
 
 class Inventory{
 public:
-	std::vector<Weapon> weapons;
+	vector<Weapon> weapons;
 
 	Inventory();
+	~Inventory();
 
-	Inventory::addWeapon(Weapon w);
-
-	~Iventory();
+	void addWeapon(Weapon w);
 };

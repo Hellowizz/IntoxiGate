@@ -2,6 +2,7 @@
 #include <string> 
 
 #include <Hero.hpp>
+#include <Map.hpp>
 
 using namespace std;
 
@@ -10,6 +11,9 @@ int main(){
 	cout << "Coucou voici notre jeu !" << endl;
 
 	Hero ourHero;
+
+	Map newMap;
+	newMap.loadMap("./maps/level1.txt");
 
 	ourHero.loseLife(30);
 

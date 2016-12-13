@@ -3,6 +3,7 @@
 #include <Position.hpp>
 #include <Character.hpp>
 #include <Weapon.hpp>
+#include <Inventory.hpp>
 
 class Hero : public Character{
 public:
@@ -10,7 +11,7 @@ public:
 	int experience;
 	int experienceMax;
 	Weapon currentWeapon;
-	Inventaire inven;
+	Inventory inven;
 
 	Hero();
 

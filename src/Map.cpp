@@ -11,6 +11,7 @@ void Map::loadObject(string line) {
 		tmp.append(1, line[i]);
 		i++;
 	}
+	i++;
 	id = stoi(tmp);
 	tmp = "";
 
@@ -18,6 +19,7 @@ void Map::loadObject(string line) {
 		tmp.append(1, line[i]);
 		i++;
 	}
+	i++;
 	type = stoi(tmp);
 	tmp = "";
 
@@ -49,6 +51,7 @@ void Map::loadObject(string line) {
 		tmp.append(1, line[i]);
 		i++;
 	}
+	i++;
 	obj.pos.pos_X = stoi(tmp);
 	tmp = "";
 
@@ -56,6 +59,7 @@ void Map::loadObject(string line) {
 		tmp.append(1, line[i]);
 		i++;
 	}
+	i++;
 	obj.pos.pos_Y = stoi(tmp);
 	tmp = "";
 
@@ -63,10 +67,11 @@ void Map::loadObject(string line) {
 		tmp.append(1, line[i]);
 		i++;
 	}
+	i++;
 	obj.name = tmp;
 	tmp = "";
 
-	while(line[i] != '\n') {
+	while(line[i] != ':') {
 		tmp.append(1, line[i]);
 		i++;
 	}
@@ -85,6 +90,7 @@ void Map::loadMonster(string line) {
 		tmp.append(1, line[i]);
 		i++;
 	}
+	i++;
 	id = stoi(tmp);
 	tmp = "";
 
@@ -92,6 +98,7 @@ void Map::loadMonster(string line) {
 		tmp.append(1, line[i]);
 		i++;
 	}
+	i++;
 	type = stoi(tmp);
 	tmp = "";
 
@@ -123,6 +130,7 @@ void Map::loadMonster(string line) {
 		tmp.append(1, line[i]);
 		i++;
 	}
+	i++;
 	mons.pos.pos_X = stoi(tmp);
 	tmp = "";
 
@@ -130,6 +138,7 @@ void Map::loadMonster(string line) {
 		tmp.append(1, line[i]);
 		i++;
 	}
+	i++;
 	mons.pos.pos_Y = stoi(tmp);
 	tmp = "";
 
@@ -137,6 +146,7 @@ void Map::loadMonster(string line) {
 		tmp.append(1, line[i]);
 		i++;
 	}
+	i++;
 	mons.name = tmp;
 	tmp = "";
 
@@ -144,10 +154,11 @@ void Map::loadMonster(string line) {
 		tmp.append(1, line[i]);
 		i++;
 	}
+	i++;
 	mons.life = stoi(tmp);
 	tmp = "";
 
-	while(line[i] != '\n') {
+	while(line[i] != ':') {
 		tmp.append(1, line[i]);
 		i++;
 	}
@@ -164,7 +175,7 @@ void Map::loadMap(string fileName) {
 	int nbMonst;
 	int i;
 
-	file.open (fileName);
+	file.open(fileName);
 	if(file.is_open()) {
 		getline(file, line);
 		mapName = line;
@@ -202,15 +213,17 @@ void Map::loadMap(string fileName) {
 			tmp.append(1, line[i]);
 			i++;
 		}
+		i++;
 		int width = stoi(tmp);
 		tmp = "";
-		i = 0;
 
 		while(line[i] != ' ') {
 			tmp.append(1, line[i]);
 			i++;
 		}
 		int height = stoi(tmp);
+
+		pixels = (Square*)malloc(width*height*sizeof(Square));
 
 		getline(file, line);
 

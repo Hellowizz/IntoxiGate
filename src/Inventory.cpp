@@ -2,8 +2,8 @@
 
 Inventory::Inventory(){}
 
-Inventory::addWeapon(Weapon w){
+Inventory::~Inventory(){}
+
+void Inventory::addWeapon(Weapon w){
 	weapons.push_back(w);
 }
-
-~Inventory(){}
