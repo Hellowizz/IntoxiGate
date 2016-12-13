@@ -1,0 +1,15 @@
+CPP :
+
+Fases de collisions
+Character simple pour les tests
+
+
+OpenGL :
+
+Générez la map
+La créer en 3D
+
+
+ART :
+
+Design de la poubelle
