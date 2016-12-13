@@ -218,45 +218,37 @@ void loadMap(string fileName) {
 				pix.pos.pos_Y = i;
 				getline(file, line);
 				string col;
-				strcpy(col, getline(file, line));
-				strcat(col, ",");
+				col.append(line);
+				col.append(",");
 				getline(file, line);
-				strcat(col, line);
-				strcat(col, ",");
+				col.append(line);
+				col.append(",");
 				getline(file, line);
-				strcat(col, line);
-				switch(col) {
-					case "0,0,0":
-						pix.type = wall;
-						break;
+				col.append(line);
+				
+				if(col.compare("0,0,0") == 0)
+					pix.type = wall;
 
-					case "255,255,255":
-						pix.type = hall;
-						break;
+				else if(col.compare("255,255,255") == 0)
+					pix.type = hall;
 
-					case "170,119,34":
-						pix.type = door;
-						break;
+				else if(col.compare("170,119,34") == 0)
+					pix.type = door;
 
-					case "255,90,25":
-						pix.type = acid;
-						break;
+				else if(col.compare("255,90,25") == 0)
+					pix.type = acid;
 
-					case "255,0,0":
-						pix.type = getOut;
-						break;
+				else if(col.compare("255,0,0") == 0)
+					pix.type = getOut;
 
-					case "0,255,0":
-						pix.type = getIn;
-						break;
+				else if(col.compare("0,255,0") == 0)
+					pix.type = getIn;
 
-					case "0,0,255":
-						pix.type = safeRoom;
-						break;
+				else if(col.compare("0,0,255") == 0)
+					pix.type = safeRoom;
 
-					default:
-						pix.type = wall;
-				}
+				else
+					pix.type = wall;
 
 				*(pixels + i*height + j) = pix;
 			}

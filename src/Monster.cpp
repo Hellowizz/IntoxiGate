@@ -2,7 +2,7 @@
 
 int nbMonsters = 0;
 
-Monster::Monster{
+Monster::Monster() {
 	nbMonsters ++;
 	id = nbMonsters;
 }
