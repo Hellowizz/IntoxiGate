@@ -1,30 +1,31 @@
 #include <Map.hpp>
 
 using namespace std;
-using namespace string;
 
-void loadObject(string line) {
+void Map::loadObject(string line) {
 	int i = 0, id, type;
+	Object obj;
 	string tmp = "";
 
-	while(line[i] != ":") {
-		tmp.append(line[i]);
+	while(line[i] != ':') {
+		tmp.append(1, line[i]);
 		i++;
 	}
 	id = stoi(tmp);
 	tmp = "";
 
-	while(line[i] != ":") {
-		tmp.append(line[i]);
+	while(line[i] != ':') {
+		tmp.append(1, line[i]);
 		i++;
 	}
 	type = stoi(tmp);
 	tmp = "";
 
 	switch(type) {
-		case 1:
-			Weapon obj;
-			break;
+		case 1: {
+			obj = Weapon();
+		}
+		break;
 
 		/*case 2:
 			Object2 obj;
@@ -39,34 +40,34 @@ void loadObject(string line) {
 			break;*/
 
 		default:
-			Object obj;
+			obj = Object();
 	}
 
 	obj.id = id;
 
-	while(line[i] != ":") {
-		tmp.append(line[i]);
+	while(line[i] != ':') {
+		tmp.append(1, line[i]);
 		i++;
 	}
 	obj.pos.pos_X = stoi(tmp);
 	tmp = "";
 
-	while(line[i] != ":") {
-		tmp.append(line[i]);
+	while(line[i] != ':') {
+		tmp.append(1, line[i]);
 		i++;
 	}
 	obj.pos.pos_Y = stoi(tmp);
 	tmp = "";
 
-	while(line[i] != ":") {
-		tmp.append(line[i]);
+	while(line[i] != ':') {
+		tmp.append(1, line[i]);
 		i++;
 	}
 	obj.name = tmp;
 	tmp = "";
 
-	while(line[i] != "\n") {
-		tmp.append(line[i]);
+	while(line[i] != '\n') {
+		tmp.append(1, line[i]);
 		i++;
 	}
 	obj.texture = tmp;
@@ -75,28 +76,30 @@ void loadObject(string line) {
 	objects.push_back(obj);
 }
 
-void loadMonster(string line) {
+void Map::loadMonster(string line) {
 	int i = 0, id, type;
+	Monster mons;
 	string tmp = "";
 
-	while(line[i] != ":") {
-		tmp.append(line[i]);
+	while(line[i] != ':') {
+		tmp.append(1, line[i]);
 		i++;
 	}
 	id = stoi(tmp);
 	tmp = "";
 
-	while(line[i] != ":") {
-		tmp.append(line[i]);
+	while(line[i] != ':') {
+		tmp.append(1, line[i]);
 		i++;
 	}
 	type = stoi(tmp);
 	tmp = "";
 
 	switch(type) {
-		case 1:
-			Waste mons;
-			break;
+		case 1: {
+			mons = Waste();
+		}
+		break;
 
 		/*case 2:
 			Monster2 mons;
@@ -111,41 +114,41 @@ void loadMonster(string line) {
 			break;*/
 
 		default:
-			Monster mons;
+			mons = Monster();
 	}
 
 	mons.id = id;
 
-	while(line[i] != ":") {
-		tmp.append(line[i]);
+	while(line[i] != ':') {
+		tmp.append(1, line[i]);
 		i++;
 	}
 	mons.pos.pos_X = stoi(tmp);
 	tmp = "";
 
-	while(line[i] != ":") {
-		tmp.append(line[i]);
+	while(line[i] != ':') {
+		tmp.append(1, line[i]);
 		i++;
 	}
 	mons.pos.pos_Y = stoi(tmp);
 	tmp = "";
 
-	while(line[i] != ":") {
-		tmp.append(line[i]);
+	while(line[i] != ':') {
+		tmp.append(1, line[i]);
 		i++;
 	}
 	mons.name = tmp;
 	tmp = "";
 
-	while(line[i] != ":") {
-		tmp.append(line[i]);
+	while(line[i] != ':') {
+		tmp.append(1, line[i]);
 		i++;
 	}
 	mons.life = stoi(tmp);
 	tmp = "";
 
-	while(line[i] != "\n") {
-		tmp.append(line[i]);
+	while(line[i] != '\n') {
+		tmp.append(1, line[i]);
 		i++;
 	}
 	mons.texture = tmp;
@@ -154,7 +157,7 @@ void loadMonster(string line) {
 	monsters.push_back(mons);
 }
 
-void loadMap(string fileName) {
+void Map::loadMap(string fileName) {
 	ifstream file;
 	string line;
 	int nbObj;
@@ -195,16 +198,16 @@ void loadMap(string fileName) {
 		i = 0;
 		string tmp = "";
 
-		while(line[i] != " ") {
-			tmp.append(line[i]);
+		while(line[i] != ' ') {
+			tmp.append(1, line[i]);
 			i++;
 		}
 		int width = stoi(tmp);
 		tmp = "";
 		i = 0;
 
-		while(line[i] != " ") {
-			tmp.append(line[i]);
+		while(line[i] != ' ') {
+			tmp.append(1, line[i]);
 			i++;
 		}
 		int height = stoi(tmp);
