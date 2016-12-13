@@ -1,0 +1,41 @@
+--------------
+Toxic Dungeon
+--------------
+
+Concept du jeu
+- Monde radioactif
+- Jauge de vie qui descend progressivement
+- Objectif : atteindre la sortie le plus rapidement possible
+- Objectif final : passer toutes les salles pour atteindre l'antidote 
+
+Monstres :
+	- Type poubelle
+	- Nous font perdre de la vie (+ ou - selon le type)
+
+Bonus type :
+	- Masque à gaz pour limiter la vitesse de descente de la jauge de vie
+	- "Bonbonne" d'02 permettant de récupérer de la vie
+
+Types de cases :
+	- Normales
+	- Entrée
+	- Sortie
+	- Flaques radioactives
+	- Salles désaffectées inoffensives sur la vie
+
+Armes et objets :
+	- Balai
+	- 
+
+Touches clavier :
+	↑ : Avancer
+	← : 90° gauche 
+	→ : 90° droite
+	↓ : Reculer
+
+Code couleur :
+	- Départ : vert #00ff00
+	- Arrivée : rouge #ff0000
+	- Flaque radioactive : orange rgb(255,90,25) 
+	- Safe : bleu #0000ff
+	- Door : marron rgb(170,119,34)
