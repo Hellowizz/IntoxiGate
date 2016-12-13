@@ -4,6 +4,7 @@
 #include <fstream>
 #include <list>
 #include <string>
+#include <cstring>
 #include <Object.hpp>
 #include <Monster.hpp>
 #include <Waste.hpp>
