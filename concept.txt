@@ -26,7 +26,7 @@ Types de cases :
 Armes et objets :
 	- Balai
 	- Planter un arbre
-	- Sac poubelle recyclable
+	- Sac poubelle recyclable 
 
 Touches clavier :
 	↑ : Avancer
