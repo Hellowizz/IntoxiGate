@@ -255,6 +255,6 @@ void loadMap(string fileName) {
 
 
 		file.close();
-	}
+	} 
 	else cout << "Unable to open file." << endl;
 }
