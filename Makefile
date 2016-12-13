@@ -21,7 +21,7 @@ DOT_EXE  := .app
 DOT_O    := .o
 
 CXX      := g++
-CXXFLAGS := -std=c++11 -Wall -Iinclude -g -Og
+CXXFLAGS := -std=c++11 -Wall -Iinclude -g -Og -fdiagnostics-color
 CPPFILES := $(call rglob,src,*.cpp)
 OFILES   := $(patsubst src/%.cpp,build/%$(DOT_O),$(CPPFILES))
 EXE      := ./bin/$(APP)$(DOT_EXE)

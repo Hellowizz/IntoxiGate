@@ -10,14 +10,14 @@ public:
 	int experience;
 	int experienceMax;
 	Weapon currentWeapon;
-	// Avoir un inventaire
+	Inventaire inven;
 
 	Hero();
 
 	void upLife(int gain);
 	void gainExp(int exp);
 	void lvlUp();
-	void attackMonster(); // Prendre en compte l'attaque du perso + l'attaque de l'arme
+	void attackMonster();
 	// switchWeapon : Changer d'arme
 
 	~Hero();

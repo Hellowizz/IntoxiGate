@@ -12,16 +12,12 @@ Monstres :
 	- Type poubelle
 	- Nous font perdre de la vie (+ ou - selon le type)
 
+Trésor : 
+	- Représentation par sac poubelle recyclage
+
 Bonus type :
 	- Masque à gaz pour limiter la vitesse de descente de la jauge de vie
 	- "Bonbonne" d'02 permettant de récupérer de la vie
-
-Types de cases :
-	- Normales
-	- Entrée
-	- Sortie
-	- Flaques radioactives
-	- Salles désaffectées inoffensives sur la vie
 
 Armes et objets :
 	- Balai
@@ -34,6 +30,13 @@ Touches clavier :
 	← : 90° gauche 
 	→ : 90° droite
 	↓ : Reculer
+
+Types de cases :
+	- Normales
+	- Entrée
+	- Sortie
+	- Flaques radioactives
+	- Salles désaffectées inoffensives sur la vie
 
 Code couleur :
 	- Départ : vert #00ff00
