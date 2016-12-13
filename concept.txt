@@ -25,7 +25,8 @@ Types de cases :
 
 Armes et objets :
 	- Balai
-	- 
+	- Planter un arbre
+	- Sac poubelle recyclable
 
 Touches clavier :
 	↑ : Avancer
@@ -39,3 +40,7 @@ Code couleur :
 	- Flaque radioactive : orange rgb(255,90,25) 
 	- Safe : bleu #0000ff
 	- Door : marron rgb(170,119,34)
+
+Les + :
+	- Système de score
+	- Classement
