@@ -23,6 +23,7 @@ Armes et objets :
 	- Balai
 	- Planter un arbre
 	- Sac poubelle recyclable
+	- Légumes bio
 
 Touches clavier :
 	↑ : Avancer
