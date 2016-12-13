@@ -6,3 +6,5 @@ Monster::Monster() {
 	nbMonsters ++;
 	id = nbMonsters;
 }
+
+Monster::~Monster() {}

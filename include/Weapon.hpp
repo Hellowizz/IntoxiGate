@@ -8,6 +8,7 @@ public:
 
 	Weapon();
 	Weapon(std::string name, int d);
+	~Weapon();
 
 	void usePower();
 };
