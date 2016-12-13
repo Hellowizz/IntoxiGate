@@ -25,7 +25,7 @@ Types de cases :
 
 Armes et objets :
 	- Balai
-	- 
+	- test
 
 Touches clavier :
 	↑ : Avancer
