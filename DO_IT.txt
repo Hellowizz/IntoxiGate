@@ -1,6 +1,6 @@
 CPP :
 
-Fases de collisions
+Fases (bonjour que veut dire ce mot ?) de collisions
 Character simple pour les tests
 
 
