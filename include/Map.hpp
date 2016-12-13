@@ -5,8 +5,8 @@
 #include <fstream>
 #include <list>
 #include <string>
-#include "Object.h"
-#include "Monster.h"
+#include <Object.hpp>
+#include <Monster.hpp>
 
 using namespace std;
 
