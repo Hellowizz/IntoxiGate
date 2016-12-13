@@ -17,7 +17,7 @@ public:
 	void upLife(int gain);
 	void gainExp(int exp);
 	void lvlUp();
-	void attackMonster(); // Prendre en compte l'attaque du perso + l'attaque de l'arme
+	void attackMonster();
 	// switchWeapon : Changer d'arme
 
 	~Hero();
