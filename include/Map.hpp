@@ -1,5 +1,4 @@
-#ifndef MAP_H
-#define MAP_H
+#pragma once
 
 #include <iostream>
 #include <fstream>
@@ -7,6 +6,8 @@
 #include <string>
 #include <Object.hpp>
 #include <Monster.hpp>
+#include <Waste.hpp>
+#include <Weapon.hpp>
 
 using namespace std;
 
@@ -30,5 +31,3 @@ class Map {
 		void loadMap(string filename);
 
 };
-
-#endif
