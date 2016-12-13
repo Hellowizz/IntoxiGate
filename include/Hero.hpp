@@ -10,7 +10,7 @@ public:
 	int experience;
 	int experienceMax;
 	Weapon currentWeapon;
-	// Avoir un inventaire
+	Inventaire inven;
 
 	Hero();
 
