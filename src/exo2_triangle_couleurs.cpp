@@ -125,7 +125,7 @@ int main(int argc, char** argv) {
 
     // création & initialisation d'une map
     Map map;
-    map.loadMap("maps/level1.txt");
+    map.loadMap("assets/maps/level1.txt");
 
     // initialize glew for OpenGL3+ support
     GLenum glewInitError = glewInit();
@@ -221,36 +221,42 @@ int main(int argc, char** argv) {
     //     }
     // }
 
+    cout << "hello" << endl;
+
     for(int j = 1; j < map.width-1; j++)
         for(int k = 1; k < map.height-1; k++) {
             Square curr = *(map.pixels + j*map.width + map.height);
             for(int i=1; i<=4; i++){
                 if(isHall(curr.pos.pos_X, curr.pos.pos_Y, i, map)){
-
                      switch(i) {
                         case 1:
+                            cout << "case 1" << endl;
                             quads.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y+0.5)));
                             break;
 
                         case 2:
+                            cout << "case 2" << endl;
                             quads.push_back(newQuadVertical(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y+0.5)));
                             break;
 
                         case 3:
+                            cout << "case 3" << endl;
                             quads.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y-0.5f)));
                             break;
 
                         case 4:
+                            cout << "case 4" << endl;
                             quads.push_back(newQuadVertical(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y-0.5)));
                             break;
 
                         default:
-                            return false;
+                            break;
                     }
                 }
             }
 
         }
+    cout << "oui merci" << endl;
 
     /* END INITIALIZATION CODE */
 

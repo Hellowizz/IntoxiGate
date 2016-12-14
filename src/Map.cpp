@@ -279,12 +279,13 @@ void Map::loadMap(string fileName) {
 
 Square Map::getEntrance() {
 	Square ret;
-	for(int i = 0; i < width*height; i++) {
-		if((*(pixels + i)).type == 5) {
-			ret = *(pixels + i);
-			return ret;
+	for(int i = 0; i < height; i++) 
+		for(int j = 0; j < width; j++) {
+			if((*(pixels + i*height + j)).type == 5) {
+				ret = *(pixels + i*height + j);
+				return ret;
+			}
 		}
-	}
 	cout << "Erreur : pas d'entrée" << endl;
 	return ret;	
 }
