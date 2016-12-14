@@ -37,4 +37,4 @@ void Hero::attackMonster(){
 	m.loseLife(attack + currentWeapon.damage);
 }
 
-Hero::~Hero(){};
+Hero::~Hero(){}

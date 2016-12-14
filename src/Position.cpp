@@ -19,4 +19,4 @@ void Position::move(int x, int y) {
 	pos_Y += y;
 }
 
-Position::~Position(){};
+Position::~Position(){}
