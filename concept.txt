@@ -24,6 +24,7 @@ Armes et objets :
 	- Planter un arbre
 	- Sac poubelle recyclable
 	- Légumes bio
+	- Pistolet à logo recyclage
 
 Touches clavier :
 	↑ : Avancer
