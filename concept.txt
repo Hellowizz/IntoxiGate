@@ -17,14 +17,18 @@ Trésor :
 
 Bonus type :
 	- Masque à gaz pour limiter la vitesse de descente de la jauge de vie
-	- "Bonbonne" d'02 permettant de récupérer de la vie
+	- Fiole d'02 permettant de récupérer de la vie
 
 Armes et objets :
 	- Balai
 	- Planter un arbre
+<<<<<<< HEAD
+	- Sac poubelle recyclable 
+=======
 	- Sac poubelle recyclable
 	- Légumes bio
 	- Pistolet à logo recyclage
+>>>>>>> 4123dff2c33f89b7df5d68033c19556340df2897
 
 Touches clavier :
 	↑ : Avancer
@@ -48,4 +52,8 @@ Code couleur :
 
 Les + :
 	- Système de score
+<<<<<<< HEAD
 	- Classement
+=======
+	- Classement
+>>>>>>> 4123dff2c33f89b7df5d68033c19556340df2897

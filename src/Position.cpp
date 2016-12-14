@@ -14,6 +14,7 @@ Position::Position(int x, int y) {
 }
 
 void Position::move(int x, int y) {
+
 	pos_X += x;
 	pos_Y += y;
 }
