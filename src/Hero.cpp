@@ -1,4 +1,5 @@
 #include <Hero.hpp>
+#include <Monster.hpp>
 
 using namespace std;
 
@@ -29,4 +30,11 @@ void Hero::lvlUp(){
 	upLife(20);
 }
 
-Hero::~Hero(){};
+void Hero::attackMonster(){
+	// Auparavant il y a un if sur la touche d'attaque (s'il attaque)
+	// Parcours de la liste des monstres, s'il y a un monstre dans la case de devant :
+	Monster m;
+	m.loseLife(attack + currentWeapon.damage);
+}
+
+Hero::~Hero(){}
