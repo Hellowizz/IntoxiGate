@@ -214,14 +214,15 @@ void Map::loadMap(string fileName) {
 			i++;
 		}
 		i++;
-		int width = stoi(tmp);
+		width = stoi(tmp);
 		tmp = "";
 
 		while(line[i] != ' ') {
 			tmp.append(1, line[i]);
 			i++;
 		}
-		int height = stoi(tmp);
+		height = stoi(tmp);
+
 
 		pixels = (Square*)malloc(width*height*sizeof(Square));
 
@@ -230,8 +231,9 @@ void Map::loadMap(string fileName) {
 		for(i = 0; i < height; i++)
 			for(int j = 0; j < width; j++) {
 				Square pix;
-				pix.pos.pos_X = j;
-				pix.pos.pos_Y = i;
+				pix.pos.pos_X = i;
+				pix.pos.pos_Y = j;
+
 				getline(file, line);
 				string col;
 				col.append(line);
@@ -273,4 +275,16 @@ void Map::loadMap(string fileName) {
 		file.close();
 	} 
 	else cout << "Unable to open file." << endl;
+}
+
+Square Map::getEntrance() {
+	Square ret;
+	for(int i = 0; i < width*height; i++) {
+		if((*(pixels + i)).type == 5) {
+			ret = *(pixels + i);
+			return ret;
+		}
+	}
+	cout << "Erreur : pas d'entrée" << endl;
+	return ret;	
 }

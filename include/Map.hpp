@@ -26,9 +26,13 @@ class Map {
 		list<Monster> monsters;
 		Square *pixels;
 		string ppmFile;
+		int width;
+		int height;
 
 		void loadObject(string line);
 		void loadMonster(string line);
 		void loadMap(string filename);
+
+		Square getEntrance();
 
 };
