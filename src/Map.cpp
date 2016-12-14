@@ -223,16 +223,13 @@ void Map::loadMap(string fileName) {
 		}
 		height = stoi(tmp);
 
-
-		pixels = (Square*)malloc(width*height*sizeof(Square));
-
 		getline(file, line);
 
 		for(i = 0; i < height; i++)
 			for(int j = 0; j < width; j++) {
 				Square pix;
-				pix.pos.pos_X = i;
-				pix.pos.pos_Y = j;
+				pix.position.pos_X = i;
+				pix.position.pos_Y = j;
 
 				getline(file, line);
 				string col;
@@ -268,7 +265,7 @@ void Map::loadMap(string fileName) {
 				else
 					pix.type = wall;
 
-				*(pixels + i*height + j) = pix;
+				pixels.push_back(pix);
 			}
 
 
@@ -279,10 +276,11 @@ void Map::loadMap(string fileName) {
 
 Square Map::getEntrance() {
 	Square ret;
-	for(int i = 0; i < width*height; i++) {
-		if((*(pixels + i)).type == 5) {
-			ret = *(pixels + i);
-			return ret;
+	cout << pixels.size() << endl;
+
+	for(unsigned int i = 0; i < pixels.size(); i++) {
+		if(pixels[i].type == 5) {
+			return pixels[i];
 		}
 	}
 	cout << "Erreur : pas d'entrée" << endl;

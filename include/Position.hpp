@@ -1,12 +1,12 @@
 #pragma once
 
-enum OrientationType { nord, sud, est, ouest };
+enum OrientationType { nord, est, sud, ouest };
 
 class Position{
 public:
 	int pos_X;
 	int pos_Y;
-	OrientationType orientation;
+	int orientation;
 
 	Position();
 	Position(int x, int y);

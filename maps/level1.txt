@@ -1,5 +1,5 @@
 #Level 1
-./imgs/maps/level1.ppm
+./assets/maps/levels/level1.ppm
 1
 1:1:2:5:objet1:./imgs/textures/waterTexture.jpg:
 0

@@ -11,6 +11,7 @@ public:
 
 	Character();
 
+	void putPos(Position p);
 	void gainLife(int lifeGain);
 	void loseLife(int lifeLose);
 

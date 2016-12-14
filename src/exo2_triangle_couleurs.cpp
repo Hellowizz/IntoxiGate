@@ -6,7 +6,10 @@
 #include <glimac/Image.hpp>
 #include <vector>
 #include <string>
+
+
 #include <Map.hpp>
+#include <Hero.hpp>
 
 #define HEIGHT 900
 #define WIDTH 1200
@@ -89,34 +92,6 @@ mat4 QuadInstance::getModelMatrix(){
     m = rotate(m, angleY, vec3(0, 1, 0));
 
     return m; 
-}
-
-bool isHall(int i, int j, int orientation, Map map) {
-    switch(orientation) {
-        case 1:
-            if((*(map.pixels + (i+1) * map.height + j)).type)
-                return true;
-            break;
-
-        case 2:
-            if((*(map.pixels + i * map.height + j + 1)).type)
-                    return true;
-            break;
-
-        case 3:
-            if((*(map.pixels + (i-1) * map.height + j)).type)
-                return true;
-            break;
-
-        case 4:
-            if((*(map.pixels + i * map.height + j-1)).type)
-                return true;
-            break;
-
-        default:
-            return false;
-    }
-    return false;
 }
 
 int main(int argc, char** argv) {
@@ -207,6 +182,9 @@ int main(int argc, char** argv) {
 
     Square entrance = map.getEntrance();
     Camera c(entrance.pos.pos_X, entrance.pos.pos_Y);
+    Hero heroine;
+    heroine.putPos(entrance.pos);
+    heroine.changeOrientation(map);
 
     // quads.push_back(newQuadHorizontal(float(entrance.pos.pos_X), 0.f, float(entrance.pos.pos_Y+0.5f)));
     // quads.push_back(newQuadHorizontal(float(entrance.pos.pos_X), 0.f, float(entrance.pos.pos_Y-0.5f)));
@@ -219,35 +197,21 @@ int main(int argc, char** argv) {
     //     }
     // }
 
-    for(int j = 1; j < map.width-1; j++)
-        for(int k = 1; k < map.height-1; k++) {
-            Square curr = *(map.pixels + j*map.width + map.height);
-            for(int i=1; i<=4; i++){
-                if(isHall(curr.pos.pos_X, curr.pos.pos_Y, i, map)){
+    for(int i = 1; i < map.width-1; i++)
+        for(int j = 1; j < map.height-1; j++) {
+            Square curr = map.pixels[i + map.width*j];
 
-                     switch(i) {
-                        case 1:
-                            quads.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y+0.5)));
-                            break;
+            if(map.pixels[(i+1)+ map.height*j].type == 0)
+                quads.push_back(newQuadHorizontal(float(curr.pos.pos_X)+0.5, 0.f, float(curr.pos.pos_Y)));
 
-                        case 2:
-                            quads.push_back(newQuadVertical(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y+0.5)));
-                            break;
+            if(map.pixels[i + map.height*(j+1)].type == 0)
+                quads.push_back(newQuadVertical(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)+0.5));
 
-                        case 3:
-                            quads.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y-0.5f)));
-                            break;
+            if(map.pixels[(i-1) + map.height*j].type == 0)
+                quads.push_back(newQuadHorizontal(float(curr.pos.pos_X)-0.5, 0.f, float(curr.pos.pos_Y)));
 
-                        case 4:
-                            quads.push_back(newQuadVertical(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y-0.5)));
-                            break;
-
-                        default:
-                            return false;
-                    }
-                }
-            }
-
+            if(map.pixels[i + map.height*(j-1)].type == 0)
+                quads.push_back(newQuadVertical(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)-0.5));
         }
 
     /* END INITIALIZATION CODE */
@@ -264,17 +228,33 @@ int main(int argc, char** argv) {
                 /* Pass the event data onto PrintKeyInfo() */
                 case SDL_KEYDOWN:
                     switch( e.key.keysym.sym ){
-                        case SDLK_LEFT:
+                        case SDLK_LEFT: 
+                            heroine.pos.orientation = (heroine.pos.orientation + 1) % 4;
                             c.angle += M_PI/2.f;
                             break;
                         case SDLK_RIGHT:
+                            heroine.pos.orientation = (heroine.pos.orientation + 3) % 4;
                             c.angle -= M_PI/2.f;
                             break;
                         case SDLK_UP:
-                            c.position.z -= 1.f;
+                            if(heroine.pos.orientation == 0)
+                                c.position.z -= 1.f;
+                            else if(heroine.pos.orientation == 1)
+                                c.position.x -= 1.f;
+                            else if(heroine.pos.orientation == 2)
+                                c.position.z += 1.f;
+                            else if(heroine.pos.orientation == 3)
+                                c.position.x += 1.f;
                             break;
                         case SDLK_DOWN:
-                            c.position.z = 1.f;
+                            if(heroine.pos.orientation == 0)
+                                c.position.z -= 1.f;
+                            else if(heroine.pos.orientation == 1)
+                                c.position.x -= 1.f;
+                            else if(heroine.pos.orientation == 2)
+                                c.position.z += 1.f;
+                            else if(heroine.pos.orientation == 3)
+                                c.position.x += 1.f;
                             break;
                         default:
                             break;
