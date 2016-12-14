@@ -1,0 +1,18 @@
+CPP :
+
+Phases de collisions
+Inventaire du Hero
+Character simple pour les tests
+
+
+OpenGL :
+
+Générer la map
+La créer en 3D
+	Générer des cubes de différentes couleurs, en 3D sur les côtés à la manière d'un dongeon master
+	réussir à avancer en fonction des touches
+
+
+ART :
+
+Design de la poubelle (x4), des murs, du sol, des portes, des sac recyclables. 
