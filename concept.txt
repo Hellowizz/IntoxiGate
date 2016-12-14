@@ -17,7 +17,7 @@ Trésor :
 
 Bonus type :
 	- Masque à gaz pour limiter la vitesse de descente de la jauge de vie
-	- "Bonbonne" d'02 permettant de récupérer de la vie
+	- Fiole d'02 permettant de récupérer de la vie
 
 Armes et objets :
 	- Balai

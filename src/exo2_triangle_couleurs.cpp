@@ -137,7 +137,7 @@ int main(int argc, char** argv) {
     FilePath applicationPath(argv[0]);
 
 
-    string imagePath = applicationPath.dirPath()+"../images/textures/mur.png";
+    string imagePath = applicationPath.dirPath()+"../assets/textures/wall.png";
     std::unique_ptr<Image> wallTexture = loadImage(imagePath);
     if(!wallTexture) {
         cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
