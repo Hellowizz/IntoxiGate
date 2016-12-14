@@ -21,4 +21,4 @@ void Character::loseLife(int lifeLose){
 	}
 }
 
-Character::~Character(){};
+Character::~Character(){}

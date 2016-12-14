@@ -154,7 +154,7 @@ int main(int argc, char** argv) {
     QuadInstance quad2(-0.5f, 0.f, 0.5f, 0, radians(90.f));
     quads.push_back(quad2);
 
-    quads.push_back(QuadInstance(0.5f, 0.f, 0.5f, 0, radians(-90.f)));
+    quads.push_back(QuadInstance(0.5f, 0.f, 0.5f, 0, radians(90.f)));
 
     Camera c;
 
