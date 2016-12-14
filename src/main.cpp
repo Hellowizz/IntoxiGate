@@ -13,7 +13,7 @@ int main(){
 	Hero ourHero;
 
 	Map newMap;
-	newMap.loadMap("./maps/level1.txt");
+	newMap.loadMap("./assets/maps/level1.txt");
 
 	ourHero.loseLife(30);
 
