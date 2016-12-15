@@ -26,11 +26,12 @@ struct Camera
     Camera();
     Camera(int x, int y);
     mat4 getViewProjectionMatrix();
+    void changeOrientation(int orient);
 
 };
 
 Camera::Camera(){
-    position = vec3(0.f,0.f,2.f);
+    position = vec3(0.f,0.f,0.f);
     angle = 0;
 }
 
@@ -42,11 +43,21 @@ Camera::Camera(int x, int y){
 mat4 Camera::getViewProjectionMatrix(){
     mat4 p = perspective(radians(70.f), (float)WIDTH/(float)HEIGHT, 0.1f, 100.f);
     mat4 v(1);
-    //v = translate(v, -position);
-    //v = rotate(v, -angle, vec3(0,1,0));
     v = lookAt(position, position+vec3(cosf(angle+M_PI/2.f), 0, -sinf(angle+M_PI/2.f)), vec3(0,1,0));
     
     return p * v;
+}
+
+void Camera::changeOrientation(int orient){
+    if(orient == 0)
+        angle = 0;
+    else if(orient == 1){
+        angle = -M_PI/2.f;
+    }
+    else if(orient == 2)
+        angle = M_PI;
+    else if(orient == 3)
+        angle = M_PI/2.f;
 }
 
 struct QuadInstance
@@ -77,7 +88,7 @@ QuadInstance::QuadInstance(float x, float y, float z, float x_angle, float y_ang
 }
 
 QuadInstance  newQuadVertical(float x, float y, float z) {
-    return QuadInstance(x, y, z, 0, 90);
+    return QuadInstance(x, y, z, 0, M_PI/2.f);
 }
 
 QuadInstance  newQuadHorizontal(float x, float y, float z) {
@@ -100,7 +111,71 @@ int main(int argc, char** argv) {
 
     // création & initialisation d'une map
     Map map;
-    map.loadMap("maps/level1.txt");
+    //map.loadMap("maps/level1.txt");
+
+    Square pix1;
+    pix1.type = wall;
+    map.pixels.push_back (pix1);
+
+    Square pix2;
+    pix2.type = wall;
+    map.pixels.push_back (pix2);
+
+    Square pix3;
+    pix3.type = wall;
+    map.pixels.push_back (pix3);
+
+    Square pix5;
+    pix5.type = wall;
+    map.pixels.push_back (pix5);
+
+    Square pix6;
+    pix6.type = getIn;
+    map.pixels.push_back (pix6);
+
+    Square pix7;
+    pix7.type = hall;
+    map.pixels.push_back (pix7);
+
+    Square pix8;
+    pix8.type = getOut;
+    map.pixels.push_back (pix8);
+
+    Square pix9;
+    pix9.type = wall;
+    map.pixels.push_back (pix9);
+
+    Square pix10;
+    pix10.type = wall;
+    map.pixels.push_back (pix10);
+
+    Square pix11;
+    pix11.type = wall;
+    map.pixels.push_back (pix11);
+
+    Square pix12;
+    pix12.type = wall;
+    map.pixels.push_back (pix12);
+
+    Square pix13;
+    pix13.type = wall;
+    map.pixels.push_back (pix13);
+
+    Square pix14;
+    pix14.type = wall;
+    map.pixels.push_back (pix14);
+
+
+    map.width = 5;
+    map.height = 3;
+
+    for(int i=0; i< map.width; i++){
+        for(int j=0; j< map.height; j++){
+            map.pixels[i+(j*map.width)].pos.pos_X = i;
+            map.pixels[i+(j*map.width)].pos.pos_Y = j;
+        }
+    }
+
 
     // initialize glew for OpenGL3+ support
     GLenum glewInitError = glewInit();
@@ -173,45 +248,43 @@ int main(int argc, char** argv) {
 
     std::vector<QuadInstance> quads;
 
-    /*QuadInstance quad;
-    quads.push_back(quad);
+    Square entrance;
 
-    QuadInstance quad2(-0.5f, 0.f, 0.5f, 0, radians(90.f));
-    quads.push_back(quad2);
-    quads.push_back(QuadInstance(0.5f, 0.f, 0.5f, 0, radians(-90.f)));*/
-
-    Square entrance = map.getEntrance();
-    Camera c(entrance.pos.pos_X, entrance.pos.pos_Y);
+    Camera c(entrance.pos.pos_X+1, entrance.pos.pos_Y+1);
     Hero heroine;
     heroine.putPos(entrance.pos);
     heroine.changeOrientation(map);
+    c.changeOrientation(heroine.pos.orientation);
 
-    // quads.push_back(newQuadHorizontal(float(entrance.pos.pos_X), 0.f, float(entrance.pos.pos_Y+0.5f)));
-    // quads.push_back(newQuadHorizontal(float(entrance.pos.pos_X), 0.f, float(entrance.pos.pos_Y-0.5f)));
-
-    // for(int i=1; i<=4; i++){
-    //     if(isHall(entrance.pos.pos_X, entrance.pos.pos_Y, i, map)){
-    //         if(i%2 == 0) quads.push_back(newQuadVertical(float(entrance.pos.pos_X), 0.f, float(entrance.pos.pos_Y)));
-    //         else quads.push_back(newQuadHorizontal(float(entrance.pos.pos_X), 0.f, float(entrance.pos.pos_Y)));
-            
-    //     }
-    // }
 
     for(int i = 1; i < map.width-1; i++)
         for(int j = 1; j < map.height-1; j++) {
             Square curr = map.pixels[i + map.width*j];
 
-            if(map.pixels[(i+1)+ map.height*j].type == 0)
-                quads.push_back(newQuadHorizontal(float(curr.pos.pos_X)+0.5, 0.f, float(curr.pos.pos_Y)));
+            if(map.pixels[i+ map.height*j].type == 1 || map.pixels[i+ map.height*j].type == getIn || map.pixels[i+ map.height*j].type == getOut){
 
-            if(map.pixels[i + map.height*(j+1)].type == 0)
-                quads.push_back(newQuadVertical(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)+0.5));
+                cout << "case :" << i << ", " << j << " est une case hall." << endl;
+                if(map.pixels[(i+1)+ map.height*j].type == wall){
+                    //cout << "la case au devant de la case " << i << ", " << j << " est un mur." << endl;
+                    quads.push_back(newQuadVertical(float(curr.pos.pos_X)+0.5f, 0.f, float(curr.pos.pos_Y)));
+                }
 
-            if(map.pixels[(i-1) + map.height*j].type == 0)
-                quads.push_back(newQuadHorizontal(float(curr.pos.pos_X)-0.5, 0.f, float(curr.pos.pos_Y)));
+                if(map.pixels[i + map.height*(j-1)].type == wall){
+                    //cout << "la case au dessus de la case " << i << ", " << j << " est un mur." << endl;
+                    quads.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)+0.5f));
+                }
 
-            if(map.pixels[i + map.height*(j-1)].type == 0)
-                quads.push_back(newQuadVertical(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)-0.5));
+                if(map.pixels[(i-1) + map.height*j].type == wall){
+                    //cout << "la case derrière de la case " << i << ", " << j << " est un mur." << endl;
+                    quads.push_back(newQuadVertical(float(curr.pos.pos_X)-0.5f, 0.f, float(curr.pos.pos_Y)));
+                }
+
+                if(map.pixels[i + map.height*(j+1)].type == wall){
+                    //cout << "la case en dessous de la case " << i << ", " << j << " est un mur." << endl;
+                    quads.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)-0.5f));
+                }
+                
+            }
         }
 
     /* END INITIALIZATION CODE */
@@ -229,30 +302,30 @@ int main(int argc, char** argv) {
                 case SDL_KEYDOWN:
                     switch( e.key.keysym.sym ){
                         case SDLK_LEFT: 
-                            heroine.pos.orientation = (heroine.pos.orientation + 1) % 4;
-                            c.angle += M_PI/2.f;
+                            heroine.pos.orientation = (heroine.pos.orientation + 3) % 4;
+                            c.changeOrientation(heroine.pos.orientation);
                             break;
                         case SDLK_RIGHT:
-                            heroine.pos.orientation = (heroine.pos.orientation + 3) % 4;
-                            c.angle -= M_PI/2.f;
+                            heroine.pos.orientation = (heroine.pos.orientation + 1) % 4;
+                            c.changeOrientation(heroine.pos.orientation);
                             break;
                         case SDLK_UP:
                             if(heroine.pos.orientation == 0)
                                 c.position.z -= 1.f;
                             else if(heroine.pos.orientation == 1)
-                                c.position.x -= 1.f;
+                                c.position.x += 1.f;
                             else if(heroine.pos.orientation == 2)
                                 c.position.z += 1.f;
                             else if(heroine.pos.orientation == 3)
-                                c.position.x += 1.f;
+                                c.position.x -= 1.f;
                             break;
                         case SDLK_DOWN:
                             if(heroine.pos.orientation == 0)
-                                c.position.z -= 1.f;
+                                c.position.z += 1.f;
                             else if(heroine.pos.orientation == 1)
                                 c.position.x -= 1.f;
                             else if(heroine.pos.orientation == 2)
-                                c.position.z += 1.f;
+                                c.position.z -= 1.f;
                             else if(heroine.pos.orientation == 3)
                                 c.position.x += 1.f;
                             break;
