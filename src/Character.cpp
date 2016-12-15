@@ -8,6 +8,11 @@ using namespace std;
 
 Character::Character() {}
 
+void Character::putPos(Position p){
+	pos = p;
+}
+
+
 void Character::gainLife(int lifeGain){
 	life += lifeGain;
 }
@@ -21,4 +26,4 @@ void Character::loseLife(int lifeLose){
 	}
 }
 
-Character::~Character(){};
+Character::~Character(){}

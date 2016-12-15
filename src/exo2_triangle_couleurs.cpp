@@ -7,6 +7,10 @@
 #include <vector>
 #include <string>
 
+
+#include <Map.hpp>
+#include <Hero.hpp>
+
 #define HEIGHT 900
 #define WIDTH 1200
 
@@ -20,6 +24,7 @@ struct Camera
     float angle;
 
     Camera();
+    Camera(int x, int y);
     mat4 getViewProjectionMatrix();
 
 };
@@ -29,10 +34,18 @@ Camera::Camera(){
     angle = 0;
 }
 
+Camera::Camera(int x, int y){
+    position = vec3(float(x), 0.f, float(y));
+    angle = M_PI/2.f;
+}
+
 mat4 Camera::getViewProjectionMatrix(){
     mat4 p = perspective(radians(70.f), (float)WIDTH/(float)HEIGHT, 0.1f, 100.f);
-    mat4 v = translate(mat4(1), -position);
-    v = rotate(v, -angle, vec3(0,1,0));
+    mat4 v(1);
+    //v = translate(v, -position);
+    //v = rotate(v, -angle, vec3(0,1,0));
+    v = lookAt(position, position+vec3(cosf(angle+M_PI/2.f), 0, -sinf(angle+M_PI/2.f)), vec3(0,1,0));
+    
     return p * v;
 }
 
@@ -63,6 +76,14 @@ QuadInstance::QuadInstance(float x, float y, float z, float x_angle, float y_ang
     model = getModelMatrix();
 }
 
+QuadInstance  newQuadVertical(float x, float y, float z) {
+    return QuadInstance(x, y, z, 0, 90);
+}
+
+QuadInstance  newQuadHorizontal(float x, float y, float z) {
+    return QuadInstance(x, y, z, 0, 0);
+}
+
 mat4 QuadInstance::getModelMatrix(){
     mat4 m(1);
 
@@ -76,6 +97,10 @@ mat4 QuadInstance::getModelMatrix(){
 int main(int argc, char** argv) {
     // initialize SDL and open a window
     SDLWindowManager windowManager(WIDTH, HEIGHT, "GLImac");
+
+    // création & initialisation d'une map
+    Map map;
+    map.loadMap("maps/level1.txt");
 
     // initialize glew for OpenGL3+ support
     GLenum glewInitError = glewInit();
@@ -148,15 +173,46 @@ int main(int argc, char** argv) {
 
     std::vector<QuadInstance> quads;
 
-    QuadInstance quad;
+    /*QuadInstance quad;
     quads.push_back(quad);
 
     QuadInstance quad2(-0.5f, 0.f, 0.5f, 0, radians(90.f));
     quads.push_back(quad2);
+    quads.push_back(QuadInstance(0.5f, 0.f, 0.5f, 0, radians(-90.f)));*/
 
-    quads.push_back(QuadInstance(0.5f, 0.f, 0.5f, 0, radians(-90.f)));
+    Square entrance = map.getEntrance();
+    Camera c(entrance.pos.pos_X, entrance.pos.pos_Y);
+    Hero heroine;
+    heroine.putPos(entrance.pos);
+    heroine.changeOrientation(map);
 
-    Camera c;
+    // quads.push_back(newQuadHorizontal(float(entrance.pos.pos_X), 0.f, float(entrance.pos.pos_Y+0.5f)));
+    // quads.push_back(newQuadHorizontal(float(entrance.pos.pos_X), 0.f, float(entrance.pos.pos_Y-0.5f)));
+
+    // for(int i=1; i<=4; i++){
+    //     if(isHall(entrance.pos.pos_X, entrance.pos.pos_Y, i, map)){
+    //         if(i%2 == 0) quads.push_back(newQuadVertical(float(entrance.pos.pos_X), 0.f, float(entrance.pos.pos_Y)));
+    //         else quads.push_back(newQuadHorizontal(float(entrance.pos.pos_X), 0.f, float(entrance.pos.pos_Y)));
+            
+    //     }
+    // }
+
+    for(int i = 1; i < map.width-1; i++)
+        for(int j = 1; j < map.height-1; j++) {
+            Square curr = map.pixels[i + map.width*j];
+
+            if(map.pixels[(i+1)+ map.height*j].type == 0)
+                quads.push_back(newQuadHorizontal(float(curr.pos.pos_X)+0.5, 0.f, float(curr.pos.pos_Y)));
+
+            if(map.pixels[i + map.height*(j+1)].type == 0)
+                quads.push_back(newQuadVertical(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)+0.5));
+
+            if(map.pixels[(i-1) + map.height*j].type == 0)
+                quads.push_back(newQuadHorizontal(float(curr.pos.pos_X)-0.5, 0.f, float(curr.pos.pos_Y)));
+
+            if(map.pixels[i + map.height*(j-1)].type == 0)
+                quads.push_back(newQuadVertical(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)-0.5));
+        }
 
     /* END INITIALIZATION CODE */
 
@@ -167,8 +223,51 @@ int main(int argc, char** argv) {
         // event loop:
         SDL_Event e;
         while(windowManager.pollEvent(e)) {
-            if(e.type == SDL_QUIT) {
-                done = true; // leave the loop after this iteration
+            switch(e.type ){
+                /* Keyboard event */
+                /* Pass the event data onto PrintKeyInfo() */
+                case SDL_KEYDOWN:
+                    switch( e.key.keysym.sym ){
+                        case SDLK_LEFT: 
+                            heroine.pos.orientation = (heroine.pos.orientation + 1) % 4;
+                            c.angle += M_PI/2.f;
+                            break;
+                        case SDLK_RIGHT:
+                            heroine.pos.orientation = (heroine.pos.orientation + 3) % 4;
+                            c.angle -= M_PI/2.f;
+                            break;
+                        case SDLK_UP:
+                            if(heroine.pos.orientation == 0)
+                                c.position.z -= 1.f;
+                            else if(heroine.pos.orientation == 1)
+                                c.position.x -= 1.f;
+                            else if(heroine.pos.orientation == 2)
+                                c.position.z += 1.f;
+                            else if(heroine.pos.orientation == 3)
+                                c.position.x += 1.f;
+                            break;
+                        case SDLK_DOWN:
+                            if(heroine.pos.orientation == 0)
+                                c.position.z -= 1.f;
+                            else if(heroine.pos.orientation == 1)
+                                c.position.x -= 1.f;
+                            else if(heroine.pos.orientation == 2)
+                                c.position.z += 1.f;
+                            else if(heroine.pos.orientation == 3)
+                                c.position.x += 1.f;
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+
+                /* SDL_QUIT event (window close) */
+                case SDL_QUIT:
+                    done = true;
+                    break;
+
+                default:
+                    break;
             }
         }
 

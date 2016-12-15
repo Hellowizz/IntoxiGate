@@ -4,6 +4,7 @@
 #include <Character.hpp>
 #include <Weapon.hpp>
 #include <Inventory.hpp>
+#include <Map.hpp>
 
 class Hero : public Character{
 public:
@@ -15,10 +16,12 @@ public:
 
 	Hero();
 
-	void upLife(int gain);
+	void upLife(int gain); 
 	void gainExp(int exp);
 	void lvlUp();
 	void attackMonster();
+	void changeOrientation(Map m);
+
 	// switchWeapon : Changer d'arme
 
 	~Hero();

@@ -5,6 +5,8 @@
 #include <list>
 #include <string>
 #include <cstring>
+#include <vector>
+
 #include <Object.hpp>
 #include <Monster.hpp>
 #include <Waste.hpp>
@@ -24,11 +26,15 @@ class Map {
 		string mapName;
 		list<Object> objects;
 		list<Monster> monsters;
-		Square *pixels;
+		vector<Square> pixels;
 		string ppmFile;
+		int width;
+		int height;
 
 		void loadObject(string line);
 		void loadMonster(string line);
 		void loadMap(string filename);
+
+		Square getEntrance();
 
 };
