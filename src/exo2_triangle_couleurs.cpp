@@ -174,7 +174,7 @@ int main(int argc, char** argv) {
 
     //Texture 1
 
-    glGenTextures(1, texturesBuffer);
+    glGenTextures(9, texturesBuffer);
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[0]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
         wallTexture->getWidth(), wallTexture->getHeight(), 
@@ -187,7 +187,6 @@ int main(int argc, char** argv) {
 
     //Texture 2
 
-    glGenTextures(1, texturesBuffer);
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[1]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
         badGarbageTexture->getWidth(), badGarbageTexture->getHeight(), 
@@ -200,7 +199,6 @@ int main(int argc, char** argv) {
 
     //Texture 3
 
-    glGenTextures(1, texturesBuffer);
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[2]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
         ceilingTexture->getWidth(), ceilingTexture->getHeight(), 
@@ -213,7 +211,6 @@ int main(int argc, char** argv) {
 
     //Texture 4
 
-    glGenTextures(1, texturesBuffer);
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[3]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
         doorTexture->getWidth(), doorTexture->getHeight(), 
@@ -226,7 +223,6 @@ int main(int argc, char** argv) {
 
     //Texture 5
 
-    glGenTextures(1, texturesBuffer);
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[4]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
         groundTexture->getWidth(), groundTexture->getHeight(), 
@@ -239,7 +235,6 @@ int main(int argc, char** argv) {
 
     //Texture 6
 
-    glGenTextures(1, texturesBuffer);
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[5]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
         lifeBonusTexture->getWidth(), lifeBonusTexture->getHeight(), 
@@ -252,7 +247,6 @@ int main(int argc, char** argv) {
 
     //Texture 7
 
-    glGenTextures(1, texturesBuffer);
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[6]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
         sacTexture->getWidth(), sacTexture->getHeight(), 
@@ -265,7 +259,6 @@ int main(int argc, char** argv) {
 
     //Texture 8
 
-    glGenTextures(1, texturesBuffer);
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[7]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
         toxicTexture->getWidth(), toxicTexture->getHeight(), 
@@ -278,7 +271,6 @@ int main(int argc, char** argv) {
 
     //Texture 9
 
-    glGenTextures(1, texturesBuffer);
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[8]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
         waterTexture->getWidth(), waterTexture->getHeight(), 
@@ -442,17 +434,37 @@ int main(int argc, char** argv) {
         
         mat4 MVPMatrix;
 
-        for(unsigned int i=0; i<quads.size(); i++){
+        for(unsigned int i=0; i<quads.size()/2; i++){
             MVPMatrix = c.getViewProjectionMatrix() * quads[i].model;
         
             glUniformMatrix4fv(uMVPMatrixLoc, 1, GL_FALSE, value_ptr(MVPMatrix));
+
             glActiveTexture(GL_TEXTURE0 + 4);
             glBindTexture(GL_TEXTURE_2D, texturesBuffer[0]);
             glActiveTexture(GL_TEXTURE0);
             glUniform1i(uTextureLoc, 4);
+
             glBindVertexArray(vao);
 
             glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glBindVertexArray(0);
+        }
+
+        for(unsigned int i=quads.size()/2; i<quads.size(); i++){
+            MVPMatrix = c.getViewProjectionMatrix() * quads[i].model;
+        
+            glUniformMatrix4fv(uMVPMatrixLoc, 1, GL_FALSE, value_ptr(MVPMatrix));
+
+            glActiveTexture(GL_TEXTURE0 + 4);
+            glBindTexture(GL_TEXTURE_2D, texturesBuffer[1]);
+            glActiveTexture(GL_TEXTURE0);
+            glUniform1i(uTextureLoc, 4);
+
+            glBindVertexArray(vao);
+
+            glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+            glBindTexture(GL_TEXTURE_2D, 0);
             glBindVertexArray(0);
         }
 
