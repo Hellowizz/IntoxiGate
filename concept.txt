@@ -20,7 +20,7 @@ Bonus type :
 	- Fiole d'02 permettant de récupérer de la vie
 
 Armes et objets :
-	- Balai
+	- Balai	
 	- Planter un arbre
 	- Sac poubelle recyclable
 	- Légumes bio
