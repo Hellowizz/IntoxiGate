@@ -111,6 +111,7 @@ int main(int argc, char** argv) {
 
     // création & initialisation d'une map
     Map map;
+<<<<<<< HEAD
     //map.loadMap("maps/level1.txt");
 
     Square pix1;
@@ -176,6 +177,7 @@ int main(int argc, char** argv) {
         }
     }
 
+    //map.loadMap("assets/maps/level1.txt");
 
     // initialize glew for OpenGL3+ support
     GLenum glewInitError = glewInit();
@@ -186,6 +188,10 @@ int main(int argc, char** argv) {
 
     FilePath applicationPath(argv[0]);
 
+    ///////////////////////////////////////////
+    /////////////////TEXTURES//////////////////
+    ///////////////////////////////////////////
+
 
     string imagePath = applicationPath.dirPath()+"../assets/textures/wall.png";
     std::unique_ptr<Image> wallTexture = loadImage(imagePath);
@@ -193,7 +199,58 @@ int main(int argc, char** argv) {
         cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
     }
 
-    GLuint texturesBuffer[1];
+    imagePath = applicationPath.dirPath()+"../assets/textures/badGarbage.png";
+    std::unique_ptr<Image> badGarbageTexture = loadImage(imagePath);
+    if(!badGarbageTexture) {
+        cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
+    }
+
+    imagePath = applicationPath.dirPath()+"../assets/textures/ceiling&light.png";
+    std::unique_ptr<Image> ceilingTexture = loadImage(imagePath);
+    if(!ceilingTexture) {
+        cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
+    }
+
+    imagePath = applicationPath.dirPath()+"../assets/textures/door&wall.png";
+    std::unique_ptr<Image> doorTexture = loadImage(imagePath);
+    if(!doorTexture) {
+        cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
+    }
+
+    imagePath = applicationPath.dirPath()+"../assets/textures/ground.png";
+    std::unique_ptr<Image> groundTexture = loadImage(imagePath);
+    if(!groundTexture) {
+        cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
+    }
+
+    imagePath = applicationPath.dirPath()+"../assets/textures/lifeBonus.png";
+    std::unique_ptr<Image> lifeBonusTexture = loadImage(imagePath);
+    if(!lifeBonusTexture) {
+        cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
+    }
+
+    imagePath = applicationPath.dirPath()+"../assets/textures/sacRecyclable.png";
+    std::unique_ptr<Image> sacTexture = loadImage(imagePath);
+    if(!sacTexture) {
+        cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
+    }
+
+    imagePath = applicationPath.dirPath()+"../assets/textures/toxicWater.png";
+    std::unique_ptr<Image> toxicTexture = loadImage(imagePath);
+    if(!toxicTexture) {
+        cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
+    }
+
+    imagePath = applicationPath.dirPath()+"../assets/textures/water.png";
+    std::unique_ptr<Image> waterTexture = loadImage(imagePath);
+    if(!waterTexture) {
+        cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
+    }
+
+    GLuint texturesBuffer[9];
+
+    //Texture 1
+
     glGenTextures(1, texturesBuffer);
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[0]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
@@ -204,6 +261,113 @@ int main(int argc, char** argv) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     glBindTexture( GL_TEXTURE_2D, 0);
+
+    //Texture 2
+
+    glGenTextures(1, texturesBuffer);
+    glBindTexture( GL_TEXTURE_2D, texturesBuffer[1]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+        badGarbageTexture->getWidth(), badGarbageTexture->getHeight(), 
+        0, GL_RGBA, GL_FLOAT, badGarbageTexture->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture( GL_TEXTURE_2D, 0);
+
+    //Texture 3
+
+    glGenTextures(1, texturesBuffer);
+    glBindTexture( GL_TEXTURE_2D, texturesBuffer[2]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+        ceilingTexture->getWidth(), ceilingTexture->getHeight(), 
+        0, GL_RGBA, GL_FLOAT, ceilingTexture->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture( GL_TEXTURE_2D, 0);
+
+    //Texture 4
+
+    glGenTextures(1, texturesBuffer);
+    glBindTexture( GL_TEXTURE_2D, texturesBuffer[3]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+        doorTexture->getWidth(), doorTexture->getHeight(), 
+        0, GL_RGBA, GL_FLOAT, doorTexture->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture( GL_TEXTURE_2D, 0);
+
+    //Texture 5
+
+    glGenTextures(1, texturesBuffer);
+    glBindTexture( GL_TEXTURE_2D, texturesBuffer[4]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+        groundTexture->getWidth(), groundTexture->getHeight(), 
+        0, GL_RGBA, GL_FLOAT, groundTexture->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture( GL_TEXTURE_2D, 0);
+
+    //Texture 6
+
+    glGenTextures(1, texturesBuffer);
+    glBindTexture( GL_TEXTURE_2D, texturesBuffer[5]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+        lifeBonusTexture->getWidth(), lifeBonusTexture->getHeight(), 
+        0, GL_RGBA, GL_FLOAT, lifeBonusTexture->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture( GL_TEXTURE_2D, 0);
+
+    //Texture 7
+
+    glGenTextures(1, texturesBuffer);
+    glBindTexture( GL_TEXTURE_2D, texturesBuffer[6]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+        sacTexture->getWidth(), sacTexture->getHeight(), 
+        0, GL_RGBA, GL_FLOAT, sacTexture->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture( GL_TEXTURE_2D, 0);
+
+    //Texture 8
+
+    glGenTextures(1, texturesBuffer);
+    glBindTexture( GL_TEXTURE_2D, texturesBuffer[7]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+        toxicTexture->getWidth(), toxicTexture->getHeight(), 
+        0, GL_RGBA, GL_FLOAT, toxicTexture->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture( GL_TEXTURE_2D, 0);
+
+    //Texture 9
+
+    glGenTextures(1, texturesBuffer);
+    glBindTexture( GL_TEXTURE_2D, texturesBuffer[8]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+        waterTexture->getWidth(), waterTexture->getHeight(), 
+        0, GL_RGBA, GL_FLOAT, waterTexture->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture( GL_TEXTURE_2D, 0);
+
+
+    ///////////////////FIN TEXTURES////////////////////
 
     Program program =   loadProgram(applicationPath.dirPath() + "../shaders/triangle.vs.glsl",
                         applicationPath.dirPath() + "../shaders/triangle.fs.glsl");
@@ -286,6 +450,7 @@ int main(int argc, char** argv) {
                 
             }
         }
+    cout << "oui merci" << endl;
 
     /* END INITIALIZATION CODE */
 

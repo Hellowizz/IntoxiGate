@@ -228,8 +228,8 @@ void Map::loadMap(string fileName) {
 		for(i = 0; i < height; i++)
 			for(int j = 0; j < width; j++) {
 				Square pix;
-				pix.position.pos_X = i;
-				pix.position.pos_Y = j;
+				pix.pos.pos_X = i;
+				pix.pos.pos_Y = j;
 
 				getline(file, line);
 				string col;
