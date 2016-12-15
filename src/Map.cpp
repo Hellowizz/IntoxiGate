@@ -282,7 +282,6 @@ Square Map::getEntrance() {
 		if(pixels[i].type == 5) {
 			return pixels[i];
 		}
-	}
 	cout << "Erreur : pas d'entrée" << endl;
 	return ret;	
 }
