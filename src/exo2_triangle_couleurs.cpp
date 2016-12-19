@@ -49,15 +49,24 @@ mat4 Camera::getViewProjectionMatrix(){
 }
 
 void Camera::changeOrientation(int orient){
-    if(orient == 0)
-        angle = 0;
-    else if(orient == 1){
-        angle = -M_PI/2.f;
+    if(orient == 1){
+        cout << "coucou mon orientation est vers l'est " << endl;
+        angle = M_PI; //est;
     }
-    else if(orient == 2)
-        angle = M_PI;
-    else if(orient == 3)
-        angle = M_PI/2.f;
+
+    else if(orient == 2){
+        cout << "mon orientation est vers le sud" << endl;
+        angle = M_PI/2.f; // sud
+    }
+    else if(orient == 3){
+        cout << "mon orientation est vers l'ouest" << endl;
+        angle = 0; //ouest
+    }
+
+    else if(orient == 0){
+        cout << "coucou mon orientation est vers le nord" << endl;
+        angle = -M_PI/2.f;; // nord;
+    }
 }
 
 struct QuadInstance
@@ -348,7 +357,6 @@ int main(int argc, char** argv) {
     for(int i = 1; i < map.height-1; i++)
         for(int j = 1; j < map.width-1; j++) {
             Square curr = map.pixels[map.width*j + i];
-            cout << curr.pos.pos_X << ", " << curr.pos.pos_Y << endl;
 
             if(map.pixels[map.width*j+i].type){
 
@@ -387,31 +395,31 @@ int main(int argc, char** argv) {
                     switch( e.key.keysym.sym ){
                         case SDLK_LEFT: 
                             heroine.pos.orientation = (heroine.pos.orientation + 3) % 4;
-                            c.changeOrientation(heroine.pos.orientation);
+                            c.angle += M_PI/2.f;
                             break;
                         case SDLK_RIGHT:
                             heroine.pos.orientation = (heroine.pos.orientation + 1) % 4;
-                            c.changeOrientation(heroine.pos.orientation);
+                            c.angle -= M_PI/2.f;
                             break;
                         case SDLK_UP:
                             if(heroine.pos.orientation == 0)
-                                c.position.z -= 1.f;
+                                c.position.x += 0.5f;
                             else if(heroine.pos.orientation == 1)
-                                c.position.x += 1.f;
+                                c.position.z += 0.5f;
                             else if(heroine.pos.orientation == 2)
-                                c.position.z += 1.f;
+                                c.position.x -= 0.5f;
                             else if(heroine.pos.orientation == 3)
-                                c.position.x -= 1.f;
+                                c.position.z -= 0.5f;
                             break;
                         case SDLK_DOWN:
                             if(heroine.pos.orientation == 0)
-                                c.position.z += 1.f;
+                                c.position.x -= 0.5f;
                             else if(heroine.pos.orientation == 1)
-                                c.position.x -= 1.f;
+                                c.position.z -= 0.5f;
                             else if(heroine.pos.orientation == 2)
-                                c.position.z -= 1.f;
+                                c.position.x += 0.5f;
                             else if(heroine.pos.orientation == 3)
-                                c.position.x += 1.f;
+                                c.position.z += 0.5f;
                             break;
                         default:
                             break;

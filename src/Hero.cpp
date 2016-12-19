@@ -39,13 +39,13 @@ void Hero::attackMonster(){
 
 void Hero::changeOrientation(Map m){
 	if(m.pixels[m.width*pos.pos_X + (pos.pos_Y+1)].type == hall){
-		pos.orientation = nord;
-	}else if(m.pixels[m.width*(pos.pos_X+1) + pos.pos_Y].type == hall){
 		pos.orientation = est;
-	}else if(m.pixels[m.width*pos.pos_X + (pos.pos_Y-1)].type == hall){
+	}else if(m.pixels[m.width*(pos.pos_X+1) + pos.pos_Y].type == hall){
 		pos.orientation = sud;
-	}else if(m.pixels[m.width*(pos.pos_X-1) + pos.pos_Y].type == hall){
+	}else if(m.pixels[m.width*pos.pos_X + (pos.pos_Y-1)].type == hall){
 		pos.orientation = ouest;
+	}else if(m.pixels[m.width*(pos.pos_X-1) + pos.pos_Y].type == hall){
+		pos.orientation = nord;
 	}
 }
 
