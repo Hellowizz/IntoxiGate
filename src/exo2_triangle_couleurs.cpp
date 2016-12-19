@@ -402,14 +402,20 @@ int main(int argc, char** argv) {
                             c.angle -= M_PI/2.f;
                             break;
                         case SDLK_UP:
-                            if(heroine.pos.orientation == 0)
-                                c.position.x += 0.5f;
-                            else if(heroine.pos.orientation == 1)
-                                c.position.z += 0.5f;
-                            else if(heroine.pos.orientation == 2)
-                                c.position.x -= 0.5f;
-                            else if(heroine.pos.orientation == 3)
-                                c.position.z -= 0.5f;
+                            if(heroine.movingForward(map)){
+                                if(heroine.pos.orientation == 0){
+                                    heroine.pos.pos_X += 1.f;
+                                    c.position.x += 1.f;}
+                                else if(heroine.pos.orientation == 1){
+                                    heroine.pos.pos_Y += 1.f;
+                                    c.position.z += 1.f;}
+                                else if(heroine.pos.orientation == 2){
+                                    heroine.pos.pos_X -= 1.f;
+                                    c.position.x -= 1.f;}
+                                else if(heroine.pos.orientation == 3){
+                                    heroine.pos.pos_Y -= 1.f;
+                                    c.position.z -= 1.f;}
+                            }
                             break;
                         case SDLK_DOWN:
                             if(heroine.pos.orientation == 0)
