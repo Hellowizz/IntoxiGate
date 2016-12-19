@@ -111,72 +111,8 @@ int main(int argc, char** argv) {
 
     // création & initialisation d'une map
     Map map;
-    //map.loadMap("maps/level1.txt");
 
-    Square pix1;
-    pix1.type = wall;
-    map.pixels.push_back (pix1);
-
-    Square pix2;
-    pix2.type = wall;
-    map.pixels.push_back (pix2);
-
-    Square pix3;
-    pix3.type = wall;
-    map.pixels.push_back (pix3);
-
-    Square pix5;
-    pix5.type = wall;
-    map.pixels.push_back (pix5);
-
-    Square pix6;
-    pix6.type = getIn;
-    map.pixels.push_back (pix6);
-
-    Square pix7;
-    pix7.type = hall;
-    map.pixels.push_back (pix7);
-
-    Square pix8;
-    pix8.type = getOut;
-    map.pixels.push_back (pix8);
-
-    Square pix9;
-    pix9.type = wall;
-    map.pixels.push_back (pix9);
-
-    Square pix10;
-    pix10.type = wall;
-    map.pixels.push_back (pix10);
-
-    Square pix11;
-    pix11.type = wall;
-    map.pixels.push_back (pix11);
-
-    Square pix12;
-    pix12.type = wall;
-    map.pixels.push_back (pix12);
-
-    Square pix13;
-    pix13.type = wall;
-    map.pixels.push_back (pix13);
-
-    Square pix14;
-    pix14.type = wall;
-    map.pixels.push_back (pix14);
-
-
-    map.width = 5;
-    map.height = 3;
-
-    for(int i=0; i< map.width; i++){
-        for(int j=0; j< map.height; j++){
-            map.pixels[i+(j*map.width)].pos.pos_X = i;
-            map.pixels[i+(j*map.width)].pos.pos_Y = j;
-        }
-    }
-
-    //map.loadMap("assets/maps/level1.txt");
+    map.loadMap("assets/maps/level1.txt");
 
     // initialize glew for OpenGL3+ support
     GLenum glewInitError = glewInit();
@@ -250,7 +186,7 @@ int main(int argc, char** argv) {
 
     //Texture 1
 
-    glGenTextures(1, texturesBuffer);
+    glGenTextures(9, texturesBuffer);
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[0]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
         wallTexture->getWidth(), wallTexture->getHeight(), 
@@ -263,7 +199,6 @@ int main(int argc, char** argv) {
 
     //Texture 2
 
-    glGenTextures(1, texturesBuffer);
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[1]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
         badGarbageTexture->getWidth(), badGarbageTexture->getHeight(), 
@@ -276,7 +211,6 @@ int main(int argc, char** argv) {
 
     //Texture 3
 
-    glGenTextures(1, texturesBuffer);
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[2]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
         ceilingTexture->getWidth(), ceilingTexture->getHeight(), 
@@ -289,7 +223,6 @@ int main(int argc, char** argv) {
 
     //Texture 4
 
-    glGenTextures(1, texturesBuffer);
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[3]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
         doorTexture->getWidth(), doorTexture->getHeight(), 
@@ -302,7 +235,6 @@ int main(int argc, char** argv) {
 
     //Texture 5
 
-    glGenTextures(1, texturesBuffer);
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[4]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
         groundTexture->getWidth(), groundTexture->getHeight(), 
@@ -315,7 +247,6 @@ int main(int argc, char** argv) {
 
     //Texture 6
 
-    glGenTextures(1, texturesBuffer);
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[5]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
         lifeBonusTexture->getWidth(), lifeBonusTexture->getHeight(), 
@@ -328,7 +259,6 @@ int main(int argc, char** argv) {
 
     //Texture 7
 
-    glGenTextures(1, texturesBuffer);
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[6]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
         sacTexture->getWidth(), sacTexture->getHeight(), 
@@ -341,7 +271,6 @@ int main(int argc, char** argv) {
 
     //Texture 8
 
-    glGenTextures(1, texturesBuffer);
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[7]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
         toxicTexture->getWidth(), toxicTexture->getHeight(), 
@@ -354,7 +283,6 @@ int main(int argc, char** argv) {
 
     //Texture 9
 
-    glGenTextures(1, texturesBuffer);
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[8]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
         waterTexture->getWidth(), waterTexture->getHeight(), 
@@ -409,45 +337,39 @@ int main(int argc, char** argv) {
 
     std::vector<QuadInstance> quads;
 
-    Square entrance;
+    Square entrance = map.getEntrance();
 
-    Camera c(entrance.pos.pos_X+1, entrance.pos.pos_Y+1);
+    Camera c(entrance.pos.pos_X, entrance.pos.pos_Y);
     Hero heroine;
     heroine.putPos(entrance.pos);
     heroine.changeOrientation(map);
     c.changeOrientation(heroine.pos.orientation);
 
+    for(int i = 1; i < map.height-1; i++)
+        for(int j = 1; j < map.width-1; j++) {
+            Square curr = map.pixels[map.width*j + i];
+            cout << curr.pos.pos_X << ", " << curr.pos.pos_Y << endl;
 
-    for(int i = 1; i < map.width-1; i++)
-        for(int j = 1; j < map.height-1; j++) {
-            Square curr = map.pixels[i + map.width*j];
+            if(map.pixels[map.width*j+i].type){
 
-            if(map.pixels[i+ map.height*j].type == 1 || map.pixels[i+ map.height*j].type == getIn || map.pixels[i+ map.height*j].type == getOut){
-
-                cout << "case :" << i << ", " << j << " est une case hall." << endl;
-                if(map.pixels[(i+1)+ map.height*j].type == wall){
-                    //cout << "la case au devant de la case " << i << ", " << j << " est un mur." << endl;
+                if(map.pixels[map.width*(j+1)+ i].type == wall){
                     quads.push_back(newQuadVertical(float(curr.pos.pos_X)+0.5f, 0.f, float(curr.pos.pos_Y)));
                 }
 
-                if(map.pixels[i + map.height*(j-1)].type == wall){
-                    //cout << "la case au dessus de la case " << i << ", " << j << " est un mur." << endl;
-                    quads.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)+0.5f));
+                if(map.pixels[map.width*j + (i-1)].type == wall){
+                    quads.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)-0.5f));
                 }
 
-                if(map.pixels[(i-1) + map.height*j].type == wall){
-                    //cout << "la case derrière de la case " << i << ", " << j << " est un mur." << endl;
+                if(map.pixels[map.width*(j-1) + i].type == wall){
                     quads.push_back(newQuadVertical(float(curr.pos.pos_X)-0.5f, 0.f, float(curr.pos.pos_Y)));
                 }
 
-                if(map.pixels[i + map.height*(j+1)].type == wall){
-                    //cout << "la case en dessous de la case " << i << ", " << j << " est un mur." << endl;
-                    quads.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)-0.5f));
+                if(map.pixels[map.width*j + (i+1)].type == wall){
+                    quads.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)+0.5f));
                 }
                 
             }
         }
-    cout << "oui merci" << endl;
 
     /* END INITIALIZATION CODE */
 
@@ -514,17 +436,37 @@ int main(int argc, char** argv) {
         
         mat4 MVPMatrix;
 
-        for(unsigned int i=0; i<quads.size(); i++){
+        for(unsigned int i=0; i<quads.size()/2; i++){
             MVPMatrix = c.getViewProjectionMatrix() * quads[i].model;
         
             glUniformMatrix4fv(uMVPMatrixLoc, 1, GL_FALSE, value_ptr(MVPMatrix));
+
             glActiveTexture(GL_TEXTURE0 + 4);
             glBindTexture(GL_TEXTURE_2D, texturesBuffer[0]);
             glActiveTexture(GL_TEXTURE0);
             glUniform1i(uTextureLoc, 4);
+
             glBindVertexArray(vao);
 
             glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glBindVertexArray(0);
+        }
+
+        for(unsigned int i=quads.size()/2; i<quads.size(); i++){
+            MVPMatrix = c.getViewProjectionMatrix() * quads[i].model;
+        
+            glUniformMatrix4fv(uMVPMatrixLoc, 1, GL_FALSE, value_ptr(MVPMatrix));
+
+            glActiveTexture(GL_TEXTURE0 + 4);
+            glBindTexture(GL_TEXTURE_2D, texturesBuffer[1]);
+            glActiveTexture(GL_TEXTURE0);
+            glUniform1i(uTextureLoc, 4);
+
+            glBindVertexArray(vao);
+
+            glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+            glBindTexture(GL_TEXTURE_2D, 0);
             glBindVertexArray(0);
         }
 

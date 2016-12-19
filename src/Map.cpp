@@ -223,6 +223,8 @@ void Map::loadMap(string fileName) {
 		}
 		height = stoi(tmp);
 
+		pixels.resize(width*height);
+
 		getline(file, line);
 
 		for(i = 0; i < height; i++)
@@ -241,7 +243,7 @@ void Map::loadMap(string fileName) {
 				getline(file, line);
 				col.append(line);
 				
-				if(col.compare("0,0,0") == 0)
+				if(col.compare("0,0,0") == 0) 
 					pix.type = wall;
 
 				else if(col.compare("255,255,255") == 0)
@@ -265,11 +267,11 @@ void Map::loadMap(string fileName) {
 				else
 					pix.type = wall;
 
-				pixels.push_back(pix);
+				pixels[i*width + j] = pix;
 			}
 
-
 		file.close();
+		cout << width << "," << height << endl;
 	} 
 	else cout << "Unable to open file." << endl;
 }
