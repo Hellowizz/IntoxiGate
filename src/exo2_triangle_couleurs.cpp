@@ -111,7 +111,6 @@ int main(int argc, char** argv) {
 
     // création & initialisation d'une map
     Map map;
-<<<<<<< HEAD
     //map.loadMap("maps/level1.txt");
 
     Square pix1;
@@ -407,8 +406,6 @@ int main(int argc, char** argv) {
     glVertexAttribPointer(VERTEX_TEXCOORDS_LOCATION, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (const GLvoid*)(2 * sizeof(GLfloat)));
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    
 
     std::vector<QuadInstance> quads;
 
