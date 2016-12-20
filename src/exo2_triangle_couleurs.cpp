@@ -26,11 +26,12 @@ struct Camera
     Camera();
     Camera(int x, int y);
     mat4 getViewProjectionMatrix();
+    void changeOrientation(int orient);
 
 };
 
 Camera::Camera(){
-    position = vec3(0.f,0.f,2.f);
+    position = vec3(0.f,0.f,0.f);
     angle = 0;
 }
 
@@ -42,11 +43,30 @@ Camera::Camera(int x, int y){
 mat4 Camera::getViewProjectionMatrix(){
     mat4 p = perspective(radians(70.f), (float)WIDTH/(float)HEIGHT, 0.1f, 100.f);
     mat4 v(1);
-    //v = translate(v, -position);
-    //v = rotate(v, -angle, vec3(0,1,0));
     v = lookAt(position, position+vec3(cosf(angle+M_PI/2.f), 0, -sinf(angle+M_PI/2.f)), vec3(0,1,0));
     
     return p * v;
+}
+
+void Camera::changeOrientation(int orient){
+    if(orient == 1){
+        cout << "coucou mon orientation est vers l'est " << endl;
+        angle = M_PI; //est;
+    }
+
+    else if(orient == 2){
+        cout << "mon orientation est vers le sud" << endl;
+        angle = M_PI/2.f; // sud
+    }
+    else if(orient == 3){
+        cout << "mon orientation est vers l'ouest" << endl;
+        angle = 0; //ouest
+    }
+
+    else if(orient == 0){
+        cout << "coucou mon orientation est vers le nord" << endl;
+        angle = -M_PI/2.f;; // nord;
+    }
 }
 
 struct QuadInstance
@@ -77,7 +97,7 @@ QuadInstance::QuadInstance(float x, float y, float z, float x_angle, float y_ang
 }
 
 QuadInstance  newQuadVertical(float x, float y, float z) {
-    return QuadInstance(x, y, z, 0, 90);
+    return QuadInstance(x, y, z, 0, M_PI/2.f);
 }
 
 QuadInstance  newQuadHorizontal(float x, float y, float z) {
@@ -100,7 +120,8 @@ int main(int argc, char** argv) {
 
     // création & initialisation d'une map
     Map map;
-    map.loadMap("maps/level1.txt");
+
+    map.loadMap("assets/maps/level1.txt");
 
     // initialize glew for OpenGL3+ support
     GLenum glewInitError = glewInit();
@@ -111,6 +132,10 @@ int main(int argc, char** argv) {
 
     FilePath applicationPath(argv[0]);
 
+    ///////////////////////////////////////////
+    /////////////////TEXTURES//////////////////
+    ///////////////////////////////////////////
+
 
     string imagePath = applicationPath.dirPath()+"../assets/textures/wall.png";
     std::unique_ptr<Image> wallTexture = loadImage(imagePath);
@@ -118,8 +143,59 @@ int main(int argc, char** argv) {
         cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
     }
 
-    GLuint texturesBuffer[1];
-    glGenTextures(1, texturesBuffer);
+    imagePath = applicationPath.dirPath()+"../assets/textures/badGarbage.png";
+    std::unique_ptr<Image> badGarbageTexture = loadImage(imagePath);
+    if(!badGarbageTexture) {
+        cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
+    }
+
+    imagePath = applicationPath.dirPath()+"../assets/textures/ceiling&light.png";
+    std::unique_ptr<Image> ceilingTexture = loadImage(imagePath);
+    if(!ceilingTexture) {
+        cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
+    }
+
+    imagePath = applicationPath.dirPath()+"../assets/textures/door&wall.png";
+    std::unique_ptr<Image> doorTexture = loadImage(imagePath);
+    if(!doorTexture) {
+        cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
+    }
+
+    imagePath = applicationPath.dirPath()+"../assets/textures/ground.png";
+    std::unique_ptr<Image> groundTexture = loadImage(imagePath);
+    if(!groundTexture) {
+        cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
+    }
+
+    imagePath = applicationPath.dirPath()+"../assets/textures/lifeBonus.png";
+    std::unique_ptr<Image> lifeBonusTexture = loadImage(imagePath);
+    if(!lifeBonusTexture) {
+        cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
+    }
+
+    imagePath = applicationPath.dirPath()+"../assets/textures/sacRecyclable.png";
+    std::unique_ptr<Image> sacTexture = loadImage(imagePath);
+    if(!sacTexture) {
+        cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
+    }
+
+    imagePath = applicationPath.dirPath()+"../assets/textures/toxicWater.png";
+    std::unique_ptr<Image> toxicTexture = loadImage(imagePath);
+    if(!toxicTexture) {
+        cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
+    }
+
+    imagePath = applicationPath.dirPath()+"../assets/textures/water.png";
+    std::unique_ptr<Image> waterTexture = loadImage(imagePath);
+    if(!waterTexture) {
+        cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
+    }
+
+    GLuint texturesBuffer[9];
+
+    //Texture 1
+
+    glGenTextures(9, texturesBuffer);
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[0]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
         wallTexture->getWidth(), wallTexture->getHeight(), 
@@ -129,6 +205,105 @@ int main(int argc, char** argv) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     glBindTexture( GL_TEXTURE_2D, 0);
+
+    //Texture 2
+
+    glBindTexture( GL_TEXTURE_2D, texturesBuffer[1]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+        badGarbageTexture->getWidth(), badGarbageTexture->getHeight(), 
+        0, GL_RGBA, GL_FLOAT, badGarbageTexture->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture( GL_TEXTURE_2D, 0);
+
+    //Texture 3
+
+    glBindTexture( GL_TEXTURE_2D, texturesBuffer[2]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+        ceilingTexture->getWidth(), ceilingTexture->getHeight(), 
+        0, GL_RGBA, GL_FLOAT, ceilingTexture->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture( GL_TEXTURE_2D, 0);
+
+    //Texture 4
+
+    glBindTexture( GL_TEXTURE_2D, texturesBuffer[3]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+        doorTexture->getWidth(), doorTexture->getHeight(), 
+        0, GL_RGBA, GL_FLOAT, doorTexture->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture( GL_TEXTURE_2D, 0);
+
+    //Texture 5
+
+    glBindTexture( GL_TEXTURE_2D, texturesBuffer[4]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+        groundTexture->getWidth(), groundTexture->getHeight(), 
+        0, GL_RGBA, GL_FLOAT, groundTexture->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture( GL_TEXTURE_2D, 0);
+
+    //Texture 6
+
+    glBindTexture( GL_TEXTURE_2D, texturesBuffer[5]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+        lifeBonusTexture->getWidth(), lifeBonusTexture->getHeight(), 
+        0, GL_RGBA, GL_FLOAT, lifeBonusTexture->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture( GL_TEXTURE_2D, 0);
+
+    //Texture 7
+
+    glBindTexture( GL_TEXTURE_2D, texturesBuffer[6]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+        sacTexture->getWidth(), sacTexture->getHeight(), 
+        0, GL_RGBA, GL_FLOAT, sacTexture->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture( GL_TEXTURE_2D, 0);
+
+    //Texture 8
+
+    glBindTexture( GL_TEXTURE_2D, texturesBuffer[7]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+        toxicTexture->getWidth(), toxicTexture->getHeight(), 
+        0, GL_RGBA, GL_FLOAT, toxicTexture->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture( GL_TEXTURE_2D, 0);
+
+    //Texture 9
+
+    glBindTexture( GL_TEXTURE_2D, texturesBuffer[8]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+        waterTexture->getWidth(), waterTexture->getHeight(), 
+        0, GL_RGBA, GL_FLOAT, waterTexture->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture( GL_TEXTURE_2D, 0);
+
+
+    ///////////////////FIN TEXTURES////////////////////
 
     Program program =   loadProgram(applicationPath.dirPath() + "../shaders/triangle.vs.glsl",
                         applicationPath.dirPath() + "../shaders/triangle.fs.glsl");
@@ -169,50 +344,50 @@ int main(int argc, char** argv) {
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    
-
     std::vector<QuadInstance> quads;
 
-    /*QuadInstance quad;
-    quads.push_back(quad);
-
-    QuadInstance quad2(-0.5f, 0.f, 0.5f, 0, radians(90.f));
-    quads.push_back(quad2);
-    quads.push_back(QuadInstance(0.5f, 0.f, 0.5f, 0, radians(-90.f)));*/
-
     Square entrance = map.getEntrance();
+
     Camera c(entrance.pos.pos_X, entrance.pos.pos_Y);
     Hero heroine;
     heroine.putPos(entrance.pos);
     heroine.changeOrientation(map);
+    c.changeOrientation(heroine.pos.orientation);
 
-    // quads.push_back(newQuadHorizontal(float(entrance.pos.pos_X), 0.f, float(entrance.pos.pos_Y+0.5f)));
-    // quads.push_back(newQuadHorizontal(float(entrance.pos.pos_X), 0.f, float(entrance.pos.pos_Y-0.5f)));
-
-    // for(int i=1; i<=4; i++){
-    //     if(isHall(entrance.pos.pos_X, entrance.pos.pos_Y, i, map)){
-    //         if(i%2 == 0) quads.push_back(newQuadVertical(float(entrance.pos.pos_X), 0.f, float(entrance.pos.pos_Y)));
-    //         else quads.push_back(newQuadHorizontal(float(entrance.pos.pos_X), 0.f, float(entrance.pos.pos_Y)));
-            
-    //     }
-    // }
+    cout << "...::: CONSTRUCTION DE LA MAP :::..." << endl;
 
     for(int i = 1; i < map.width-1; i++)
         for(int j = 1; j < map.height-1; j++) {
-            Square curr = map.pixels[i + map.width*j];
+            Square curr = map.pixels[map.width*j + i];
 
-            if(map.pixels[(i+1)+ map.height*j].type == 0)
-                quads.push_back(newQuadHorizontal(float(curr.pos.pos_X)+0.5, 0.f, float(curr.pos.pos_Y)));
+            cout << "On va dessiner la case (" << j <<", "<< i <<")." << endl;
 
-            if(map.pixels[i + map.height*(j+1)].type == 0)
-                quads.push_back(newQuadVertical(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)+0.5));
+            if(curr.type != wall){
 
-            if(map.pixels[(i-1) + map.height*j].type == 0)
-                quads.push_back(newQuadHorizontal(float(curr.pos.pos_X)-0.5, 0.f, float(curr.pos.pos_Y)));
+                if(map.pixels[map.width*(j+1)+ i].type == wall){
+                    cout << "EN J+1 : La case (" << j+1 <<", "<< i <<") est un mur!" << endl;
+                    quads.push_back(newQuadVertical(float(curr.pos.pos_X)+0.5f, 0.f, float(curr.pos.pos_Y)));
+                }
 
-            if(map.pixels[i + map.height*(j-1)].type == 0)
-                quads.push_back(newQuadVertical(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)-0.5));
+                if(map.pixels[map.width*j + (i-1)].type == wall){
+                    cout << "EN I-1 : La case (" << j <<", "<< i-1 <<") est un mur!" << endl;
+                    quads.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)-0.5f));
+                }
+
+                if(map.pixels[map.width*(j-1) + i].type == wall){
+                    cout << "EN J-1 : La case (" << j-1 <<", "<< i <<") est un mur!" << endl;
+                    quads.push_back(newQuadVertical(float(curr.pos.pos_X)-0.5f, 0.f, float(curr.pos.pos_Y)));
+                }
+
+                if(map.pixels[map.width*j + (i+1)].type == wall){
+                    cout << "EN I+1 : La case (" << j <<", "<< i+1 <<") est un mur!" << endl;
+                    quads.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)+0.5f));
+                }
+                
+            }
         }
+
+    cout << "...::: FIN DE LA CONSTRUCTION DE LA MAP :::..." << endl;    
 
     /* END INITIALIZATION CODE */
 
@@ -229,32 +404,38 @@ int main(int argc, char** argv) {
                 case SDL_KEYDOWN:
                     switch( e.key.keysym.sym ){
                         case SDLK_LEFT: 
-                            heroine.pos.orientation = (heroine.pos.orientation + 1) % 4;
+                            heroine.pos.orientation = (heroine.pos.orientation + 3) % 4;
                             c.angle += M_PI/2.f;
                             break;
                         case SDLK_RIGHT:
-                            heroine.pos.orientation = (heroine.pos.orientation + 3) % 4;
+                            heroine.pos.orientation = (heroine.pos.orientation + 1) % 4;
                             c.angle -= M_PI/2.f;
                             break;
                         case SDLK_UP:
-                            if(heroine.pos.orientation == 0)
-                                c.position.z -= 1.f;
-                            else if(heroine.pos.orientation == 1)
-                                c.position.x -= 1.f;
-                            else if(heroine.pos.orientation == 2)
-                                c.position.z += 1.f;
-                            else if(heroine.pos.orientation == 3)
-                                c.position.x += 1.f;
+                            if(heroine.movingForward(map)){
+                                if(heroine.pos.orientation == 0){
+                                    heroine.pos.pos_X -= 1.f;
+                                    c.position.x += 1.f;}
+                                else if(heroine.pos.orientation == 1){
+                                    heroine.pos.pos_Y += 1.f;
+                                    c.position.z += 1.f;}
+                                else if(heroine.pos.orientation == 2){
+                                    heroine.pos.pos_X += 1.f;
+                                    c.position.x -= 1.f;}
+                                else if(heroine.pos.orientation == 3){
+                                    heroine.pos.pos_Y -= 1.f;
+                                    c.position.z -= 1.f;}
+                            }
                             break;
                         case SDLK_DOWN:
                             if(heroine.pos.orientation == 0)
-                                c.position.z -= 1.f;
+                                c.position.x -= 0.5f;
                             else if(heroine.pos.orientation == 1)
-                                c.position.x -= 1.f;
+                                c.position.z -= 0.5f;
                             else if(heroine.pos.orientation == 2)
-                                c.position.z += 1.f;
+                                c.position.x += 0.5f;
                             else if(heroine.pos.orientation == 3)
-                                c.position.x += 1.f;
+                                c.position.z += 0.5f;
                             break;
                         default:
                             break;
@@ -279,17 +460,37 @@ int main(int argc, char** argv) {
         
         mat4 MVPMatrix;
 
-        for(unsigned int i=0; i<quads.size(); i++){
+        for(unsigned int i=0; i<quads.size()/2; i++){
             MVPMatrix = c.getViewProjectionMatrix() * quads[i].model;
         
             glUniformMatrix4fv(uMVPMatrixLoc, 1, GL_FALSE, value_ptr(MVPMatrix));
+
             glActiveTexture(GL_TEXTURE0 + 4);
             glBindTexture(GL_TEXTURE_2D, texturesBuffer[0]);
             glActiveTexture(GL_TEXTURE0);
             glUniform1i(uTextureLoc, 4);
+
             glBindVertexArray(vao);
 
             glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glBindVertexArray(0);
+        }
+
+        for(unsigned int i=quads.size()/2; i<quads.size(); i++){
+            MVPMatrix = c.getViewProjectionMatrix() * quads[i].model;
+        
+            glUniformMatrix4fv(uMVPMatrixLoc, 1, GL_FALSE, value_ptr(MVPMatrix));
+
+            glActiveTexture(GL_TEXTURE0 + 4);
+            glBindTexture(GL_TEXTURE_2D, texturesBuffer[1]);
+            glActiveTexture(GL_TEXTURE0);
+            glUniform1i(uTextureLoc, 4);
+
+            glBindVertexArray(vao);
+
+            glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+            glBindTexture(GL_TEXTURE_2D, 0);
             glBindVertexArray(0);
         }
 
