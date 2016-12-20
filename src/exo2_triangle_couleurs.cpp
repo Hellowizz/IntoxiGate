@@ -354,30 +354,40 @@ int main(int argc, char** argv) {
     heroine.changeOrientation(map);
     c.changeOrientation(heroine.pos.orientation);
 
-    for(int i = 1; i < map.height-1; i++)
-        for(int j = 1; j < map.width-1; j++) {
+    cout << "...::: CONSTRUCTION DE LA MAP :::..." << endl;
+
+    for(int i = 1; i < map.width-1; i++)
+        for(int j = 1; j < map.height-1; j++) {
             Square curr = map.pixels[map.width*j + i];
 
-            if(map.pixels[map.width*j+i].type){
+            cout << "On va dessiner la case (" << j <<", "<< i <<")." << endl;
+
+            if(curr.type != wall){
 
                 if(map.pixels[map.width*(j+1)+ i].type == wall){
+                    cout << "EN J+1 : La case (" << j+1 <<", "<< i <<") est un mur!" << endl;
                     quads.push_back(newQuadVertical(float(curr.pos.pos_X)+0.5f, 0.f, float(curr.pos.pos_Y)));
                 }
 
                 if(map.pixels[map.width*j + (i-1)].type == wall){
+                    cout << "EN I-1 : La case (" << j <<", "<< i-1 <<") est un mur!" << endl;
                     quads.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)-0.5f));
                 }
 
                 if(map.pixels[map.width*(j-1) + i].type == wall){
+                    cout << "EN J-1 : La case (" << j-1 <<", "<< i <<") est un mur!" << endl;
                     quads.push_back(newQuadVertical(float(curr.pos.pos_X)-0.5f, 0.f, float(curr.pos.pos_Y)));
                 }
 
                 if(map.pixels[map.width*j + (i+1)].type == wall){
+                    cout << "EN I+1 : La case (" << j <<", "<< i+1 <<") est un mur!" << endl;
                     quads.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)+0.5f));
                 }
                 
             }
         }
+
+    cout << "...::: FIN DE LA CONSTRUCTION DE LA MAP :::..." << endl;    
 
     /* END INITIALIZATION CODE */
 
@@ -404,13 +414,13 @@ int main(int argc, char** argv) {
                         case SDLK_UP:
                             if(heroine.movingForward(map)){
                                 if(heroine.pos.orientation == 0){
-                                    heroine.pos.pos_X += 1.f;
+                                    heroine.pos.pos_X -= 1.f;
                                     c.position.x += 1.f;}
                                 else if(heroine.pos.orientation == 1){
                                     heroine.pos.pos_Y += 1.f;
                                     c.position.z += 1.f;}
                                 else if(heroine.pos.orientation == 2){
-                                    heroine.pos.pos_X -= 1.f;
+                                    heroine.pos.pos_X += 1.f;
                                     c.position.x -= 1.f;}
                                 else if(heroine.pos.orientation == 3){
                                     heroine.pos.pos_Y -= 1.f;

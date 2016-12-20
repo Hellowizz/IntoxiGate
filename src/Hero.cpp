@@ -59,13 +59,13 @@ bool Hero::movingForward(Map m){
 	cout << "à l'ouest j'ai une case de type " << m.pixels[m.width*pos.pos_X + (pos.pos_Y-1)].type << endl;
 
 
-	if(pos.orientation == nord && m.pixels[m.width*(pos.pos_X-1) + pos.pos_Y].type == hall)
+	if(pos.orientation == nord && (m.pixels[m.width*(pos.pos_X-1) + pos.pos_Y].type == hall || m.pixels[m.width*(pos.pos_X-1) + pos.pos_Y].type == getIn))
 		return true;
-	if(pos.orientation == est && m.pixels[m.width*pos.pos_X + (pos.pos_Y+1)].type == hall)
+	if(pos.orientation == est && (m.pixels[m.width*pos.pos_X + (pos.pos_Y+1)].type == hall || m.pixels[m.width*pos.pos_X + (pos.pos_Y+1)].type == getIn))
 		return true;
-	if(pos.orientation == sud && m.pixels[m.width*(pos.pos_X+1) + pos.pos_Y].type == hall)
+	if(pos.orientation == sud && (m.pixels[m.width*(pos.pos_X+1) + pos.pos_Y].type == hall || m.pixels[m.width*(pos.pos_X+1) + pos.pos_Y].type == getIn))
 		return true;
-	if(pos.orientation == ouest && m.pixels[m.width*pos.pos_X + (pos.pos_Y-1)].type == hall)
+	if(pos.orientation == ouest && (m.pixels[m.width*pos.pos_X + (pos.pos_Y-1)].type == hall || m.pixels[m.width*pos.pos_X + (pos.pos_Y-1)].type == getIn))
 		return true;
 
 	return false;
