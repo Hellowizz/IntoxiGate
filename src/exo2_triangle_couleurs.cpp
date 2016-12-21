@@ -50,21 +50,17 @@ mat4 Camera::getViewProjectionMatrix(){
 
 void Camera::changeOrientation(int orient){
     if(orient == 1){
-        cout << "coucou mon orientation est vers l'est " << endl;
         angle = M_PI; //est;
     }
 
     else if(orient == 2){
-        cout << "mon orientation est vers le sud" << endl;
         angle = M_PI/2.f; // sud
     }
     else if(orient == 3){
-        cout << "mon orientation est vers l'ouest" << endl;
         angle = 0; //ouest
     }
 
     else if(orient == 0){
-        cout << "coucou mon orientation est vers le nord" << endl;
         angle = -M_PI/2.f;; // nord;
     }
 }
@@ -121,7 +117,7 @@ int main(int argc, char** argv) {
     // création & initialisation d'une map
     Map map;
 
-    map.loadMap("assets/maps/level2.txt");
+    map.loadMap("assets/maps/level1.txt");
 
     // initialize glew for OpenGL3+ support
     GLenum glewInitError = glewInit();
@@ -344,7 +340,9 @@ int main(int argc, char** argv) {
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    std::vector<QuadInstance> quads;
+    std::vector<QuadInstance> quadWall;
+    std::vector<QuadInstance> quadGround;
+    std::vector<QuadInstance> quadRoof;
 
     Square entrance = map.getEntrance();
 
@@ -354,40 +352,35 @@ int main(int argc, char** argv) {
     heroine.changeOrientation(map);
     c.changeOrientation(heroine.pos.orientation);
 
-    cout << "...::: CONSTRUCTION DE LA MAP :::..." << endl;
-
     for(int i = 1; i < map.width-1; i++)
         for(int j = 1; j < map.height-1; j++) {
             Square curr = map.pixels[map.width*j + i];
 
-            cout << "On va dessiner la case (" << j <<", "<< i <<")." << endl;
+            if(curr.type == hall || curr.type == getIn || curr.type == getOut ){
+                quadGround.push_back(QuadInstance(float(curr.pos.pos_X), -0.5f, float(curr.pos.pos_Y), M_PI/2.f, 0));
+                quadRoof.push_back(QuadInstance(float(curr.pos.pos_X), 0.5f, float(curr.pos.pos_Y), M_PI/2.f, 0));
+            }
 
             if(curr.type != wall){
 
                 if(map.pixels[map.width*(j+1)+ i].type == wall){
-                    cout << "EN J+1 : La case (" << j+1 <<", "<< i <<") est un mur!" << endl;
-                    quads.push_back(newQuadVertical(float(curr.pos.pos_X)+0.5f, 0.f, float(curr.pos.pos_Y)));
+                    quadWall.push_back(newQuadVertical(float(curr.pos.pos_X)+0.5f, 0.f, float(curr.pos.pos_Y)));
                 }
 
                 if(map.pixels[map.width*j + (i-1)].type == wall){
-                    cout << "EN I-1 : La case (" << j <<", "<< i-1 <<") est un mur!" << endl;
-                    quads.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)-0.5f));
+                    quadWall.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)-0.5f));
                 }
 
                 if(map.pixels[map.width*(j-1) + i].type == wall){
-                    cout << "EN J-1 : La case (" << j-1 <<", "<< i <<") est un mur!" << endl;
-                    quads.push_back(newQuadVertical(float(curr.pos.pos_X)-0.5f, 0.f, float(curr.pos.pos_Y)));
+                    quadWall.push_back(newQuadVertical(float(curr.pos.pos_X)-0.5f, 0.f, float(curr.pos.pos_Y)));
                 }
 
                 if(map.pixels[map.width*j + (i+1)].type == wall){
-                    cout << "EN I+1 : La case (" << j <<", "<< i+1 <<") est un mur!" << endl;
-                    quads.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)+0.5f));
+                    quadWall.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)+0.5f));
                 }
                 
             }
         }
-
-    cout << "...::: FIN DE LA CONSTRUCTION DE LA MAP :::..." << endl;    
 
     /* END INITIALIZATION CODE */
 
@@ -428,15 +421,20 @@ int main(int argc, char** argv) {
                             }
                             break;
                         case SDLK_DOWN:
-                            if(heroine.pos.orientation == 0)
-                                c.position.x -= 0.5f;
-                            else if(heroine.pos.orientation == 1)
-                                c.position.z -= 0.5f;
-                            else if(heroine.pos.orientation == 2)
-                                c.position.x += 0.5f;
-                            else if(heroine.pos.orientation == 3)
-                                c.position.z += 0.5f;
-                            break;
+                            if(heroine.movingBackward(map)){
+                                if(heroine.pos.orientation == 0){
+                                    heroine.pos.pos_X += 1.f;
+                                    c.position.x -= 1.f;}
+                                else if(heroine.pos.orientation == 1){
+                                    heroine.pos.pos_Y -= 1.f;
+                                    c.position.z -= 1.f;}
+                                else if(heroine.pos.orientation == 2){
+                                    heroine.pos.pos_X -= 1.f;
+                                    c.position.x += 1.f;}
+                                else if(heroine.pos.orientation == 3){
+                                    heroine.pos.pos_Y += 1.f;
+                                    c.position.z += 1.f;}
+                            }
                         default:
                             break;
                     }
@@ -460,8 +458,8 @@ int main(int argc, char** argv) {
         
         mat4 MVPMatrix;
 
-        for(unsigned int i=0; i<quads.size()/2; i++){
-            MVPMatrix = c.getViewProjectionMatrix() * quads[i].model;
+        for(unsigned int i=0; i<quadWall.size(); i++){
+            MVPMatrix = c.getViewProjectionMatrix() * quadWall[i].model;
         
             glUniformMatrix4fv(uMVPMatrixLoc, 1, GL_FALSE, value_ptr(MVPMatrix));
 
@@ -477,13 +475,30 @@ int main(int argc, char** argv) {
             glBindVertexArray(0);
         }
 
-        for(unsigned int i=quads.size()/2; i<quads.size(); i++){
-            MVPMatrix = c.getViewProjectionMatrix() * quads[i].model;
+        for(unsigned int i=0; i<quadGround.size(); i++){
+            MVPMatrix = c.getViewProjectionMatrix() * quadGround[i].model;
         
             glUniformMatrix4fv(uMVPMatrixLoc, 1, GL_FALSE, value_ptr(MVPMatrix));
 
             glActiveTexture(GL_TEXTURE0 + 4);
-            glBindTexture(GL_TEXTURE_2D, texturesBuffer[1]);
+            glBindTexture(GL_TEXTURE_2D, texturesBuffer[4]);
+            glActiveTexture(GL_TEXTURE0);
+            glUniform1i(uTextureLoc, 4);
+
+            glBindVertexArray(vao);
+
+            glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glBindVertexArray(0);
+        }
+
+        for(unsigned int i=0; i<quadRoof.size(); i++){
+            MVPMatrix = c.getViewProjectionMatrix() * quadRoof[i].model;
+        
+            glUniformMatrix4fv(uMVPMatrixLoc, 1, GL_FALSE, value_ptr(MVPMatrix));
+
+            glActiveTexture(GL_TEXTURE0 + 4);
+            glBindTexture(GL_TEXTURE_2D, texturesBuffer[2]);
             glActiveTexture(GL_TEXTURE0);
             glUniform1i(uTextureLoc, 4);
 
