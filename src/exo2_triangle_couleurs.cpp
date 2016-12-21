@@ -121,7 +121,7 @@ int main(int argc, char** argv) {
     // création & initialisation d'une map
     Map map;
 
-    map.loadMap("assets/maps/level1.txt");
+    map.loadMap("assets/maps/level2.txt");
 
     // initialize glew for OpenGL3+ support
     GLenum glewInitError = glewInit();
