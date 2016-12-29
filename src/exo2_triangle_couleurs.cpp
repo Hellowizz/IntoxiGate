@@ -110,6 +110,14 @@ mat4 QuadInstance::getModelMatrix(){
     return m; 
 }
 
+int getIndexQuad(vector<QuadInstance> quads, float x, float y) {
+    for(unsigned int i = 0; i < quads.size(); i++) {
+        if(quads[i].position == vec3(x, 0.f, y))
+            return i;
+    }
+    return quads.size();
+}
+
 int main(int argc, char** argv) {
     // initialize SDL and open a window
     SDLWindowManager windowManager(WIDTH, HEIGHT, "GLImac");
@@ -343,6 +351,7 @@ int main(int argc, char** argv) {
     std::vector<QuadInstance> quadWall;
     std::vector<QuadInstance> quadGround;
     std::vector<QuadInstance> quadRoof;
+    std::vector<QuadInstance> quadDoor;
 
     Square entrance = map.getEntrance();
 
@@ -367,16 +376,32 @@ int main(int argc, char** argv) {
                     quadWall.push_back(newQuadVertical(float(curr.pos.pos_X)+0.5f, 0.f, float(curr.pos.pos_Y)));
                 }
 
+                if(map.pixels[map.width*(j+1)+ i].type == door){
+                    quadDoor.push_back(newQuadVertical(float(curr.pos.pos_X)+0.5f, 0.f, float(curr.pos.pos_Y)));
+                }
+
                 if(map.pixels[map.width*j + (i-1)].type == wall){
                     quadWall.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)-0.5f));
+                }
+
+                if(map.pixels[map.width*j + (i-1)].type == door){
+                    quadDoor.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)-0.5f));
                 }
 
                 if(map.pixels[map.width*(j-1) + i].type == wall){
                     quadWall.push_back(newQuadVertical(float(curr.pos.pos_X)-0.5f, 0.f, float(curr.pos.pos_Y)));
                 }
 
+                if(map.pixels[map.width*(j-1) + i].type == door){
+                    quadDoor.push_back(newQuadVertical(float(curr.pos.pos_X)-0.5f, 0.f, float(curr.pos.pos_Y)));
+                }
+
                 if(map.pixels[map.width*j + (i+1)].type == wall){
                     quadWall.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)+0.5f));
+                }
+
+                if(map.pixels[map.width*j + (i+1)].type == door){
+                    quadDoor.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)+0.5f));
                 }
                 
             }
@@ -387,6 +412,7 @@ int main(int argc, char** argv) {
 
     // application loop:
     bool done = false;
+    int move;
     while(!done) {
         // event loop:
         SDL_Event e;
@@ -405,35 +431,69 @@ int main(int argc, char** argv) {
                             c.angle -= M_PI/2.f;
                             break;
                         case SDLK_UP:
-                            if(heroine.movingForward(map)){
+                            move = heroine.movingForward(map);
+                            if(move){
                                 if(heroine.pos.orientation == 0){
                                     heroine.pos.pos_X -= 1.f;
-                                    c.position.x += 1.f;}
+                                    c.position.x += 1.f;
+                                    if(move == 2) {
+                                        quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, heroine.pos.pos_X, heroine.pos.pos_Y));
+                                    }
+                                }
                                 else if(heroine.pos.orientation == 1){
                                     heroine.pos.pos_Y += 1.f;
-                                    c.position.z += 1.f;}
+                                    c.position.z += 1.f;
+                                    if(move == 2) {
+                                        quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, heroine.pos.pos_X, heroine.pos.pos_Y));
+                                    }
+                                }
                                 else if(heroine.pos.orientation == 2){
                                     heroine.pos.pos_X += 1.f;
-                                    c.position.x -= 1.f;}
+                                    c.position.x -= 1.f;
+                                    if(move == 2) {
+                                        quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, heroine.pos.pos_X, heroine.pos.pos_Y));
+                                    }
+                                }
                                 else if(heroine.pos.orientation == 3){
                                     heroine.pos.pos_Y -= 1.f;
-                                    c.position.z -= 1.f;}
+                                    c.position.z -= 1.f;
+                                    if(move == 2) {
+                                        quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, heroine.pos.pos_X, heroine.pos.pos_Y));
+                                    }
+                                }                                
                             }
                             break;
                         case SDLK_DOWN:
-                            if(heroine.movingBackward(map)){
+                            move = heroine.movingBackward(map);
+                            if(move){
                                 if(heroine.pos.orientation == 0){
                                     heroine.pos.pos_X += 1.f;
-                                    c.position.x -= 1.f;}
+                                    c.position.x -= 1.f;
+                                    if(move == 2) {
+                                        quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, heroine.pos.pos_X, heroine.pos.pos_Y));
+                                    }
+                                }
                                 else if(heroine.pos.orientation == 1){
                                     heroine.pos.pos_Y -= 1.f;
-                                    c.position.z -= 1.f;}
+                                    c.position.z -= 1.f;
+                                    if(move == 2) {
+                                        quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, heroine.pos.pos_X, heroine.pos.pos_Y));
+                                    }
+                                }
                                 else if(heroine.pos.orientation == 2){
                                     heroine.pos.pos_X -= 1.f;
-                                    c.position.x += 1.f;}
+                                    c.position.x += 1.f;
+                                    if(move == 2) {
+                                        quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, heroine.pos.pos_X, heroine.pos.pos_Y));
+                                    }
+                                }
                                 else if(heroine.pos.orientation == 3){
                                     heroine.pos.pos_Y += 1.f;
-                                    c.position.z += 1.f;}
+                                    c.position.z += 1.f;
+                                    if(move == 2) {
+                                        quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, heroine.pos.pos_X, heroine.pos.pos_Y));
+                                    }
+                                }
                             }
                         default:
                             break;
@@ -499,6 +559,23 @@ int main(int argc, char** argv) {
 
             glActiveTexture(GL_TEXTURE0 + 4);
             glBindTexture(GL_TEXTURE_2D, texturesBuffer[2]);
+            glActiveTexture(GL_TEXTURE0);
+            glUniform1i(uTextureLoc, 4);
+
+            glBindVertexArray(vao);
+
+            glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glBindVertexArray(0);
+        }
+
+        for(unsigned int i=0; i<quadDoor.size(); i++){
+            MVPMatrix = c.getViewProjectionMatrix() * quadDoor[i].model;
+        
+            glUniformMatrix4fv(uMVPMatrixLoc, 1, GL_FALSE, value_ptr(MVPMatrix));
+
+            glActiveTexture(GL_TEXTURE0 + 4);
+            glBindTexture(GL_TEXTURE_2D, texturesBuffer[3]);
             glActiveTexture(GL_TEXTURE0);
             glUniform1i(uTextureLoc, 4);
 
