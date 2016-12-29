@@ -118,14 +118,40 @@ int getIndexQuad(vector<QuadInstance> quads, float x, float y) {
     return quads.size();
 }
 
+struct CubeInstance {
+    vec3 position;
+    vector<QuadInstance> quads;
+    int texture;
+
+    CubeInstance(float x, float y, float z, int text);
+};
+
+CubeInstance::CubeInstance(float x, float y, float z, int text) {
+    position = vec3(x, y, z);
+    quads.push_back(newQuadVertical(x-0.5f, y, z));
+    quads.push_back(newQuadHorizontal(x, y, z-0.5f));
+    quads.push_back(newQuadVertical(x+0.5f, y, z));
+    quads.push_back(newQuadHorizontal(x, y, z+0.5f)); 
+    texture = text;
+}
+
+int getIndexCube(vector<CubeInstance> cubes, float x, float y) {
+    for(unsigned int i = 0; i < cubes.size(); i++) {
+        if(cubes[i].position == vec3(x, 0.f, y))
+            return i;
+    }
+    return cubes.size();
+}
+
 int main(int argc, char** argv) {
     // initialize SDL and open a window
-    SDLWindowManager windowManager(WIDTH, HEIGHT, "GLImac");
+    SDLWindowManager windowManager(WIDTH, HEIGHT, "Meilleur jeu du monde");
 
     // création & initialisation d'une map
-    Map map;
+    Map map = Map();
 
-    map.loadMap("assets/maps/level1.txt");
+    map.loadMap("assets/maps/level1.txt");  
+
 
     // initialize glew for OpenGL3+ support
     GLenum glewInitError = glewInit();
@@ -353,6 +379,8 @@ int main(int argc, char** argv) {
     std::vector<QuadInstance> quadRoof;
     std::vector<QuadInstance> quadDoor;
 
+    std::vector<CubeInstance> cubeObject;
+
     Square entrance = map.getEntrance();
 
     Camera c(entrance.pos.pos_X, entrance.pos.pos_Y);
@@ -405,6 +433,10 @@ int main(int argc, char** argv) {
                 }
                 
             }
+        }
+
+        for(unsigned int i = 0; i < map.objects.size(); i++) {
+            cubeObject.push_back(CubeInstance(map.objects[i].pos.pos_X, 0.f, map.objects[i].pos.pos_X, map.objects[i].texture));
         }
 
     /* END INITIALIZATION CODE */
@@ -460,7 +492,12 @@ int main(int argc, char** argv) {
                                     if(move == 2) {
                                         quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, heroine.pos.pos_X, heroine.pos.pos_Y));
                                     }
-                                }                                
+                                }
+                                int indexObj = map.isObject(heroine.pos.pos_X, heroine.pos.pos_Y);
+                                if(indexObj != -1) {
+                                    heroine.inven.objects.push_back(map.objects[indexObj]);
+                                    cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, heroine.pos.pos_X, heroine.pos.pos_Y));
+                                }                              
                             }
                             break;
                         case SDLK_DOWN:
@@ -494,6 +531,11 @@ int main(int argc, char** argv) {
                                         quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, heroine.pos.pos_X, heroine.pos.pos_Y));
                                     }
                                 }
+                                int indexObj = map.isObject(heroine.pos.pos_X, heroine.pos.pos_Y);
+                                if(indexObj != -1) {
+                                    heroine.inven.objects.push_back(map.objects[indexObj]);
+                                    cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, heroine.pos.pos_X, heroine.pos.pos_Y));
+                                } 
                             }
                         default:
                             break;
@@ -584,6 +626,25 @@ int main(int argc, char** argv) {
             glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
             glBindTexture(GL_TEXTURE_2D, 0);
             glBindVertexArray(0);
+        }
+
+        for(unsigned int i=0; i<cubeObject.size(); i++){
+            for(int j = 0; j < 4; j++) {
+                MVPMatrix = c.getViewProjectionMatrix() * cubeObject[i].quads[j].model;
+            
+                glUniformMatrix4fv(uMVPMatrixLoc, 1, GL_FALSE, value_ptr(MVPMatrix));
+
+                glActiveTexture(GL_TEXTURE0 + 4);
+                glBindTexture(GL_TEXTURE_2D, texturesBuffer[cubeObject[i].texture]);
+                glActiveTexture(GL_TEXTURE0);
+                glUniform1i(uTextureLoc, 4);
+
+                glBindVertexArray(vao);
+
+                glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+                glBindTexture(GL_TEXTURE_2D, 0);
+                glBindVertexArray(0);
+            }
         }
 
 

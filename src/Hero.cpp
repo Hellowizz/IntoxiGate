@@ -135,7 +135,7 @@ int Hero::movingBackward(Map m){
 bool Hero::hasKey() {
 	unsigned int i;
 	for(i = 0; i < inven.objects.size(); i++) {
-		if(inven.objects[i].name == "key")
+		if(typeid(inven.objects[i]) == typeid(Key))
 			return true;
 	}
 	return false;
@@ -144,7 +144,7 @@ bool Hero::hasKey() {
 void Hero::useKey() {
 	unsigned int i;
 	for(i = 0; i < inven.objects.size(); i++) {
-		if(inven.objects[i].name == "key")
+		if(typeid(inven.objects[i]) == typeid(Key))
 			inven.objects.erase(inven.objects.begin()+i);
 	}
 }

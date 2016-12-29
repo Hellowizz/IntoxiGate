@@ -5,6 +5,8 @@
 #include <Weapon.hpp>
 #include <Inventory.hpp>
 #include <Map.hpp>
+#include <typeinfo>
+#include <Key.hpp>
 
 class Hero : public Character{
 public:

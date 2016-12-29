@@ -11,6 +11,7 @@
 #include <Monster.hpp>
 #include <Waste.hpp>
 #include <Weapon.hpp>
+#include <Key.hpp>
 
 using namespace std;
 
@@ -24,17 +25,20 @@ typedef struct square {
 class Map {
 	public:
 		string mapName;
-		list<Object> objects;
-		list<Monster> monsters;
+		vector<Object> objects;
+		vector<Monster> monsters;
 		vector<Square> pixels;
 		string ppmFile;
 		int width;
 		int height;
+
+		Map();
 
 		void loadObject(string line);
 		void loadMonster(string line);
 		void loadMap(string filename);
 
 		Square getEntrance();
+		int isObject(float x, float y);
 
 };
