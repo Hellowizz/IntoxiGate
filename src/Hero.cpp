@@ -51,21 +51,26 @@ void Hero::changeOrientation(Map m){
 
 bool Hero::movingForward(Map m){
 
-	cout << "(" << pos.pos_X << ", " << pos.pos_Y << ")" << endl;
-
-	cout << "au nord j'ai une case de type " << m.pixels[m.width*(pos.pos_X-1) + pos.pos_Y].type << endl;
-	cout << "à l'est j'ai une case de type " << m.pixels[m.width*pos.pos_X + (pos.pos_Y+1)].type << endl;
-	cout << "au sud j'ai une case de type " << m.pixels[m.width*(pos.pos_X+1) + pos.pos_Y].type << endl;
-	cout << "à l'ouest j'ai une case de type " << m.pixels[m.width*pos.pos_X + (pos.pos_Y-1)].type << endl;
-
-
-	if(pos.orientation == nord && (m.pixels[m.width*(pos.pos_X-1) + pos.pos_Y].type == hall || m.pixels[m.width*(pos.pos_X-1) + pos.pos_Y].type == getIn))
+	if(pos.orientation == nord && m.pixels[m.width*(pos.pos_X-1) + pos.pos_Y].type != wall)
 		return true;
-	if(pos.orientation == est && (m.pixels[m.width*pos.pos_X + (pos.pos_Y+1)].type == hall || m.pixels[m.width*pos.pos_X + (pos.pos_Y+1)].type == getIn))
+	if(pos.orientation == est && m.pixels[m.width*pos.pos_X + (pos.pos_Y+1)].type != wall)
 		return true;
-	if(pos.orientation == sud && (m.pixels[m.width*(pos.pos_X+1) + pos.pos_Y].type == hall || m.pixels[m.width*(pos.pos_X+1) + pos.pos_Y].type == getIn))
+	if(pos.orientation == sud && m.pixels[m.width*(pos.pos_X+1) + pos.pos_Y].type != wall)
 		return true;
-	if(pos.orientation == ouest && (m.pixels[m.width*pos.pos_X + (pos.pos_Y-1)].type == hall || m.pixels[m.width*pos.pos_X + (pos.pos_Y-1)].type == getIn))
+	if(pos.orientation == ouest && m.pixels[m.width*pos.pos_X + (pos.pos_Y-1)].type != wall)
+		return true;
+
+	return false;
+}
+
+bool Hero::movingBackward(Map m){
+	if(pos.orientation == nord && m.pixels[m.width*(pos.pos_X+1) + pos.pos_Y].type != wall) 		
+		return true;
+	if(pos.orientation == est && m.pixels[m.width*pos.pos_X + (pos.pos_Y-1)].type != wall)
+		return true;
+	if(pos.orientation == sud && m.pixels[m.width*(pos.pos_X-1) + pos.pos_Y].type != wall)		
+		return true;
+	if(pos.orientation == ouest && m.pixels[m.width*pos.pos_X + (pos.pos_Y+1)].type != wall)
 		return true;
 
 	return false;

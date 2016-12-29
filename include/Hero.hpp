@@ -22,6 +22,7 @@ public:
 	void attackMonster();
 	void changeOrientation(Map m);
 	bool movingForward(Map m);
+	bool movingBackward(Map m);
 
 	// switchWeapon : Changer d'arme
 
