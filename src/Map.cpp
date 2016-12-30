@@ -2,6 +2,13 @@
 
 using namespace std;
 
+Map::Map() {
+	mapName = "";
+	ppmFile = "";
+	width = 0;
+	height = 0;
+}
+
 void Map::loadObject(string line) {
 	int i = 0, id, type;
 	Object obj;
@@ -24,16 +31,15 @@ void Map::loadObject(string line) {
 	tmp = "";
 
 	switch(type) {
-		case 1: {
+		case 1:
 			obj = Weapon();
-		}
-		break;
-
-		/*case 2:
-			Object2 obj;
 			break;
 
-		case 3:
+		case 2:
+			obj = Key();
+			break;
+
+		/*case 3:
 			Object3 obj;
 			break;
 
@@ -52,7 +58,7 @@ void Map::loadObject(string line) {
 		i++;
 	}
 	i++;
-	obj.pos.pos_X = stoi(tmp);
+	obj.pos.pos_X = (float)stoi(tmp);
 	tmp = "";
 
 	while(line[i] != ':') {
@@ -60,7 +66,7 @@ void Map::loadObject(string line) {
 		i++;
 	}
 	i++;
-	obj.pos.pos_Y = stoi(tmp);
+	obj.pos.pos_Y = (float)stoi(tmp);
 	tmp = "";
 
 	while(line[i] != ':') {
@@ -75,7 +81,7 @@ void Map::loadObject(string line) {
 		tmp.append(1, line[i]);
 		i++;
 	}
-	obj.texture = tmp;
+	obj.texture = stoi(tmp);
 	tmp = "";
 
 	objects.push_back(obj);
@@ -190,6 +196,7 @@ void Map::loadMap(string fileName) {
 			loadObject(line);
 		}
 
+
 		getline(file, line);
 		nbMonst = stoi(line);
 		for(i = 0; i < nbMonst; i++) {
@@ -287,4 +294,14 @@ Square Map::getEntrance() {
 	}
 	cout << "Erreur : pas d'entrée" << endl;
 	return ret;	
+}
+
+int Map::isObject(float x, float y) {
+	for(unsigned int i = 0; i < objects.size(); i++) {
+		cout << "Position héro : " << x << ", " << y << endl;
+		cout << "Position objet : " << objects[i].pos.pos_X << ", " << objects[i].pos.pos_Y << endl;
+		if(objects[i].pos.pos_X == x && objects[i].pos.pos_Y == y)
+			return i;
+	}
+	return -1;
 }
