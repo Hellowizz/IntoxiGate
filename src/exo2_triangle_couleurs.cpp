@@ -11,6 +11,8 @@
 #include <Map.hpp>
 #include <Hero.hpp>
 
+// export MESA_GL_VERSION_OVERRIDE=3.30
+
 #define HEIGHT 900
 #define WIDTH 1200
 
@@ -128,10 +130,19 @@ struct CubeInstance {
 
 CubeInstance::CubeInstance(float x, float y, float z, int text) {
     position = vec3(x, y, z);
-    quads.push_back(newQuadVertical(x-0.5f, y, z));
-    quads.push_back(newQuadHorizontal(x, y, z-0.5f));
-    quads.push_back(newQuadVertical(x+0.5f, y, z));
-    quads.push_back(newQuadHorizontal(x, y, z+0.5f)); 
+    QuadInstance q1 = newQuadVertical(x-0.25f, y, z);
+    q1.model = scale(q1.model, vec3(0.5));
+    QuadInstance q2 = newQuadHorizontal(x, y, z-0.25f);
+    q2.model = scale(q2.model, vec3(0.5));
+    QuadInstance q3 = newQuadVertical(x+0.25f, y, z);
+    q3.model = scale(q3.model, vec3(0.5));
+    QuadInstance q4 = newQuadHorizontal(x, y, z+0.25f);
+    q4.model = scale(q4.model, vec3(0.5));
+
+    quads.push_back(q1);
+    quads.push_back(q2);
+    quads.push_back(q3);
+    quads.push_back(q4); 
     texture = text;
 }
 

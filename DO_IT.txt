@@ -11,6 +11,7 @@ Générer la map
 La créer en 3D
 	Générer des cubes de différentes couleurs, en 3D sur les côtés à la manière d'un dongeon master
 	réussir à avancer en fonction des touches
+Pour les objets : créer cubes de 0.5 de côté
 
 
 ART :
