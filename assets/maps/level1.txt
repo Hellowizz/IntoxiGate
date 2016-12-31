@@ -1,5 +1,5 @@
 #Level 1
-./assets/maps/levels/level1.ppm
+./assets/maps/levels/level1bis.ppm
 1
-1:2:7:5:objet1:5:
+1:2:7:5:key:9:
 0
