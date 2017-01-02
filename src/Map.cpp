@@ -110,12 +110,6 @@ void Map::loadObject(string line) {
 	obj.texture = stoi(tmp);
 	tmp = "";
 
-<<<<<<< HEAD
-=======
-	Position graph(7,5);
-	obj.posGraph = graph;
-
->>>>>>> b400770e0ed7b81297ff35814cadfffc81ca7cb8
 	objects.push_back(obj);
 }
 
