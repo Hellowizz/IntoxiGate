@@ -331,8 +331,6 @@ Map Map::invert(){
 
 int Map::isObject(float x, float y) {
 	for(unsigned int i = 0; i < objects.size(); i++) {
-		cout << "Position héro : " << x << ", " << y << endl;
-		cout << "Position objet : " << objects[i].pos.pos_X << ", " << objects[i].pos.pos_Y << endl;
 		if(objects[i].pos.pos_X == x && objects[i].pos.pos_Y == y)
 			return i;
 	}

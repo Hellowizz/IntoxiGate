@@ -251,11 +251,17 @@ int main(int argc, char** argv) {
         cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
     }
 
-    GLuint texturesBuffer[9];
+    imagePath = applicationPath.dirPath()+"../assets/textures/key.png";
+    std::unique_ptr<Image> keyTexture = loadImage(imagePath);
+    if(!keyTexture) {
+        cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
+    }
+
+    GLuint texturesBuffer[10];
+    glGenTextures(10, texturesBuffer);
 
     //Texture 1
 
-    glGenTextures(9, texturesBuffer);
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[0]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
         wallTexture->getWidth(), wallTexture->getHeight(), 
@@ -362,6 +368,18 @@ int main(int argc, char** argv) {
 
     glBindTexture( GL_TEXTURE_2D, 0);
 
+    //Texture 10
+
+    glBindTexture( GL_TEXTURE_2D, texturesBuffer[9]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+        keyTexture->getWidth(), keyTexture->getHeight(), 
+        0, GL_RGBA, GL_FLOAT, keyTexture->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture( GL_TEXTURE_2D, 0);
+
 
     ///////////////////FIN TEXTURES////////////////////
 
@@ -450,7 +468,7 @@ int main(int argc, char** argv) {
         for(int j = 1; j < map.height-1; j++) {
             Square curr = map.pixels[map.width*j + i];
 
-            if(curr.type == hall || curr.type == getIn || curr.type == getOut ){
+            if(curr.type == hall || curr.type == getIn || curr.type == getOut || curr.type == door){
                 quadGround.push_back(QuadInstance(float(curr.pos.pos_X), -0.5f, float(curr.pos.pos_Y), M_PI/2.f, 0));
                 quadRoof.push_back(QuadInstance(float(curr.pos.pos_X), 0.5f, float(curr.pos.pos_Y), M_PI/2.f, 0));
             }
@@ -493,7 +511,7 @@ int main(int argc, char** argv) {
         }
 
         for(unsigned int i = 0; i < map.objects.size(); i++) {
-            cubeObject.push_back(CubeInstance(map.objects[i].pos.pos_X, 0.f, map.objects[i].pos.pos_X, map.objects[i].texture));
+            cubeObject.push_back(CubeInstance(map.objects[i].pos.pos_X, 0.f, map.objects[i].pos.pos_Y, map.objects[i].texture));
         }
 
     /* END INITIALIZATION CODE */
@@ -583,6 +601,7 @@ int main(int argc, char** argv) {
                                 if(indexObj != -1) {
                                     cm.heroine.inven.objects.push_back(map.objects[indexObj]);
                                     cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
+                                    map.objects.erase(map.objects.begin()+indexObj);
                                 }                              
                             }
                             break;
@@ -624,6 +643,7 @@ int main(int argc, char** argv) {
                                     for(size_t i; i<invertMap.objects.size(); i++){
                                         cout << "Nous avons un objet dans la case : (" << invertMap.objects[i].pos.pos_X << ", " << invertMap.objects[i].pos.pos_Y << ")" << endl;
                                     }
+                                    map.objects.erase(map.objects.begin()+indexObj);
                                 } 
                             }
                         default:
