@@ -9,7 +9,8 @@
 
 
 #include <Map.hpp>
-#include <Hero.hpp>
+#include <Waste.hpp>
+#include <CharacterManager.hpp>
 
 #define HEIGHT 900
 #define WIDTH 1200
@@ -108,6 +109,24 @@ mat4 QuadInstance::getModelMatrix(){
     m = rotate(m, angleY, vec3(0, 1, 0));
 
     return m; 
+}
+
+std::vector<QuadInstance> remplirQuadMonster(std::vector<Monster> monsters, Map m){
+
+    std::vector<QuadInstance> vectorQuadMonsters;
+    for(size_t i = 0; i<monsters.size(); i++){
+        Monster curr = monsters[i];
+        
+        if (curr.type == waste) {
+            cout << curr.posGraph.pos_X << " et " << curr.posGraph.pos_Y << endl;
+
+            vectorQuadMonsters.push_back(newQuadVertical(float(curr.posGraph.pos_X)+0.5f, 0.f, float(curr.posGraph.pos_Y)));
+            vectorQuadMonsters.push_back(newQuadVertical(float(curr.posGraph.pos_X)-0.5f, 0.f, float(curr.posGraph.pos_Y)));
+            vectorQuadMonsters.push_back(newQuadHorizontal(float(curr.posGraph.pos_X), 0.f, float(curr.posGraph.pos_Y)-0.5f));
+            vectorQuadMonsters.push_back(newQuadHorizontal(float(curr.posGraph.pos_X), 0.f, float(curr.posGraph.pos_Y)+0.5f));
+        }
+    }
+    return vectorQuadMonsters;
 }
 
 int main(int argc, char** argv) {
@@ -340,17 +359,44 @@ int main(int argc, char** argv) {
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+        // DEFINITION DES VECTEURS
+
     std::vector<QuadInstance> quadWall;
     std::vector<QuadInstance> quadGround;
     std::vector<QuadInstance> quadRoof;
+    std::vector<QuadInstance> quadMonster;
+
+        //INITIALISATIONS
 
     Square entrance = map.getEntrance();
-
     Camera c(entrance.pos.pos_X, entrance.pos.pos_Y);
-    Hero heroine;
-    heroine.putPos(entrance.pos);
-    heroine.changeOrientation(map);
-    c.changeOrientation(heroine.pos.orientation);
+
+    CharacterManager cm;
+    std::vector<Monster> m;
+    Hero h;
+    cm.heroine = h;
+    cm.monsters = m;
+
+    Map invertMap = map.invert();
+    entrance = invertMap.getEntrance();
+    cm.heroine.putPos(entrance.pos);
+
+    Waste poubelle;
+    poubelle.type = waste;
+    poubelle.pos.pos_X = 5;
+    poubelle.pos.pos_Y = 4;
+    poubelle.posGraph.pos_X = 4;
+    poubelle.posGraph.pos_Y = 9;
+
+    cm.monsters.push_back(poubelle);
+
+
+    cm.heroine.changeOrientation(invertMap);
+    c.changeOrientation(cm.heroine.pos.orientation);
+
+        //REMPLISSAGE DES VECTEURS DE QUADS
+
+    quadMonster = remplirQuadMonster(cm.monsters, invertMap);
 
     for(int i = 1; i < map.width-1; i++)
         for(int j = 1; j < map.height-1; j++) {
@@ -391,48 +437,77 @@ int main(int argc, char** argv) {
         // event loop:
         SDL_Event e;
         while(windowManager.pollEvent(e)) {
+
             switch(e.type ){
                 /* Keyboard event */
+
                 /* Pass the event data onto PrintKeyInfo() */
                 case SDL_KEYDOWN:
+                    cm.monstersAttack();
+                    cm.moveAllMonsters();
+                    quadMonster = remplirQuadMonster(cm.monsters, invertMap);
+
+                    cout << "___________________\n" << endl;
+                    cout << "Je regarde vers " << cm.heroine.pos.orientation << endl;
+                    cout << "Et ma position est (" << cm.heroine.pos.pos_X << ", " << cm.heroine.pos.pos_Y << ")" <<  endl;
+                    cout << "Celle du monstre est (" << cm.monsters[0].pos.pos_X << ", " << cm.monsters[0].pos.pos_Y << ")" <<  endl;
+
+                    for(int j = 0; j<invertMap.height; j++){
+                        for(int i = 0; i<invertMap.width; i++){
+                            if(j == cm.heroine.pos.pos_Y && i == cm.heroine.pos.pos_X)
+                                cout << "A";
+                            else if(j == cm.monsters[0].pos.pos_Y && i == cm.monsters[0].pos.pos_X)
+                                cout << "H";
+                            else{
+                                if(invertMap.pixels[map.width*(j)+ i].type == getIn)
+                                    cout << 8;
+                                else if(invertMap.pixels[invertMap.width*(j)+ i].type == wall)
+                                    cout << 1;
+                                else
+                                     cout << 0;
+                            }
+                        }
+                        cout << endl;
+                    }
+
                     switch( e.key.keysym.sym ){
                         case SDLK_LEFT: 
-                            heroine.pos.orientation = (heroine.pos.orientation + 3) % 4;
+                            cm.heroine.pos.orientation = (cm.heroine.pos.orientation + 3) % 4;
                             c.angle += M_PI/2.f;
                             break;
                         case SDLK_RIGHT:
-                            heroine.pos.orientation = (heroine.pos.orientation + 1) % 4;
+                            cm.heroine.pos.orientation = (cm.heroine.pos.orientation + 1) % 4;
                             c.angle -= M_PI/2.f;
                             break;
                         case SDLK_UP:
-                            if(heroine.movingForward(map)){
-                                if(heroine.pos.orientation == 0){
-                                    heroine.pos.pos_X -= 1.f;
+                            if(cm.heroine.movingForward(invertMap) && !cm.monsterForward()){
+                                if(cm.heroine.pos.orientation == 0){
+                                    cm.heroine.pos.pos_Y -= 1.f;
                                     c.position.x += 1.f;}
-                                else if(heroine.pos.orientation == 1){
-                                    heroine.pos.pos_Y += 1.f;
+                                else if(cm.heroine.pos.orientation == 1){
+                                    cm.heroine.pos.pos_X -= 1.f;
                                     c.position.z += 1.f;}
-                                else if(heroine.pos.orientation == 2){
-                                    heroine.pos.pos_X += 1.f;
+                                else if(cm.heroine.pos.orientation == 2){
+                                    cm.heroine.pos.pos_Y += 1.f;
                                     c.position.x -= 1.f;}
-                                else if(heroine.pos.orientation == 3){
-                                    heroine.pos.pos_Y -= 1.f;
+                                else if(cm.heroine.pos.orientation == 3){
+                                    cm.heroine.pos.pos_X += 1.f;
                                     c.position.z -= 1.f;}
                             }
                             break;
                         case SDLK_DOWN:
-                            if(heroine.movingBackward(map)){
-                                if(heroine.pos.orientation == 0){
-                                    heroine.pos.pos_X += 1.f;
+                            if(cm.heroine.movingBackward(invertMap) && !cm.monsterBackward()){
+                                if(cm.heroine.pos.orientation == 0){
+                                    cm.heroine.pos.pos_Y += 1.f;
                                     c.position.x -= 1.f;}
-                                else if(heroine.pos.orientation == 1){
-                                    heroine.pos.pos_Y -= 1.f;
+                                else if(cm.heroine.pos.orientation == 1){
+                                    cm.heroine.pos.pos_X += 1.f;
                                     c.position.z -= 1.f;}
-                                else if(heroine.pos.orientation == 2){
-                                    heroine.pos.pos_X -= 1.f;
+                                else if(cm.heroine.pos.orientation == 2){
+                                    cm.heroine.pos.pos_Y -= 1.f;
                                     c.position.x += 1.f;}
-                                else if(heroine.pos.orientation == 3){
-                                    heroine.pos.pos_Y += 1.f;
+                                else if(cm.heroine.pos.orientation == 3){
+                                    cm.heroine.pos.pos_X -= 1.f;
                                     c.position.z += 1.f;}
                             }
                         default:
@@ -459,12 +534,29 @@ int main(int argc, char** argv) {
         mat4 MVPMatrix;
 
         for(unsigned int i=0; i<quadWall.size(); i++){
-            MVPMatrix = c.getViewProjectionMatrix() * quadWall[i].model;
+            MVPMatrix = c.getViewProjectionMatrix() * quadWall[i].model; // changer ici en fonction de la texture
         
             glUniformMatrix4fv(uMVPMatrixLoc, 1, GL_FALSE, value_ptr(MVPMatrix));
 
             glActiveTexture(GL_TEXTURE0 + 4);
-            glBindTexture(GL_TEXTURE_2D, texturesBuffer[0]);
+            glBindTexture(GL_TEXTURE_2D, texturesBuffer[0]); // changer ici en fonction de la texture
+            glActiveTexture(GL_TEXTURE0);
+            glUniform1i(uTextureLoc, 4);
+
+            glBindVertexArray(vao);
+
+            glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glBindVertexArray(0);
+        }
+
+        for(unsigned int i=0; i<quadMonster.size(); i++){
+            MVPMatrix = c.getViewProjectionMatrix() * quadMonster[i].model;
+        
+            glUniformMatrix4fv(uMVPMatrixLoc, 1, GL_FALSE, value_ptr(MVPMatrix));
+
+            glActiveTexture(GL_TEXTURE0 + 4);
+            glBindTexture(GL_TEXTURE_2D, texturesBuffer[1]);
             glActiveTexture(GL_TEXTURE0);
             glUniform1i(uTextureLoc, 4);
 

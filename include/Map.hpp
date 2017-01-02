@@ -12,8 +12,6 @@
 #include <Waste.hpp>
 #include <Weapon.hpp>
 
-using namespace std;
-
 enum squareType {wall, hall, door, acid, safeRoom, getIn, getOut};
 
 typedef struct square {
@@ -26,7 +24,7 @@ class Map {
 		string mapName;
 		list<Object> objects;
 		list<Monster> monsters;
-		vector<Square> pixels;
+		std::vector<Square> pixels;
 		string ppmFile;
 		int width;
 		int height;
@@ -34,6 +32,7 @@ class Map {
 		void loadObject(string line);
 		void loadMonster(string line);
 		void loadMap(string filename);
+		Map invert();
 
 		Square getEntrance();
 
