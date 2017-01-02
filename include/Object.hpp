@@ -10,7 +10,7 @@ public:
 	Position pos;
 
 	std::string name;
-	std::string texture;
+	int texture;
 
 	~Object();
 };

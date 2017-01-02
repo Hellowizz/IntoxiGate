@@ -1,7 +1,19 @@
 CPP :
 
-Problème de déplacements : CA FAIT CHIER SAMER
-
+Problème de déplacement
 Inverser les données de la map une fois qu'elle est affichée.
 Inverser le déplacement en profondeur du héro
 Inverser nord et sud
+
+OpenGL :
+
+Générer la map
+La créer en 3D
+	Générer des cubes de différentes couleurs, en 3D sur les côtés à la manière d'un dongeon master
+	réussir à avancer en fonction des touches
+Pour les objets : créer cubes de 0.5 de côté
+
+
+ART :
+
+Design de la poubelle (x4), des murs, du sol, des portes, des sac recyclables. 
