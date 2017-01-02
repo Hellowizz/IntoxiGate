@@ -1,6 +1,7 @@
 #Level 1
 ./assets/maps/levels/level1bis.ppm
-1
+2
 1:2:9:1:7:5:key:9:
+2:1:5:5:3:8:life:5:
 1
 1:1:5:7:1:9:waste:2:

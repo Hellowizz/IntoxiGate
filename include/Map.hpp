@@ -10,7 +10,7 @@
 #include <Object.hpp>
 #include <Monster.hpp>
 #include <Waste.hpp>
-#include <Weapon.hpp>
+#include <Life.hpp>
 #include <Key.hpp>
 
 enum squareType {wall, hall, door, acid, safeRoom, getIn, getOut};

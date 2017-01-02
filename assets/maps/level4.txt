@@ -1,4 +1,6 @@
 #Level 4
 ./assets/maps/levels/level4.ppm
-0
+2
+1:2:9:1:11:12:key:9:
+2:1:5:5:3:8:life:5:
 0
