@@ -13,8 +13,6 @@
 #include <Weapon.hpp>
 #include <Key.hpp>
 
-using namespace std;
-
 enum squareType {wall, hall, door, acid, safeRoom, getIn, getOut};
 
 typedef struct square {
@@ -37,6 +35,7 @@ class Map {
 		void loadObject(string line);
 		void loadMonster(string line);
 		void loadMap(string filename);
+		Map invert();
 
 		Square getEntrance();
 		int isObject(float x, float y);

@@ -1,9 +1,9 @@
 CPP :
 
-Phases de collisions
-Inventaire du Hero
-Character simple pour les tests
-
+Problème de déplacement
+Inverser les données de la map une fois qu'elle est affichée.
+Inverser le déplacement en profondeur du héro
+Inverser nord et sud
 
 OpenGL :
 

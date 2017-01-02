@@ -13,7 +13,7 @@ public:
 
 	void putPos(Position p);
 	void gainLife(int lifeGain);
-	void loseLife(int lifeLose);
+	void looseLife(int lifeLose);
 
 	~Character();
 };

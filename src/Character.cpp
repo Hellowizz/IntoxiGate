@@ -9,15 +9,15 @@ using namespace std;
 Character::Character() {}
 
 void Character::putPos(Position p){
-	pos = p;
+	pos.pos_X = p.pos_X;
+	pos.pos_Y = p.pos_Y;
 }
-
 
 void Character::gainLife(int lifeGain){
 	life += lifeGain;
 }
 
-void Character::loseLife(int lifeLose){
+void Character::looseLife(int lifeLose){
 	if(life - lifeLose < 0){
 		cout << "Vous avez perdu !!!" << endl;
 		exit(0);

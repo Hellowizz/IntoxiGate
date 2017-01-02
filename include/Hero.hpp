@@ -19,9 +19,9 @@ public:
 	Hero();
 
 	void upLife(int gain); 
+	void looseLife(int pain);
 	void gainExp(int exp);
 	void lvlUp();
-	void attackMonster();
 	void changeOrientation(Map m);
 	int movingForward(Map m);
 	int movingBackward(Map m);

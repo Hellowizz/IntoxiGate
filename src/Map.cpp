@@ -153,7 +153,6 @@ void Map::loadMonster(string line) {
 		i++;
 	}
 	i++;
-	mons.name = tmp;
 	tmp = "";
 
 	while(line[i] != ':') {
@@ -168,7 +167,6 @@ void Map::loadMonster(string line) {
 		tmp.append(1, line[i]);
 		i++;
 	}
-	mons.texture = tmp;
 	tmp = "";
 
 	monsters.push_back(mons);
@@ -226,15 +224,16 @@ void Map::loadMap(string fileName) {
 
 		while(line[i] != ' ') {
 			tmp.append(1, line[i]);
+			cout << "je lis" << line[i] << endl; //#WTF
 			i++;
 		}
-		height = stoi(tmp);
+		height = 9;
 
 		pixels.resize(width*height);
 
 		getline(file, line);
 
-		for(i = 0; i < height; i++)
+		for(i = 0; i < height; i++){
 			for(int j = 0; j < width; j++) {
 				Square pix;
 				pix.pos.pos_X = i;
@@ -250,7 +249,7 @@ void Map::loadMap(string fileName) {
 				getline(file, line);
 				col.append(line);
 				
-				if(col.compare("0,0,0") == 0) 
+				if(col.compare("0,0,0") == 0)
 					pix.type = wall;
 
 				else if(col.compare("255,255,255") == 0)
@@ -276,11 +275,14 @@ void Map::loadMap(string fileName) {
 
 				pixels[i*width + j] = pix;
 			}
-
+		}
 		file.close();
 		cout << width << "," << height << endl;
 	} 
-	else cout << "Unable to open file." << endl;
+	else{
+		cout << "Unable to open file." << endl;
+		exit(1);
+	} 
 }
 
 Square Map::getEntrance() {
@@ -294,6 +296,37 @@ Square Map::getEntrance() {
 	}
 	cout << "Erreur : pas d'entrée" << endl;
 	return ret;	
+}
+
+Map Map::invert(){
+	Map cpy;
+
+	cpy.mapName = mapName;
+	cpy.objects = objects;
+	cpy.monsters = monsters;
+	cpy.ppmFile = ppmFile;
+	cpy.width = width;
+	cpy.height = height; 
+
+	/*for(size_t i = 0; i<pixels.size(); i++){
+		cpy.pixels.push_back (pixels[pixels.size()-i-1]);
+	}*/
+
+	int t = 0;
+
+	for(int j = 0; j<height; j++){
+		for(int i = 0; i<width; i++){
+			Square s;
+			s.pos.pos_X = i;
+			s.pos.pos_Y = j;
+			s.type = pixels[width*(height-j-1) + (width-i-1)].type;
+
+			cpy.pixels.push_back(s);
+			t++;
+		}
+	}
+
+	return cpy;
 }
 
 int Map::isObject(float x, float y) {

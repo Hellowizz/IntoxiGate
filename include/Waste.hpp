@@ -5,5 +5,4 @@
 class Waste : public Monster{
 public:
 	Waste();
-
 };
