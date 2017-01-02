@@ -229,7 +229,6 @@ void Map::loadMap(string fileName) {
 		nbObj = stoi(line);
 
 		for(i = 0; i < nbObj; i++) {
-			cout<< "PALAPAPAPA : " << i << endl;
 			getline(file, line);
 			loadObject(line);
 		}

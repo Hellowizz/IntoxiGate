@@ -1,4 +1,5 @@
 #Level 3
 ./assets/maps/levels/level3.ppm
 0
-0
+1
+1:1:19:10:9:10:waste:2:
