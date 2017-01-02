@@ -16,6 +16,10 @@ void Hero::upLife(int gain){
 		life += gain;
 }
 
+void Hero::looseLife(int pain){
+		life -= pain;
+}
+
 void Hero::gainExp(int exp){
 	if(experience + exp >= experienceMax){
 		lvlUp();
@@ -30,50 +34,125 @@ void Hero::lvlUp(){
 	upLife(20);
 }
 
-void Hero::attackMonster(){
-	// Auparavant il y a un if sur la touche d'attaque (s'il attaque)
-	// Parcours de la liste des monstres, s'il y a un monstre dans la case de devant :
-	Monster m;
-	m.loseLife(attack + currentWeapon.damage);
-}
-
 void Hero::changeOrientation(Map m){
-	if(m.pixels[m.width*pos.pos_X + (pos.pos_Y+1)].type == hall){
-		pos.orientation = est;
-	}else if(m.pixels[m.width*(pos.pos_X+1) + pos.pos_Y].type == hall){
-		pos.orientation = sud;
-	}else if(m.pixels[m.width*pos.pos_X + (pos.pos_Y-1)].type == hall){
+
+	if(m.pixels[m.width*pos.pos_Y + (pos.pos_X+1)].type == hall){
+		cout << "ouest" << endl;
 		pos.orientation = ouest;
-	}else if(m.pixels[m.width*(pos.pos_X-1) + pos.pos_Y].type == hall){
-		pos.orientation = nord;
+	}else if(m.pixels[m.width*(pos.pos_Y+1) + pos.pos_X].type == hall){
+		cout << "nord" << endl;
+		pos.orientation = nord; //PAS SUR
+	}else if(m.pixels[m.width*pos.pos_Y + (pos.pos_X-1)].type == hall){
+		cout << "est" << endl;
+		pos.orientation = est;
+	}else if(m.pixels[m.width*(pos.pos_Y-1) + pos.pos_X].type == hall){
+		cout << "sud" << endl;
+		pos.orientation = sud; //PAS SUR
 	}
 }
 
-bool Hero::movingForward(Map m){
+int Hero::movingForward(Map m){
 
-	if(pos.orientation == nord && m.pixels[m.width*(pos.pos_X-1) + pos.pos_Y].type != wall)
-		return true;
-	if(pos.orientation == est && m.pixels[m.width*pos.pos_X + (pos.pos_Y+1)].type != wall)
-		return true;
-	if(pos.orientation == sud && m.pixels[m.width*(pos.pos_X+1) + pos.pos_Y].type != wall)
-		return true;
-	if(pos.orientation == ouest && m.pixels[m.width*pos.pos_X + (pos.pos_Y-1)].type != wall)
-		return true;
+	if(pos.orientation == nord && m.pixels[m.width*(pos.pos_Y-1) + pos.pos_X].type != wall) {
+		if(m.pixels[m.width*(pos.pos_Y-1) + pos.pos_X].type == door) {
+			cout << "Porte devant" << endl;
+			if(!hasKey())
+				return 0;
+			useKey();
+			return 2;
+		}
+		return 1;
+	}
+	if(pos.orientation == est && m.pixels[m.width*pos.pos_Y + (pos.pos_X-1)].type != wall){
+		if(m.pixels[m.width*pos.pos_Y + (pos.pos_X-1)].type == door) {
+			cout << "Porte devant" << endl;
+			if(!hasKey())
+				return 0;
+			useKey();
+			return 2;
+		}
+		return 1;
+	}
+	if(pos.orientation == sud && m.pixels[m.width*(pos.pos_Y+1) + pos.pos_X].type != wall){
+		if(m.pixels[m.width*(pos.pos_Y+1) + pos.pos_X].type == door) {
+			cout << "Porte devant" << endl;
+			if(!hasKey())
+				return 0;
+			useKey();
+			return 2;
+		}
+		return 1;
+	}
+	if(pos.orientation == ouest && m.pixels[m.width*pos.pos_Y + (pos.pos_X+1)].type != wall){
+		if(m.pixels[m.width*pos.pos_Y + (pos.pos_X+1)].type == door) {
+			cout << "Porte devant" << endl;
+			if(!hasKey())
+				return 0;
+			useKey();
+			return 2;
+		}
+		return 1;
+	}
 
+	return 0;
+}
+int Hero::movingBackward(Map m){
+	if(pos.orientation == nord && m.pixels[m.width*(pos.pos_Y+1) + pos.pos_X].type != wall){
+		if(m.pixels[m.width*pos.pos_X + (pos.pos_Y+1)].type == door) {
+			if(!hasKey())
+				return 0;
+			useKey();
+			return 2;
+		}
+		return 1;
+	}
+	if(pos.orientation == est && m.pixels[m.width*pos.pos_Y + (pos.pos_X+1)].type != wall){
+		if(m.pixels[m.width*pos.pos_Y + (pos.pos_X+1)].type == door) {
+			if(!hasKey())
+				return 0;
+			useKey();
+			return 2;
+		}
+		return 1;
+	}
+	if(pos.orientation == sud && m.pixels[m.width*(pos.pos_Y-1) + pos.pos_X].type != wall){
+		if(m.pixels[m.width*(pos.pos_Y-1) + pos.pos_X].type == door) {
+			if(!hasKey())
+				return 0;
+			useKey();
+			return 2;
+		}
+		return 1;
+	}
+	if(pos.orientation == ouest && m.pixels[m.width*pos.pos_Y + (pos.pos_X-1)].type != wall){
+		if(m.pixels[m.width*pos.pos_Y + (pos.pos_X-1)].type == door) {
+			if(!hasKey())
+				return 0;
+			useKey();
+			return 2;
+		}
+		return 1;
+	}
+
+	return 0;
+}
+
+bool Hero::hasKey() {
+	unsigned int i;
+	for(i = 0; i < inven.objects.size(); i++) {
+		if(inven.objects[i].name.compare("key") == 0) {
+			return true;
+		}
+	}
 	return false;
 }
 
-bool Hero::movingBackward(Map m){
-	if(pos.orientation == nord && m.pixels[m.width*(pos.pos_X+1) + pos.pos_Y].type != wall) 		
-		return true;
-	if(pos.orientation == est && m.pixels[m.width*pos.pos_X + (pos.pos_Y-1)].type != wall)
-		return true;
-	if(pos.orientation == sud && m.pixels[m.width*(pos.pos_X-1) + pos.pos_Y].type != wall)		
-		return true;
-	if(pos.orientation == ouest && m.pixels[m.width*pos.pos_X + (pos.pos_Y+1)].type != wall)
-		return true;
-
-	return false;
+void Hero::useKey() {
+	unsigned int i;
+	for(i = 0; i < inven.objects.size(); i++) {
+		if(inven.objects[i].name.compare("key") == 0)
+			inven.objects.erase(inven.objects.begin()+i);
+	}
 }
 
 

@@ -5,6 +5,8 @@
 #include <Weapon.hpp>
 #include <Inventory.hpp>
 #include <Map.hpp>
+#include <typeinfo>
+#include <Key.hpp>
 
 class Hero : public Character{
 public:
@@ -17,12 +19,14 @@ public:
 	Hero();
 
 	void upLife(int gain); 
+	void looseLife(int pain);
 	void gainExp(int exp);
 	void lvlUp();
-	void attackMonster();
 	void changeOrientation(Map m);
-	bool movingForward(Map m);
-	bool movingBackward(Map m);
+	int movingForward(Map m);
+	int movingBackward(Map m);
+	bool hasKey();
+	void useKey();
 
 	// switchWeapon : Changer d'arme
 

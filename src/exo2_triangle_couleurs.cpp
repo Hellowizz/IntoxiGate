@@ -9,7 +9,10 @@
 
 
 #include <Map.hpp>
-#include <Hero.hpp>
+#include <Waste.hpp>
+#include <CharacterManager.hpp>
+
+// export MESA_GL_VERSION_OVERRIDE=3.30
 
 #define HEIGHT 900
 #define WIDTH 1200
@@ -110,14 +113,74 @@ mat4 QuadInstance::getModelMatrix(){
     return m; 
 }
 
+std::vector<QuadInstance> remplirQuadMonster(std::vector<Monster> monsters, Map m){
+
+    std::vector<QuadInstance> vectorQuadMonsters;
+    for(size_t i = 0; i<monsters.size(); i++){
+        Monster curr = monsters[i];
+        
+        if (curr.type == waste) {
+            vectorQuadMonsters.push_back(newQuadVertical(float(curr.posGraph.pos_X)+0.5f, 0.f, float(curr.posGraph.pos_Y)));
+            vectorQuadMonsters.push_back(newQuadVertical(float(curr.posGraph.pos_X)-0.5f, 0.f, float(curr.posGraph.pos_Y)));
+            vectorQuadMonsters.push_back(newQuadHorizontal(float(curr.posGraph.pos_X), 0.f, float(curr.posGraph.pos_Y)-0.5f));
+            vectorQuadMonsters.push_back(newQuadHorizontal(float(curr.posGraph.pos_X), 0.f, float(curr.posGraph.pos_Y)+0.5f));
+        }
+    }
+    return vectorQuadMonsters;
+}
+
+int getIndexQuad(vector<QuadInstance> quads, float x, float y) {
+    for(unsigned int i = 0; i < quads.size(); i++) {
+        if(quads[i].position == vec3(x, 0.f, y))
+            return i;
+    }
+    return quads.size();
+}
+
+struct CubeInstance {
+    vec3 position;
+    vector<QuadInstance> quads;
+    int texture;
+
+    CubeInstance(float x, float y, float z, int text);
+};
+
+CubeInstance::CubeInstance(float x, float y, float z, int text) {
+    position = vec3(x, y, z);
+    QuadInstance q1 = newQuadVertical(x-0.25f, y, z);
+    q1.model = scale(q1.model, vec3(0.5));
+    QuadInstance q2 = newQuadHorizontal(x, y, z-0.25f);
+    q2.model = scale(q2.model, vec3(0.5));
+    QuadInstance q3 = newQuadVertical(x+0.25f, y, z);
+    q3.model = scale(q3.model, vec3(0.5));
+    QuadInstance q4 = newQuadHorizontal(x, y, z+0.25f);
+    q4.model = scale(q4.model, vec3(0.5));
+
+    quads.push_back(q1);
+    quads.push_back(q2);
+    quads.push_back(q3);
+    quads.push_back(q4); 
+    texture = text;
+}
+
+int getIndexCube(vector<CubeInstance> cubes, float x, float y) {
+    for(unsigned int i = 0; i < cubes.size(); i++) {
+        if(cubes[i].position == vec3(x, 0.f, y))
+            return i;
+    }
+    return cubes.size();
+}
+
 int main(int argc, char** argv) {
     // initialize SDL and open a window
-    SDLWindowManager windowManager(WIDTH, HEIGHT, "GLImac");
+    SDLWindowManager windowManager(WIDTH, HEIGHT, "Meilleur jeu du monde");
 
     // création & initialisation d'une map
-    Map map;
+    //cout << "OHEEEEEEEEEEE" <<  endl;
+    Map map = Map();
 
-    map.loadMap("assets/maps/level1.txt");
+    map.loadMap("assets/maps/level1.txt");  
+
 
     // initialize glew for OpenGL3+ support
     GLenum glewInitError = glewInit();
@@ -187,11 +250,17 @@ int main(int argc, char** argv) {
         cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
     }
 
-    GLuint texturesBuffer[9];
+    imagePath = applicationPath.dirPath()+"../assets/textures/key.png";
+    std::unique_ptr<Image> keyTexture = loadImage(imagePath);
+    if(!keyTexture) {
+        cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
+    }
+
+    GLuint texturesBuffer[10];
+    glGenTextures(10, texturesBuffer);
 
     //Texture 1
 
-    glGenTextures(9, texturesBuffer);
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[0]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
         wallTexture->getWidth(), wallTexture->getHeight(), 
@@ -298,6 +367,18 @@ int main(int argc, char** argv) {
 
     glBindTexture( GL_TEXTURE_2D, 0);
 
+    //Texture 10
+
+    glBindTexture( GL_TEXTURE_2D, texturesBuffer[9]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+        keyTexture->getWidth(), keyTexture->getHeight(), 
+        0, GL_RGBA, GL_FLOAT, keyTexture->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture( GL_TEXTURE_2D, 0);
+
 
     ///////////////////FIN TEXTURES////////////////////
 
@@ -340,23 +421,63 @@ int main(int argc, char** argv) {
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+        // DEFINITION DES VECTEURS
+
     std::vector<QuadInstance> quadWall;
     std::vector<QuadInstance> quadGround;
     std::vector<QuadInstance> quadRoof;
+    std::vector<QuadInstance> quadMonster;
+    std::vector<QuadInstance> quadDoor;
+
+    std::vector<CubeInstance> cubeObject;
+
+        //INITIALISATIONS
 
     Square entrance = map.getEntrance();
-
     Camera c(entrance.pos.pos_X, entrance.pos.pos_Y);
-    Hero heroine;
-    heroine.putPos(entrance.pos);
-    heroine.changeOrientation(map);
-    c.changeOrientation(heroine.pos.orientation);
+
+    CharacterManager cm;
+    std::vector<Monster> m;
+    cout << "Je suis passé par ici 1" << endl;
+    Hero h;
+    cout << "Je suis passé par ici 2" << endl;
+    cm.heroine = h;
+    cout << "Je suis passé par ici 3" << endl;
+    cm.monsters = m;
+    cout << "Je suis passé par ici 4" << endl;
+
+    Map invertMap = map.invert();
+    entrance = invertMap.getEntrance();
+    cm.heroine.putPos(entrance.pos);
+
+    Waste poubelle;
+    poubelle.type = waste;
+    poubelle.pos.pos_X = 5;
+    poubelle.pos.pos_Y = 4;
+    poubelle.posGraph.pos_X = 4;
+    poubelle.posGraph.pos_Y = 9;
+
+        //POSITIONS GRAPHIQUE KEY
+    //invertMap.objects[0].pos.pos_X = 5;
+    //invertMap.objects[0].pos.pos_Y = 7;
+
+    cout << "La position de la clef est : " << invertMap.objects[0].pos.pos_X << " et " << invertMap.objects[0].pos.pos_Y << endl;
+
+    cm.monsters.push_back(poubelle);
+
+
+    cm.heroine.changeOrientation(invertMap);
+    c.changeOrientation(cm.heroine.pos.orientation);
+
+        //REMPLISSAGE DES VECTEURS DE QUADS
+
+    quadMonster = remplirQuadMonster(cm.monsters, invertMap);
 
     for(int i = 1; i < map.width-1; i++)
         for(int j = 1; j < map.height-1; j++) {
             Square curr = map.pixels[map.width*j + i];
 
-            if(curr.type == hall || curr.type == getIn || curr.type == getOut ){
+            if(curr.type == hall || curr.type == getIn || curr.type == getOut || curr.type == door){
                 quadGround.push_back(QuadInstance(float(curr.pos.pos_X), -0.5f, float(curr.pos.pos_Y), M_PI/2.f, 0));
                 quadRoof.push_back(QuadInstance(float(curr.pos.pos_X), 0.5f, float(curr.pos.pos_Y), M_PI/2.f, 0));
             }
@@ -367,19 +488,39 @@ int main(int argc, char** argv) {
                     quadWall.push_back(newQuadVertical(float(curr.pos.pos_X)+0.5f, 0.f, float(curr.pos.pos_Y)));
                 }
 
+                if(map.pixels[map.width*(j+1)+ i].type == door){
+                    quadDoor.push_back(newQuadVertical(float(curr.pos.pos_X)+0.5f, 0.f, float(curr.pos.pos_Y)));
+                }
+
                 if(map.pixels[map.width*j + (i-1)].type == wall){
                     quadWall.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)-0.5f));
+                }
+
+                if(map.pixels[map.width*j + (i-1)].type == door){
+                    quadDoor.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)-0.5f));
                 }
 
                 if(map.pixels[map.width*(j-1) + i].type == wall){
                     quadWall.push_back(newQuadVertical(float(curr.pos.pos_X)-0.5f, 0.f, float(curr.pos.pos_Y)));
                 }
 
+                if(map.pixels[map.width*(j-1) + i].type == door){
+                    quadDoor.push_back(newQuadVertical(float(curr.pos.pos_X)-0.5f, 0.f, float(curr.pos.pos_Y)));
+                }
+
                 if(map.pixels[map.width*j + (i+1)].type == wall){
                     quadWall.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)+0.5f));
                 }
+
+                if(map.pixels[map.width*j + (i+1)].type == door){
+                    quadDoor.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)+0.5f));
+                }
                 
             }
+        }
+
+        for(unsigned int i = 0; i < map.objects.size(); i++) {
+            cubeObject.push_back(CubeInstance(map.objects[i].posGraph.pos_X, 0.f, map.objects[i].posGraph.pos_Y, map.objects[i].texture));
         }
 
     /* END INITIALIZATION CODE */
@@ -387,53 +528,142 @@ int main(int argc, char** argv) {
 
     // application loop:
     bool done = false;
+    int move;
     while(!done) {
         // event loop:
         SDL_Event e;
         while(windowManager.pollEvent(e)) {
+
             switch(e.type ){
                 /* Keyboard event */
+
                 /* Pass the event data onto PrintKeyInfo() */
                 case SDL_KEYDOWN:
+                    cm.monstersAttack();
+                    cm.moveAllMonsters();
+                    quadMonster = remplirQuadMonster(cm.monsters, invertMap);
+
+                    cout << "___________________\n" << endl;
+                    cout << "Je regarde vers " << cm.heroine.pos.orientation << endl;
+                    cout << "Et ma position est (" << cm.heroine.pos.pos_X << ", " << cm.heroine.pos.pos_Y << ")" <<  endl;
+                    cout << "Celle du monstre est (" << cm.monsters[0].pos.pos_X << ", " << cm.monsters[0].pos.pos_Y << ")" <<  endl;
+                    cout << "Cette case est" << invertMap.pixels[invertMap.width*cm.heroine.pos.pos_Y + (cm.heroine.pos.pos_X-1)].type << endl; 
+
+                    for(int j = 0; j<invertMap.height; j++){
+                        for(int i = 0; i<invertMap.width; i++){
+                            if(j == cm.heroine.pos.pos_Y && i == cm.heroine.pos.pos_X)
+                                cout << "A";
+                            else if(j == cm.monsters[0].pos.pos_Y && i == cm.monsters[0].pos.pos_X)
+                                cout << "H";
+                            else if(j == invertMap.objects[0].pos.pos_Y && i == invertMap.objects[0].pos.pos_X)
+                                cout << "Q";
+                            else{
+                                if(invertMap.pixels[map.width*(j)+ i].type == getIn)
+                                    cout << 8;
+                                else if(invertMap.pixels[invertMap.width*(j)+ i].type == wall)
+                                    cout << 1;
+                                else if(invertMap.pixels[invertMap.width*(j)+ i].type == door)
+                                    cout << 7;
+                                else
+                                     cout << 0;
+                            }
+                        }
+                        cout << endl;
+                    }
+
                     switch( e.key.keysym.sym ){
                         case SDLK_LEFT: 
-                            heroine.pos.orientation = (heroine.pos.orientation + 3) % 4;
+                            cm.heroine.pos.orientation = (cm.heroine.pos.orientation + 3) % 4;
                             c.angle += M_PI/2.f;
                             break;
                         case SDLK_RIGHT:
-                            heroine.pos.orientation = (heroine.pos.orientation + 1) % 4;
+                            cm.heroine.pos.orientation = (cm.heroine.pos.orientation + 1) % 4;
                             c.angle -= M_PI/2.f;
                             break;
                         case SDLK_UP:
-                            if(heroine.movingForward(map)){
-                                if(heroine.pos.orientation == 0){
-                                    heroine.pos.pos_X -= 1.f;
-                                    c.position.x += 1.f;}
-                                else if(heroine.pos.orientation == 1){
-                                    heroine.pos.pos_Y += 1.f;
-                                    c.position.z += 1.f;}
-                                else if(heroine.pos.orientation == 2){
-                                    heroine.pos.pos_X += 1.f;
-                                    c.position.x -= 1.f;}
-                                else if(heroine.pos.orientation == 3){
-                                    heroine.pos.pos_Y -= 1.f;
-                                    c.position.z -= 1.f;}
+                            move = cm.heroine.movingForward(invertMap);
+                            if(move && !cm.monsterForward()){
+                                if(cm.heroine.pos.orientation == 0){
+                                    cm.heroine.pos.pos_Y -= 1.f;
+                                    c.position.x += 1.f;
+                                    if(move == 2) {
+                                        quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
+                                    }
+                                }
+                                else if(cm.heroine.pos.orientation == 1){
+                                    cm.heroine.pos.pos_X -= 1.f;
+                                    c.position.z += 1.f;
+                                    if(move == 2) {
+                                        quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
+                                    }
+                                }
+                                else if(cm.heroine.pos.orientation == 2){
+                                    cm.heroine.pos.pos_Y += 1.f;
+                                    c.position.x -= 1.f;
+                                    if(move == 2) {
+                                        quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
+                                    }
+                                }
+                                else if(cm.heroine.pos.orientation == 3){
+                                    cm.heroine.pos.pos_X += 1.f;
+                                    c.position.z -= 1.f;
+                                    if(move == 2) {
+                                        quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
+                                    }
+                                }
+                                int indexObj = invertMap.isObject(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y);
+                                if(indexObj != -1) {
+                                    cout << "j'ai chopé la clé !" << endl;
+                                    cm.heroine.inven.objects.push_back(map.objects[indexObj]);
+                                    cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
+                                    for(size_t i = 0; i<invertMap.objects.size(); i++){
+                                        cout << "Nous avons un objet dans la case : (" << invertMap.objects[i].pos.pos_X << ", " << invertMap.objects[i].pos.pos_Y << ")" << endl;
+                                    }
+                                    map.objects.erase(map.objects.begin()+indexObj);
+                                }                              
                             }
                             break;
                         case SDLK_DOWN:
-                            if(heroine.movingBackward(map)){
-                                if(heroine.pos.orientation == 0){
-                                    heroine.pos.pos_X += 1.f;
-                                    c.position.x -= 1.f;}
-                                else if(heroine.pos.orientation == 1){
-                                    heroine.pos.pos_Y -= 1.f;
-                                    c.position.z -= 1.f;}
-                                else if(heroine.pos.orientation == 2){
-                                    heroine.pos.pos_X -= 1.f;
-                                    c.position.x += 1.f;}
-                                else if(heroine.pos.orientation == 3){
-                                    heroine.pos.pos_Y += 1.f;
-                                    c.position.z += 1.f;}
+                            move = cm.heroine.movingBackward(invertMap);
+                            if(move && !cm.monsterBackward()){
+                                if(cm.heroine.pos.orientation == 0){
+                                    cm.heroine.pos.pos_Y += 1.f;
+                                    c.position.x -= 1.f;
+                                    if(move == 2) {
+                                        quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
+                                    }
+                                }
+                                else if(cm.heroine.pos.orientation == 1){
+                                    cm.heroine.pos.pos_X += 1.f;
+                                    c.position.z -= 1.f;
+                                    if(move == 2) {
+                                        quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
+                                    }
+                                }
+                                else if(cm.heroine.pos.orientation == 2){
+                                    cm.heroine.pos.pos_Y -= 1.f;
+                                    c.position.x += 1.f;
+                                    if(move == 2) {
+                                        quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
+                                    }
+                                }
+                                else if(cm.heroine.pos.orientation == 3){
+                                    cm.heroine.pos.pos_X -= 1.f;
+                                    c.position.z += 1.f;
+                                    if(move == 2) {
+                                        quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
+                                    }
+                                }
+                                int indexObj = invertMap.isObject(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y);
+                                if(indexObj != -1) {
+                                    cout << "j'ai chopé la clé !" << endl;
+                                    cm.heroine.inven.objects.push_back(map.objects[indexObj]);
+                                    cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
+                                    for(size_t i = 0; i<invertMap.objects.size(); i++){
+                                        cout << "Nous avons un objet dans la case : (" << invertMap.objects[i].pos.pos_X << ", " << invertMap.objects[i].pos.pos_Y << ")" << endl;
+                                    }
+                                    map.objects.erase(map.objects.begin()+indexObj);
+                                } 
                             }
                         default:
                             break;
@@ -459,12 +689,29 @@ int main(int argc, char** argv) {
         mat4 MVPMatrix;
 
         for(unsigned int i=0; i<quadWall.size(); i++){
-            MVPMatrix = c.getViewProjectionMatrix() * quadWall[i].model;
+            MVPMatrix = c.getViewProjectionMatrix() * quadWall[i].model; // changer ici en fonction de la texture
         
             glUniformMatrix4fv(uMVPMatrixLoc, 1, GL_FALSE, value_ptr(MVPMatrix));
 
             glActiveTexture(GL_TEXTURE0 + 4);
-            glBindTexture(GL_TEXTURE_2D, texturesBuffer[0]);
+            glBindTexture(GL_TEXTURE_2D, texturesBuffer[0]); // changer ici en fonction de la texture
+            glActiveTexture(GL_TEXTURE0);
+            glUniform1i(uTextureLoc, 4);
+
+            glBindVertexArray(vao);
+
+            glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glBindVertexArray(0);
+        }
+
+        for(unsigned int i=0; i<quadMonster.size(); i++){
+            MVPMatrix = c.getViewProjectionMatrix() * quadMonster[i].model;
+        
+            glUniformMatrix4fv(uMVPMatrixLoc, 1, GL_FALSE, value_ptr(MVPMatrix));
+
+            glActiveTexture(GL_TEXTURE0 + 4);
+            glBindTexture(GL_TEXTURE_2D, texturesBuffer[1]);
             glActiveTexture(GL_TEXTURE0);
             glUniform1i(uTextureLoc, 4);
 
@@ -507,6 +754,42 @@ int main(int argc, char** argv) {
             glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
             glBindTexture(GL_TEXTURE_2D, 0);
             glBindVertexArray(0);
+        }
+
+        for(unsigned int i=0; i<quadDoor.size(); i++){
+            MVPMatrix = c.getViewProjectionMatrix() * quadDoor[i].model;
+        
+            glUniformMatrix4fv(uMVPMatrixLoc, 1, GL_FALSE, value_ptr(MVPMatrix));
+
+            glActiveTexture(GL_TEXTURE0 + 4);
+            glBindTexture(GL_TEXTURE_2D, texturesBuffer[3]);
+            glActiveTexture(GL_TEXTURE0);
+            glUniform1i(uTextureLoc, 4);
+
+            glBindVertexArray(vao);
+
+            glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glBindVertexArray(0);
+        }
+
+        for(unsigned int i=0; i<cubeObject.size(); i++){
+            for(int j = 0; j < 4; j++) {
+                MVPMatrix = c.getViewProjectionMatrix() * cubeObject[i].quads[j].model;
+            
+                glUniformMatrix4fv(uMVPMatrixLoc, 1, GL_FALSE, value_ptr(MVPMatrix));
+
+                glActiveTexture(GL_TEXTURE0 + 4);
+                glBindTexture(GL_TEXTURE_2D, texturesBuffer[cubeObject[i].texture]);
+                glActiveTexture(GL_TEXTURE0);
+                glUniform1i(uTextureLoc, 4);
+
+                glBindVertexArray(vao);
+
+                glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+                glBindTexture(GL_TEXTURE_2D, 0);
+                glBindVertexArray(0);
+            }
         }
 
 
