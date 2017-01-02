@@ -549,7 +549,7 @@ int main(int argc, char** argv) {
                             c.angle -= M_PI/2.f;
                             break;
                         case SDLK_UP:
-                            move = cm.heroine.movingForward(map);
+                            move = cm.heroine.movingForward(invertMap);
                             if(move && !cm.monsterForward()){
                                 if(cm.heroine.pos.orientation == 0){
                                     cm.heroine.pos.pos_Y -= 1.f;
@@ -587,7 +587,7 @@ int main(int argc, char** argv) {
                             }
                             break;
                         case SDLK_DOWN:
-                            move = cm.heroine.movingBackward(map);
+                            move = cm.heroine.movingBackward(invertMap);
                             if(move && !cm.monsterBackward()){
                                 if(cm.heroine.pos.orientation == 0){
                                     cm.heroine.pos.pos_Y += 1.f;
@@ -621,6 +621,9 @@ int main(int argc, char** argv) {
                                 if(indexObj != -1) {
                                     cm.heroine.inven.objects.push_back(map.objects[indexObj]);
                                     cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
+                                    for(size_t i; i<invertMap.objects.size(); i++){
+                                        cout << "Nous avons un objet dans la case : (" << invertMap.objects[i].pos.pos_X << ", " << invertMap.objects[i].pos.pos_Y << ")" << endl;
+                                    }
                                 } 
                             }
                         default:
