@@ -155,17 +155,17 @@ int getIndexCube(vector<CubeInstance> cubes, float x, float y) {
     return cubes.size();
 }
 
-int getIndexMonster(float x, float y, int orientation, Map map) {
-    for(unsigned int i = 0; i < map.monsters.size(); i++) {
-        if((map.monsters[i].pos.pos_X == x && map.monsters[i].pos.pos_Y == y+1 && orientation == 2) || 
-            (map.monsters[i].pos.pos_X == x && map.monsters[i].pos.pos_Y == y-1 && orientation == 0) ||
-            (map.monsters[i].pos.pos_X == x+1 && map.monsters[i].pos.pos_Y == y && orientation == 3) ||
-            (map.monsters[i].pos.pos_X == x-1 && map.monsters[i].pos.pos_Y == y && orientation == 1)) {
-            cout << "Le monstre a " << map.monsters[i].life << "vies" << endl;
+int getIndexMonster(float x, float y, int orientation, MapManager mm) {
+    for(unsigned int i = 0; i < mm.cm.monsters.size(); i++) {
+        if((mm.cm.monsters[i].pos.pos_X == x && mm.cm.monsters[i].pos.pos_Y == y+1 && orientation == 2) || 
+            (mm.cm.monsters[i].pos.pos_X == x && mm.cm.monsters[i].pos.pos_Y == y-1 && orientation == 0) ||
+            (mm.cm.monsters[i].pos.pos_X == x+1 && mm.cm.monsters[i].pos.pos_Y == y && orientation == 3) ||
+            (mm.cm.monsters[i].pos.pos_X == x-1 && mm.cm.monsters[i].pos.pos_Y == y && orientation == 1)) {
+            //cout << "Le monstre a " << mm.cm.monsters[i].life << "vies" << endl;
             return i;
         }
     }
-    return map.monsters.size();
+    return mm.cm.monsters.size();
 }
 
 std::vector<QuadInstance> remplirQuadMonster(std::vector<Monster> monsters, Map m){
@@ -251,7 +251,7 @@ int main(int argc, char** argv) {
     mm.map = mapCreate;*/
 
     MapManager mm;
-    mm.createMap("assets/maps/level5.txt");
+    mm.createMap("assets/maps/level1.txt");
 
     cout << "Voici ma position : (" << mm.cm.heroine.pos.pos_X << ", " << mm.cm.heroine.pos.pos_Y << ")" <<  endl;
 
@@ -567,11 +567,11 @@ int main(int argc, char** argv) {
                         case SDLK_SPACE:
                             att = mm.cm.heroAttack();
                             if(att != -1) {
-                                int indexMons = getIndexMonster(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y, att, mm.invertMap);
-                                if(mm.map.monsters[indexMons].life <= 0) {
+                                int indexMons = getIndexMonster(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y, att, mm);
+                                if(mm.cm.monsters[indexMons].life <= 0) {
                                     cout << "Le monstre n'a plus de vie" << endl;
-                                    mm.map.monsters.erase(mm.map.monsters.begin() + indexMons);
-                                    quadMonster.erase(quadMonster.begin() + 4*indexMons, quadMonster.begin() + 4*indexMons + 4);
+                                    mm.cm.monsters.erase(mm.cm.monsters.begin() + indexMons);
+                                    quadMonster = remplirQuadMonster(mm.cm.monsters, mm.invertMap);
                                 }
                             }
                             break;
@@ -601,9 +601,10 @@ int main(int argc, char** argv) {
 
                                 int indexObj = mm.invertMap.isObject(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y);
                                 if(indexObj != -1) {
-                                    cout << "Je prends un objet" << endl;
                                     mm.cm.heroine.inven.objects.push_back(mm.map.objects[indexObj]);
                                     cubeObject.erase(cubeObject.begin()+indexObj);
+                                    if(mm.invertMap.objects[indexObj].name == "life")
+                                        mm.cm.heroine.gainLife(20);
                                     mm.invertMap.objects.erase(mm.invertMap.objects.begin()+indexObj);
                                 } 
                                 if(mm.invertMap.isAcid(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y)) {
@@ -662,8 +663,9 @@ int main(int argc, char** argv) {
 
                                 int indexObj = mm.invertMap.isObject(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y);
                                 if(indexObj != -1) {
-                                    cout << "Je prends un objet" << endl;
                                     mm.cm.heroine.inven.objects.push_back(mm.map.objects[indexObj]);
+                                    if(mm.invertMap.objects[indexObj].name == "life")
+                                        mm.cm.heroine.gainLife(20);
                                     cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y));
                                     mm.invertMap.objects.erase(mm.invertMap.objects.begin()+indexObj);
                                 }

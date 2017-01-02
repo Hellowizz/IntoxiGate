@@ -72,12 +72,10 @@ int CharacterManager::heroAttack(){
 		if(monsters[i].pos.pos_X == heroine.pos.pos_X){
 			if((monsters[i].pos.pos_Y == heroine.pos.pos_Y+1 && heroine.pos.orientation == sud) || (monsters[i].pos.pos_Y == heroine.pos.pos_Y-1 && heroine.pos.orientation == nord)){
 				attack = true;
-				break;
 			}		
 		}else if(monsters[i].pos.pos_Y == heroine.pos.pos_Y){
 			if((monsters[i].pos.pos_X == heroine.pos.pos_X+1 && heroine.pos.orientation == ouest)|| (monsters[i].pos.pos_X == heroine.pos.pos_X-1 && heroine.pos.orientation == est)){
 				attack = true;
-				break;
 			}
 		}
 
