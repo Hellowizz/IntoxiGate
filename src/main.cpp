@@ -6,6 +6,7 @@
 #include <glimac/Image.hpp>
 #include <vector>
 #include <string>
+#include <SDL/SDL_ttf.h>
 
 
 #include <MapManager.hpp>
@@ -246,9 +247,6 @@ int main(int argc, char** argv) {
     SDLWindowManager windowManager(WIDTH, HEIGHT, "IntoxiGate");
 
     // création & initialisation d'une map
-    /*Map mapCreate = Map();
-    mapCreate.loadMap("level1.txt");
-    mm.map = mapCreate;*/
 
     MapManager mm;
     mm.createMap("assets/maps/level1.txt");
@@ -569,7 +567,6 @@ int main(int argc, char** argv) {
                             if(att != -1) {
                                 int indexMons = getIndexMonster(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y, att, mm);
                                 if(mm.cm.monsters[indexMons].life <= 0) {
-                                    cout << "Le monstre n'a plus de vie" << endl;
                                     mm.cm.monsters.erase(mm.cm.monsters.begin() + indexMons);
                                     quadMonster = remplirQuadMonster(mm.cm.monsters, mm.invertMap);
                                 }
@@ -849,5 +846,6 @@ int main(int argc, char** argv) {
     glDeleteBuffers(1, &vbo);
     glDeleteVertexArrays(1, &vao);
     glDeleteTextures(1, texturesBuffer);
+
     return EXIT_SUCCESS;
 }

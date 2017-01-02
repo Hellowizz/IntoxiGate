@@ -14,6 +14,8 @@ void Character::putPos(Position p){
 }
 
 void Character::gainLife(int lifeGain){
+	if(life + lifeGain > lifeMax)
+		return;
 	life += lifeGain;
 }
 
