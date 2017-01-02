@@ -37,16 +37,12 @@ void Hero::lvlUp(){
 void Hero::changeOrientation(Map m){
 
 	if(m.pixels[m.width*pos.pos_Y + (pos.pos_X+1)].type == hall){
-		cout << "ouest" << endl;
 		pos.orientation = ouest;
 	}else if(m.pixels[m.width*(pos.pos_Y+1) + pos.pos_X].type == hall){
-		cout << "nord" << endl;
 		pos.orientation = nord; //PAS SUR
 	}else if(m.pixels[m.width*pos.pos_Y + (pos.pos_X-1)].type == hall){
-		cout << "est" << endl;
 		pos.orientation = est;
 	}else if(m.pixels[m.width*(pos.pos_Y-1) + pos.pos_X].type == hall){
-		cout << "sud" << endl;
 		pos.orientation = sud; //PAS SUR
 	}
 }
@@ -55,7 +51,6 @@ int Hero::movingForward(Map m){
 
 	if(pos.orientation == nord && m.pixels[m.width*(pos.pos_Y-1) + pos.pos_X].type != wall) {
 		if(m.pixels[m.width*(pos.pos_Y-1) + pos.pos_X].type == door) {
-			cout << "Porte devant" << endl;
 			if(!hasKey())
 				return 0;
 			useKey();
@@ -65,7 +60,6 @@ int Hero::movingForward(Map m){
 	}
 	if(pos.orientation == est && m.pixels[m.width*pos.pos_Y + (pos.pos_X-1)].type != wall){
 		if(m.pixels[m.width*pos.pos_Y + (pos.pos_X-1)].type == door) {
-			cout << "Porte devant" << endl;
 			if(!hasKey())
 				return 0;
 			useKey();
@@ -75,7 +69,6 @@ int Hero::movingForward(Map m){
 	}
 	if(pos.orientation == sud && m.pixels[m.width*(pos.pos_Y+1) + pos.pos_X].type != wall){
 		if(m.pixels[m.width*(pos.pos_Y+1) + pos.pos_X].type == door) {
-			cout << "Porte devant" << endl;
 			if(!hasKey())
 				return 0;
 			useKey();
@@ -85,7 +78,6 @@ int Hero::movingForward(Map m){
 	}
 	if(pos.orientation == ouest && m.pixels[m.width*pos.pos_Y + (pos.pos_X+1)].type != wall){
 		if(m.pixels[m.width*pos.pos_Y + (pos.pos_X+1)].type == door) {
-			cout << "Porte devant" << endl;
 			if(!hasKey())
 				return 0;
 			useKey();
@@ -96,6 +88,7 @@ int Hero::movingForward(Map m){
 
 	return 0;
 }
+
 int Hero::movingBackward(Map m){
 	if(pos.orientation == nord && m.pixels[m.width*(pos.pos_Y+1) + pos.pos_X].type != wall){
 		if(m.pixels[m.width*pos.pos_X + (pos.pos_Y+1)].type == door) {

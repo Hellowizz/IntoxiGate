@@ -15,7 +15,7 @@ public:
 	bool monsterBackward();
 
 	void monstersAttack();
-	void heroAttack();
+	int heroAttack();
 	void moveAllMonsters();
 
 	~CharacterManager();
