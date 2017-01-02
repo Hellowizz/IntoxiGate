@@ -516,7 +516,7 @@ int main(int argc, char** argv) {
     /*entrance = map.getEntrance();
 
 <<<<<<< HEAD:src/exo2_triangle_couleurs.cpp
-    CharacterManager cm;
+    CharacterManager mm.cm;
     std::vector<Monster> m;
     Hero h;
     cm.heroine = h;
@@ -604,6 +604,17 @@ int main(int argc, char** argv) {
                     // }
 
                     switch( e.key.keysym.sym ){
+                        case SDLK_SPACE:
+                            att = mm.cm.heroAttack();
+                            if(att != -1) {
+                                int indexMons = getIndexMonster(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y, att, mm.invertMap);
+                                // if(map.monsters[indexMons].life <= 0) {
+                                //     cout << "Le monstre n'a plus de vie" << endl;
+                                //     map.monsters.erase(map.monsters.begin() + indexMons);
+                                //     quadMonster.erase(quadMonster.begin() + 4*indexMons, quadMonster.begin() + 4*indexMons + 4);
+                                // }
+                            }
+                            break;
                         case SDLK_LEFT: 
                             mm.cm.heroine.pos.orientation = (mm.cm.heroine.pos.orientation + 3) % 4;
                             c.angle += M_PI/2.f;
@@ -617,45 +628,34 @@ int main(int argc, char** argv) {
                             if(move && !mm.cm.monsterForward()){
                                 if(mm.cm.heroine.pos.orientation == 0){
                                     mm.cm.heroine.pos.pos_Y -= 1.f;
-                                    c.position.x += 1.f;
+                                    c.position.x += 1.f;}
                                 else if(mm.cm.heroine.pos.orientation == 1){
                                     mm.cm.heroine.pos.pos_X -= 1.f;
-                                    c.position.z += 1.f;
+                                    c.position.z += 1.f;}
                                 else if(mm.cm.heroine.pos.orientation == 2){
                                     mm.cm.heroine.pos.pos_Y += 1.f;
-                                    c.position.x -= 1.f;
+                                    c.position.x -= 1.f;}
                                 else if(mm.cm.heroine.pos.orientation == 3){
                                     mm.cm.heroine.pos.pos_X += 1.f;
-                                    c.position.z -= 1.f;
+                                    c.position.z -= 1.f;}
 
-                                int indexObj = mm.invertMap.isObject(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y);
+                                int indexObj = mm.invertMap.isObject(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y);
                                 if(indexObj != -1) {
-                                    cm.heroine.inven.objects.push_back(map.objects[indexObj]);
-                                    cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
-                                    map.objects.erase(map.objects.begin()+indexObj);
+                                    mm.cm.heroine.inven.objects.push_back(mm.map.objects[indexObj]);
+                                    cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y));
+                                    mm.map.objects.erase(mm.map.objects.begin()+indexObj);
                                 } 
-                                if(mm.invertMap.isAcid(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y)) {
-                                    cm.heroine.looseLife(10);
-                                    if(cm.heroine.life <= 0){
+                                if(mm.invertMap.isAcid(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y)) {
+                                    mm.cm.heroine.looseLife(10);
+                                    if(mm.cm.heroine.life <= 0){
                                         cout << "Vous êtes mort, veuillez réessayer" << endl;
                                         exit(5);
                                     }
-                                    cout << "il ne vous reste plus que : " << cm.heroine.life << " pv" << endl;
+                                    cout << "il ne vous reste plus que : " << mm.cm.heroine.life << " pv" << endl;
                                 }     
-                                    if(move == 2) {
-                                        quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y));
-                                    }
-                                }
-                                int indexObj = mm.invertMap.isObject(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y);
-                                if(indexObj != -1) {
-                                    cout << "j'ai chopé la clé !" << endl;
-                                    mm.cm.heroine.inven.objects.push_back(mm.invertMap.objects[indexObj]);
-                                    cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y));
-                                    mm.invertMap.objects.erase(mm.invertMap.objects.begin()+indexObj);
-                                    for(size_t i = 0; i<mm.invertMap.objects.size(); i++){
-                                        cout << "Nous avons un objet dans la case : (" << mm.invertMap.objects[i].pos.pos_X << ", " << mm.invertMap.objects[i].pos.pos_Y << ")" << endl;
-                                    }
-                                }                              
+                                if(move == 2) {
+                                    quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y));
+                                }                             
                             }
                             break;
                         case SDLK_DOWN:
@@ -676,47 +676,26 @@ int main(int argc, char** argv) {
                                 else if(mm.cm.heroine.pos.orientation == 3){
                                     mm.cm.heroine.pos.pos_X -= 1.f;
                                     c.position.z += 1.f;
-
-                                int indexObj = mm.invertMap.isObject(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y);
-                                if(indexObj != -1) {
-                                    cm.heroine.inven.objects.push_back(map.objects[indexObj]);
-                                    cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
-                                    map.objects.erase(map.objects.begin()+indexObj);
                                 }
 
-                                if(mm.invertMap.isAcid(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y)) {
-                                    cm.heroine.looseLife(10);
-                                    if(cm.heroine.life <= 0){
+                                int indexObj = mm.invertMap.isObject(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y);
+                                if(indexObj != -1) {
+                                    mm.cm.heroine.inven.objects.push_back(mm.map.objects[indexObj]);
+                                    cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y));
+                                    mm.map.objects.erase(mm.map.objects.begin()+indexObj);
+                                }
+
+                                if(mm.invertMap.isAcid(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y)) {
+                                    mm.cm.heroine.looseLife(10);
+                                    if(mm.cm.heroine.life <= 0){
                                         cout << "Vous êtes mort, veuillez réessayer" << endl;
                                         exit(5);
                                     }
-                                    cout << "il ne vous reste plus que : " << cm.heroine.life << " pv" << endl;
+                                    cout << "il ne vous reste plus que : " << mm.cm.heroine.life << " pv" << endl;
                                 }  
-                                    if(move == 2) {
-                                        quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y));
-                                    }
-                                }
-                                int indexObj = mm.invertMap.isObject(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y);
-                                if(indexObj != -1) {
-                                    cout << "j'ai chopé la clé !" << endl;
-                                    mm.cm.heroine.inven.objects.push_back(mm.invertMap.objects[indexObj]);
-                                    cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y));
-                                    for(size_t i = 0; i<mm.invertMap.objects.size(); i++){
-                                        cout << "Nous avons un objet dans la case : (" << mm.invertMap.objects[i].pos.pos_X << ", " << mm.invertMap.objects[i].pos.pos_Y << ")" << endl;
-                                    }
-                                    mm.invertMap.objects.erase(mm.invertMap.objects.begin()+indexObj);
+                                if(move == 2) {
+                                    quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y));
                                 } 
-                            }
-                            break;
-                        case SDLK_SPACE:
-                            att = cm.heroAttack();
-                            if(att != -1) {
-                                int indexMons = getIndexMonster(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y, att, invertMap);
-                                // if(map.monsters[indexMons].life <= 0) {
-                                //     cout << "Le monstre n'a plus de vie" << endl;
-                                //     map.monsters.erase(map.monsters.begin() + indexMons);
-                                //     quadMonster.erase(quadMonster.begin() + 4*indexMons, quadMonster.begin() + 4*indexMons + 4);
-                                // }
                             }
                             break;
 
