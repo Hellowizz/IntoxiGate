@@ -176,6 +176,7 @@ int main(int argc, char** argv) {
     SDLWindowManager windowManager(WIDTH, HEIGHT, "Meilleur jeu du monde");
 
     // création & initialisation d'une map
+    //cout << "OHEEEEEEEEEEE" <<  endl;
     Map map = Map();
 
     map.loadMap("assets/maps/level1.txt");  
@@ -452,6 +453,12 @@ int main(int argc, char** argv) {
     poubelle.posGraph.pos_X = 4;
     poubelle.posGraph.pos_Y = 9;
 
+        //POSITIONS GRAPHIQUE KEY
+    //invertMap.objects[0].pos.pos_X = 5;
+    //invertMap.objects[0].pos.pos_Y = 7;
+
+    cout << "La position de la clef est : " << invertMap.objects[0].pos.pos_X << " et " << invertMap.objects[0].pos.pos_Y << endl;
+
     cm.monsters.push_back(poubelle);
 
 
@@ -509,7 +516,7 @@ int main(int argc, char** argv) {
         }
 
         for(unsigned int i = 0; i < map.objects.size(); i++) {
-            cubeObject.push_back(CubeInstance(map.objects[i].pos.pos_X, 0.f, map.objects[i].pos.pos_Y, map.objects[i].texture));
+            cubeObject.push_back(CubeInstance(map.objects[i].posGraph.pos_X, 0.f, map.objects[i].posGraph.pos_Y, map.objects[i].texture));
         }
 
     /* END INITIALIZATION CODE */
@@ -532,7 +539,7 @@ int main(int argc, char** argv) {
                     cm.moveAllMonsters();
                     quadMonster = remplirQuadMonster(cm.monsters, invertMap);
 
-                    /*cout << "___________________\n" << endl;
+                    cout << "___________________\n" << endl;
                     cout << "Je regarde vers " << cm.heroine.pos.orientation << endl;
                     cout << "Et ma position est (" << cm.heroine.pos.pos_X << ", " << cm.heroine.pos.pos_Y << ")" <<  endl;
                     cout << "Celle du monstre est (" << cm.monsters[0].pos.pos_X << ", " << cm.monsters[0].pos.pos_Y << ")" <<  endl;
@@ -555,7 +562,7 @@ int main(int argc, char** argv) {
                             }
                         }
                         cout << endl;
-                    }*/
+                    }
 
                     switch( e.key.keysym.sym ){
                         case SDLK_LEFT: 
@@ -597,7 +604,7 @@ int main(int argc, char** argv) {
                                         quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
                                     }
                                 }
-                                int indexObj = map.isObject(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y);
+                                int indexObj = invertMap.isObject(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y);
                                 if(indexObj != -1) {
                                     cout << "YAYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY" << endl;
                                     cm.heroine.inven.objects.push_back(map.objects[indexObj]);
@@ -640,7 +647,7 @@ int main(int argc, char** argv) {
                                         quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
                                     }
                                 }
-                                int indexObj = map.isObject(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y);
+                                int indexObj = invertMap.isObject(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y);
                                 if(indexObj != -1) {
                                     cm.heroine.inven.objects.push_back(map.objects[indexObj]);
                                     cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));

@@ -6,5 +6,6 @@
 
 class Key : public Object{
 	public:
+		//Position posGraph;
 		~Key();
 };

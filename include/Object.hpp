@@ -8,10 +8,12 @@ class Object{
 public:
 	int id;
 	Position pos;
-	//Position posGraph;
+	Position posGraph;
 
 	std::string name;
 	int texture;
+
+	Object();
 
 	~Object();
 };
