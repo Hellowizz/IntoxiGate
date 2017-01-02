@@ -45,11 +45,11 @@ void Hero::changeOrientation(Map m){
 	if(m.pixels[m.width*pos.pos_Y + (pos.pos_X+1)].type == hall){
 		pos.orientation = ouest;
 	}else if(m.pixels[m.width*(pos.pos_Y+1) + pos.pos_X].type == hall){
-		pos.orientation = nord; //PAS SUR
+		pos.orientation = sud; //PAS SUR
 	}else if(m.pixels[m.width*pos.pos_Y + (pos.pos_X-1)].type == hall){
 		pos.orientation = est;
 	}else if(m.pixels[m.width*(pos.pos_Y-1) + pos.pos_X].type == hall){
-		pos.orientation = sud; //PAS SUR
+		pos.orientation = nord; //PAS SUR
 	}
 }
 

@@ -213,7 +213,7 @@ void fullAllVectors(MapManager mm, vector<QuadInstance> &quadWall, std::vector<Q
                 if(mm.map.pixels[mm.map.width*(j+1)+ i].type == door){
                     quadDoor.push_back(newQuadVertical(float(curr.pos.pos_X)+0.5f, 0.f, float(curr.pos.pos_Y)));
                 }
-
+ 
                 if(mm.map.pixels[mm.map.width*j + (i-1)].type == wall){
                     quadWall.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)-0.5f));
                 }
@@ -256,7 +256,7 @@ int main(int argc, char** argv) {
     mm.map = mapCreate;*/
 
     MapManager mm;
-    mm.createMap("assets/maps/level1.txt");
+    mm.createMap("assets/maps/level5.txt");
 
     cout << "Voici ma position : (" << mm.cm.heroine.pos.pos_X << ", " << mm.cm.heroine.pos.pos_Y << ")" <<  endl;
 
@@ -511,34 +511,6 @@ int main(int argc, char** argv) {
     std::vector<CubeInstance> cubeObject;
 
         //INITIALISATIONS
-
-   
-    /*entrance = map.getEntrance();
-
-<<<<<<< HEAD:src/exo2_triangle_couleurs.cpp
-    CharacterManager mm.cm;
-    std::vector<Monster> m;
-    Hero h;
-    cm.heroine = h;
-    cm.monsters = m;
-=======
-    cm = CharacterManager();
-    cm.heroine = Hero();
->>>>>>> b400770e0ed7b81297ff35814cadfffc81ca7cb8:src/main.cpp
-
-    invertMap = map.invert();
-    entranceInvert = invertMap.getEntrance();
-    cm.heroine.putPos(entranceInvert.pos);
-
-    Waste poubelle;
-    poubelle.type = waste;
-    poubelle.pos.pos_X = 5;
-    poubelle.pos.pos_Y = 9;
-    poubelle.posGraph.pos_X = 1;
-    poubelle.posGraph.pos_Y = 9;
-    cm.monsters.push_back(poubelle);
-    cm.heroine.changeOrientation(invertMap)*/
-
     Camera c(mm.entrance.pos.pos_X, mm.entrance.pos.pos_Y);
     c.changeOrientation(mm.cm.heroine.pos.orientation);
 
@@ -565,8 +537,7 @@ int main(int argc, char** argv) {
                     mm.cm.monstersAttack();
                     mm.cm.moveAllMonsters();
                     quadMonster = remplirQuadMonster(mm.cm.monsters, mm.invertMap);
-
-<<<<<<< HEAD
+                   
                     cout << "___________________\n" << endl;
                     cout << "Je regarde vers " << mm.cm.heroine.pos.orientation << endl;
                     cout << "Et ma position est (" << mm.cm.heroine.pos.pos_X << ", " << mm.cm.heroine.pos.pos_Y << ")" <<  endl;
@@ -594,44 +565,6 @@ int main(int argc, char** argv) {
                         }
                         cout << endl;
                     }
-=======
-                    if(mm.cm.heroine.atTheEndOfTheDungeon(mm.invertMap)){
-                        if(mm.level == 1){
-                            mm.createMap("assets/maps/level2.txt");
-                            Camera c2(mm.entrance.pos.pos_X, mm.entrance.pos.pos_Y);
-                            c2.changeOrientation(mm.cm.heroine.pos.orientation);
-                            c = c2;
-                            fullAllVectors(mm, quadWall, quadGround, quadRoof, quadMonster, quadDoor, cubeObject);
-                        }
-                    }
-                    // cout << "___________________\n" << endl;
-                    // cout << "Je regarde vers " << mm.cm.heroine.pos.orientation << endl;
-                    // cout << "Et ma position est (" << mm.cm.heroine.pos.pos_X << ", " << mm.cm.heroine.pos.pos_Y << ")" <<  endl;
-                    // cout << "Celle du monstre est (" << mm.cm.monsters[0].pos.pos_X << ", " << mm.cm.monsters[0].pos.pos_Y << ")" <<  endl;
-                    // cout << "Cette case est" << mm.invertMap.pixels[mm.invertMap.width*mm.cm.heroine.pos.pos_Y + (mm.cm.heroine.pos.pos_X-1)].type << endl; 
-
-                    // for(int j = 0; j<mm.invertMap.height; j++){
-                    //     for(int i = 0; i<mm.invertMap.width; i++){
-                    //         if(j == mm.cm.heroine.pos.pos_Y && i == mm.cm.heroine.pos.pos_X)
-                    //             cout << "A";
-                    //         else if(j == mm.cm.monsters[0].pos.pos_Y && i == mm.cm.monsters[0].pos.pos_X)
-                    //             cout << "H";
-                    //         else if(j == mm.invertMap.objects[0].pos.pos_Y && i == mm.invertMap.objects[0].pos.pos_X)
-                    //             cout << "Q";
-                    //         else{
-                    //             if(mm.invertMap.pixels[mm.invertMap.width*(j)+ i].type == getIn)
-                    //                 cout << 8;
-                    //             else if(mm.invertMap.pixels[mm.invertMap.width*(j)+ i].type == wall)
-                    //                 cout << 1;
-                    //             else if(mm.invertMap.pixels[mm.invertMap.width*(j)+ i].type == door)
-                    //                 cout << 7;
-                    //             else
-                    //                  cout << 0;
-                    //         }
-                    //     }
-                    //     cout << endl;
-                    // }
->>>>>>> c2f64830377e9b52eeead6749ba61fff2b33f302
 
                     switch( e.key.keysym.sym ){
                         case SDLK_SPACE:
@@ -671,9 +604,10 @@ int main(int argc, char** argv) {
 
                                 int indexObj = mm.invertMap.isObject(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y);
                                 if(indexObj != -1) {
+                                    cout << "Je prends un objet" << endl;
                                     mm.cm.heroine.inven.objects.push_back(mm.map.objects[indexObj]);
-                                    cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y));
-                                    mm.map.objects.erase(mm.map.objects.begin()+indexObj);
+                                    cubeObject.erase(cubeObject.begin()+indexObj);
+                                    mm.invertMap.objects.erase(mm.invertMap.objects.begin()+indexObj);
                                 } 
                                 if(mm.invertMap.isAcid(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y)) {
                                     mm.cm.heroine.looseLife(10);
@@ -681,7 +615,6 @@ int main(int argc, char** argv) {
                                         cout << "Vous êtes mort, veuillez réessayer" << endl;
                                         exit(5);
                                     }
-<<<<<<< HEAD
                                 }
                                 if(mm.cm.heroine.atTheEndOfTheDungeon(mm.invertMap)){
                                     if(mm.level == 1)
@@ -703,14 +636,11 @@ int main(int argc, char** argv) {
                                     c = c2;
                                     fullAllVectors(mm, quadWall, quadGround, quadRoof, quadMonster, quadDoor, cubeObject);
 
-                                }                              
-=======
-                                    cout << "il ne vous reste plus que : " << mm.cm.heroine.life << " pv" << endl;
-                                }     
+                                }   
                                 if(move == 2) {
                                     quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y));
-                                }                             
->>>>>>> c2f64830377e9b52eeead6749ba61fff2b33f302
+                                    mm.invertMap.eraseDoor(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y);
+                                }
                             }
                             break;
                         case SDLK_DOWN:
@@ -735,9 +665,10 @@ int main(int argc, char** argv) {
 
                                 int indexObj = mm.invertMap.isObject(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y);
                                 if(indexObj != -1) {
+                                    cout << "Je prends un objet" << endl;
                                     mm.cm.heroine.inven.objects.push_back(mm.map.objects[indexObj]);
                                     cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y));
-                                    mm.map.objects.erase(mm.map.objects.begin()+indexObj);
+                                    mm.invertMap.objects.erase(mm.invertMap.objects.begin()+indexObj);
                                 }
 
                                 if(mm.invertMap.isAcid(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y)) {
@@ -750,6 +681,7 @@ int main(int argc, char** argv) {
                                 }  
                                 if(move == 2) {
                                     quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y));
+                                    mm.invertMap.eraseDoor(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y);
                                 } 
 
                                 if(mm.cm.heroine.atTheEndOfTheDungeon(mm.invertMap)){
