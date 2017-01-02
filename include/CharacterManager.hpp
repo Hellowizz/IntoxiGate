@@ -2,6 +2,7 @@
 
 #include <Hero.hpp>
 #include <Monster.hpp>
+#include <Map.hpp>
 #include <vector>
 
 class CharacterManager{
