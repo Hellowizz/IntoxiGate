@@ -174,11 +174,14 @@ void Map::loadMonster(string line) {
 	mons.pos.pos_Y = stoi(tmp);
 	tmp = "";
 
+	// Position graphique
+
 	while(line[i] != ':') {
 		tmp.append(1, line[i]);
 		i++;
 	}
 	i++;
+	mons.posGraph.pos_X = stoi(tmp);
 	tmp = "";
 
 	while(line[i] != ':') {
@@ -186,13 +189,22 @@ void Map::loadMonster(string line) {
 		i++;
 	}
 	i++;
-	mons.life = stoi(tmp);
+	mons.posGraph.pos_Y = stoi(tmp);
 	tmp = "";
 
 	while(line[i] != ':') {
 		tmp.append(1, line[i]);
 		i++;
 	}
+	i++;
+	mons.name = tmp;
+	tmp = "";
+
+	while(line[i] != ':') {
+		tmp.append(1, line[i]);
+		i++;
+	}
+	mons.text = stoi(tmp);
 	tmp = "";
 
 	monsters.push_back(mons);

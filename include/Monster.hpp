@@ -16,6 +16,8 @@ public:
  	monsterType type;
 	int givenExperience;
 	Position posGraph;
+	string name;
+	int text;
 
 	Monster();
 

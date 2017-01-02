@@ -22,14 +22,10 @@ void MapManager::createMap(string name){
     invertMap = map.invert();
     entranceInvert = invertMap.getEntrance();
     cm.heroine.putPos(entranceInvert.pos);
-
-    Waste poubelle;
-    poubelle.type = waste;
-    poubelle.pos.pos_X = 5;
-    poubelle.pos.pos_Y = 7;
-    poubelle.posGraph.pos_X = 1;
-    poubelle.posGraph.pos_Y = 9;
-    cm.monsters.push_back(poubelle);
+    
+    for(unsigned int i= 0 ; i < map.monsters.size(); i++) {
+        cm.monsters.push_back(map.monsters[i]);
+    }
     cm.heroine.changeOrientation(invertMap);
 
     cout << "Voici ma position : (" << cm.heroine.pos.pos_X << ", " << cm.heroine.pos.pos_Y << ")" <<  endl;
