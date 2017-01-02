@@ -218,16 +218,8 @@ void fullAllVectors(MapManager mm, vector<QuadInstance> &quadWall, std::vector<Q
                     quadWall.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)-0.5f));
                 }
 
-                if(mm.map.pixels[mm.map.width*j + (i-1)].type == door){
-                    quadDoor.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)-0.5f));
-                }
-
                 if(mm.map.pixels[mm.map.width*(j-1) + i].type == wall){
                     quadWall.push_back(newQuadVertical(float(curr.pos.pos_X)-0.5f, 0.f, float(curr.pos.pos_Y)));
-                }
-
-                if(mm.map.pixels[mm.map.width*(j-1) + i].type == door){
-                    quadDoor.push_back(newQuadVertical(float(curr.pos.pos_X)-0.5f, 0.f, float(curr.pos.pos_Y)));
                 }
 
                 if(mm.map.pixels[mm.map.width*j + (i+1)].type == wall){
@@ -655,6 +647,7 @@ int main(int argc, char** argv) {
                                 }     
                                 if(move == 2) {
                                     quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y));
+                                    mm.invertMap.eraseDoor(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y);
                                 }                             
                             }
                             break;
@@ -695,6 +688,7 @@ int main(int argc, char** argv) {
                                 }  
                                 if(move == 2) {
                                     quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y));
+                                    mm.invertMap.eraseDoor(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y);
                                 } 
                             }
                             break;
