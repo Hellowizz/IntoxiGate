@@ -242,7 +242,7 @@ int main(int argc, char** argv) {
     mm.map = mapCreate;*/
 
     MapManager mm;
-    mm.createMap("assets/maps/level1.txt"); 
+    mm.createMap("assets/maps/level1.txt");
 
     cout << "Voici ma position : (" << mm.cm.heroine.pos.pos_X << ", " << mm.cm.heroine.pos.pos_Y << ")" <<  endl;
 
@@ -314,7 +314,7 @@ int main(int argc, char** argv) {
         cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
     }
 
-    imagePath = applicationPath.dirPath()+"../assets/textures/key.png";
+    imagePath = applicationPath.dirPath()+"../assets/textures/metalBox.png";
     std::unique_ptr<Image> keyTexture = loadImage(imagePath);
     if(!keyTexture) {
         cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
@@ -543,16 +543,6 @@ int main(int argc, char** argv) {
                     mm.cm.moveAllMonsters();
                     quadMonster = remplirQuadMonster(mm.cm.monsters, mm.invertMap);
 
-                    if(mm.cm.heroine.atTheEndOfTheDungeon(mm.invertMap)){
-                        if(mm.level == 1){
-                            mm.createMap("assets/maps/level2.txt");
-                            Camera c2(mm.entrance.pos.pos_X, mm.entrance.pos.pos_Y);
-                            c2.changeOrientation(mm.cm.heroine.pos.orientation);
-                            c = c2;
-                            fullAllVectors(mm, quadWall, quadGround, quadRoof, quadMonster, quadDoor, cubeObject);
-                        }
-                    }
-
                     cout << "___________________\n" << endl;
                     cout << "Je regarde vers " << mm.cm.heroine.pos.orientation << endl;
                     cout << "Et ma position est (" << mm.cm.heroine.pos.pos_X << ", " << mm.cm.heroine.pos.pos_Y << ")" <<  endl;
@@ -630,6 +620,27 @@ int main(int argc, char** argv) {
                                     for(size_t i = 0; i<mm.invertMap.objects.size(); i++){
                                         cout << "Nous avons un objet dans la case : (" << mm.invertMap.objects[i].pos.pos_X << ", " << mm.invertMap.objects[i].pos.pos_Y << ")" << endl;
                                     }
+                                }
+                                if(mm.cm.heroine.atTheEndOfTheDungeon(mm.invertMap)){
+                                    if(mm.level == 1)
+                                        mm.createMap("assets/maps/level2.txt");
+                                    else if(mm.level == 2)
+                                        mm.createMap("assets/maps/level5.txt");
+                                    else if(mm.level == 3)
+                                        mm.createMap("assets/maps/level4.txt");
+                                    else if(mm.level == 4){
+                                        mm.createMap("assets/maps/level5.txt");
+                                    }
+                                    else{
+                                        cout << "VOUS AVEZ GAGNE WOUHOUUUUUUUUUU" << endl;
+                                        exit(10);
+                                    }
+
+                                    Camera c2(mm.entrance.pos.pos_X, mm.entrance.pos.pos_Y);
+                                    c2.changeOrientation(mm.cm.heroine.pos.orientation);
+                                    c = c2;
+                                    fullAllVectors(mm, quadWall, quadGround, quadRoof, quadMonster, quadDoor, cubeObject);
+
                                 }                              
                             }
                             break;
@@ -674,6 +685,16 @@ int main(int argc, char** argv) {
                                     }
                                     mm.invertMap.objects.erase(mm.invertMap.objects.begin()+indexObj);
                                 } 
+
+                                if(mm.cm.heroine.atTheEndOfTheDungeon(mm.invertMap)){
+                                    if(mm.level == 1){
+                                        mm.createMap("assets/maps/level2.txt");
+                                        Camera c2(mm.entrance.pos.pos_X, mm.entrance.pos.pos_Y);
+                                        c2.changeOrientation(mm.cm.heroine.pos.orientation);
+                                        c = c2;
+                                        fullAllVectors(mm, quadWall, quadGround, quadRoof, quadMonster, quadDoor, cubeObject);
+                                    }
+                                }
                             }
                         default:
                             break;
