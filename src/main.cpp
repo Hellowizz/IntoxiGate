@@ -339,8 +339,8 @@ int main(int argc, char** argv) {
         cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
     }
 
-    GLuint texturesBuffer[10];
-    glGenTextures(10, texturesBuffer);
+    GLuint texturesBuffer[11];
+    glGenTextures(11, texturesBuffer);
 
     //Texture 1
 
@@ -462,7 +462,7 @@ int main(int argc, char** argv) {
 
     glBindTexture( GL_TEXTURE_2D, 0);
 
-    //Texture 10
+    //Texture 11
 
     glBindTexture( GL_TEXTURE_2D, texturesBuffer[10]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
@@ -639,7 +639,7 @@ int main(int argc, char** argv) {
                                 }
                                 if(mm.cm.heroine.atTheEndOfTheDungeon(mm.invertMap)){
                                     if(mm.level == 1)
-                                        mm.createMap("assets/maps/level6.txt");
+                                        mm.createMap("assets/maps/level2.txt");
                                     else if(mm.level == 2)
                                         mm.createMap("assets/maps/level3.txt");
                                     else if(mm.level == 3)
@@ -715,9 +715,10 @@ int main(int argc, char** argv) {
                                         mm.createMap("assets/maps/level3.txt");
                                     else if(mm.level == 3)
                                         mm.createMap("assets/maps/level4.txt");
-                                    else if(mm.level == 4){
+                                    else if(mm.level == 4)
                                         mm.createMap("assets/maps/level5.txt");
-                                    }
+                                    else if(mm.level == 5)
+                                        mm.createMap("assets/maps/level6.txt");
                                     else{
                                         cout << "VOUS AVEZ GAGNE WOUHOUUUUUUUUUU" << endl;
                                         exit(10);

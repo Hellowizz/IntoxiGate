@@ -1,5 +1,7 @@
 #Level 3
 ./assets/maps/levels/level3.ppm
-0
 1
+2:1:15:10:9:14:life:5:
+2
 1:1:19:10:9:10:waste:2:
+2:1:12:10:9:17:waste:2:
