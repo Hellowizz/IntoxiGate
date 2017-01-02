@@ -11,6 +11,7 @@ void MapManager::createMap(string name){
 	level++;
 
 	Map mapCreate = Map();
+	cout<< "ON VA CREER LA MAP..." << endl;
     mapCreate.loadMap(name);
     map = mapCreate;  
     entrance = map.getEntrance();
@@ -25,7 +26,7 @@ void MapManager::createMap(string name){
     Waste poubelle;
     poubelle.type = waste;
     poubelle.pos.pos_X = 5;
-    poubelle.pos.pos_Y = 9;
+    poubelle.pos.pos_Y = 7;
     poubelle.posGraph.pos_X = 1;
     poubelle.posGraph.pos_Y = 9;
     cm.monsters.push_back(poubelle);

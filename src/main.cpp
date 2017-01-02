@@ -248,7 +248,7 @@ int main(int argc, char** argv) {
     mm.map = mapCreate;*/
 
     MapManager mm;
-    mm.createMap("assets/maps/level1.txt"); 
+    mm.createMap("assets/maps/level1.txt");
 
     cout << "Voici ma position : (" << mm.cm.heroine.pos.pos_X << ", " << mm.cm.heroine.pos.pos_Y << ")" <<  endl;
 
@@ -320,7 +320,7 @@ int main(int argc, char** argv) {
         cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
     }
 
-    imagePath = applicationPath.dirPath()+"../assets/textures/key.png";
+    imagePath = applicationPath.dirPath()+"../assets/textures/metalBox.png";
     std::unique_ptr<Image> keyTexture = loadImage(imagePath);
     if(!keyTexture) {
         cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
@@ -558,6 +558,35 @@ int main(int argc, char** argv) {
                     mm.cm.moveAllMonsters();
                     quadMonster = remplirQuadMonster(mm.cm.monsters, mm.invertMap);
 
+<<<<<<< HEAD
+                    cout << "___________________\n" << endl;
+                    cout << "Je regarde vers " << mm.cm.heroine.pos.orientation << endl;
+                    cout << "Et ma position est (" << mm.cm.heroine.pos.pos_X << ", " << mm.cm.heroine.pos.pos_Y << ")" <<  endl;
+                    cout << "Celle du monstre est (" << mm.cm.monsters[0].pos.pos_X << ", " << mm.cm.monsters[0].pos.pos_Y << ")" <<  endl;
+                    cout << "Cette case est" << mm.invertMap.pixels[mm.invertMap.width*mm.cm.heroine.pos.pos_Y + (mm.cm.heroine.pos.pos_X-1)].type << endl; 
+
+                    for(int j = 0; j<mm.invertMap.height; j++){
+                        for(int i = 0; i<mm.invertMap.width; i++){
+                            if(j == mm.cm.heroine.pos.pos_Y && i == mm.cm.heroine.pos.pos_X)
+                                cout << "A";
+                            else if(j == mm.cm.monsters[0].pos.pos_Y && i == mm.cm.monsters[0].pos.pos_X)
+                                cout << "H";
+                            else if(j == mm.invertMap.objects[0].pos.pos_Y && i == mm.invertMap.objects[0].pos.pos_X)
+                                cout << "Q";
+                            else{
+                                if(mm.invertMap.pixels[mm.invertMap.width*(j)+ i].type == getIn)
+                                    cout << 8;
+                                else if(mm.invertMap.pixels[mm.invertMap.width*(j)+ i].type == wall)
+                                    cout << 1;
+                                else if(mm.invertMap.pixels[mm.invertMap.width*(j)+ i].type == door)
+                                    cout << 7;
+                                else
+                                     cout << 0;
+                            }
+                        }
+                        cout << endl;
+                    }
+=======
                     if(mm.cm.heroine.atTheEndOfTheDungeon(mm.invertMap)){
                         if(mm.level == 1){
                             mm.createMap("assets/maps/level2.txt");
@@ -594,6 +623,7 @@ int main(int argc, char** argv) {
                     //     }
                     //     cout << endl;
                     // }
+>>>>>>> c2f64830377e9b52eeead6749ba61fff2b33f302
 
                     switch( e.key.keysym.sym ){
                         case SDLK_SPACE:
@@ -643,12 +673,37 @@ int main(int argc, char** argv) {
                                         cout << "Vous êtes mort, veuillez réessayer" << endl;
                                         exit(5);
                                     }
+<<<<<<< HEAD
+                                }
+                                if(mm.cm.heroine.atTheEndOfTheDungeon(mm.invertMap)){
+                                    if(mm.level == 1)
+                                        mm.createMap("assets/maps/level2.txt");
+                                    else if(mm.level == 2)
+                                        mm.createMap("assets/maps/level5.txt");
+                                    else if(mm.level == 3)
+                                        mm.createMap("assets/maps/level4.txt");
+                                    else if(mm.level == 4){
+                                        mm.createMap("assets/maps/level5.txt");
+                                    }
+                                    else{
+                                        cout << "VOUS AVEZ GAGNE WOUHOUUUUUUUUUU" << endl;
+                                        exit(10);
+                                    }
+
+                                    Camera c2(mm.entrance.pos.pos_X, mm.entrance.pos.pos_Y);
+                                    c2.changeOrientation(mm.cm.heroine.pos.orientation);
+                                    c = c2;
+                                    fullAllVectors(mm, quadWall, quadGround, quadRoof, quadMonster, quadDoor, cubeObject);
+
+                                }                              
+=======
                                     cout << "il ne vous reste plus que : " << mm.cm.heroine.life << " pv" << endl;
                                 }     
                                 if(move == 2) {
                                     quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y));
                                     mm.invertMap.eraseDoor(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y);
                                 }                             
+>>>>>>> c2f64830377e9b52eeead6749ba61fff2b33f302
                             }
                             break;
                         case SDLK_DOWN:
@@ -690,6 +745,16 @@ int main(int argc, char** argv) {
                                     quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y));
                                     mm.invertMap.eraseDoor(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y);
                                 } 
+
+                                if(mm.cm.heroine.atTheEndOfTheDungeon(mm.invertMap)){
+                                    if(mm.level == 1){
+                                        mm.createMap("assets/maps/level2.txt");
+                                        Camera c2(mm.entrance.pos.pos_X, mm.entrance.pos.pos_Y);
+                                        c2.changeOrientation(mm.cm.heroine.pos.orientation);
+                                        c = c2;
+                                        fullAllVectors(mm, quadWall, quadGround, quadRoof, quadMonster, quadDoor, cubeObject);
+                                    }
+                                }
                             }
                             break;
 
