@@ -93,7 +93,7 @@ int Hero::movingForward(Map m){
 	return 0;
 }
 int Hero::movingBackward(Map m){
-	if(pos.orientation == nord && m.pixels[m.width*(pos.pos_Y-1) + pos.pos_X].type != wall){
+	if(pos.orientation == nord && m.pixels[m.width*(pos.pos_Y+1) + pos.pos_X].type != wall){
 		if(m.pixels[m.width*pos.pos_X + (pos.pos_Y-1)].type == door) {
 			if(!hasKey())
 				return 0;
@@ -111,7 +111,7 @@ int Hero::movingBackward(Map m){
 		}
 		return 1;
 	}
-	if(pos.orientation == sud && m.pixels[m.width*(pos.pos_Y+1) + pos.pos_X].type != wall){
+	if(pos.orientation == sud && m.pixels[m.width*(pos.pos_Y-1) + pos.pos_X].type != wall){
 		if(m.pixels[m.width*(pos.pos_X-1) + pos.pos_Y].type == door) {
 			if(!hasKey())
 				return 0;

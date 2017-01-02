@@ -120,8 +120,6 @@ std::vector<QuadInstance> remplirQuadMonster(std::vector<Monster> monsters, Map 
         Monster curr = monsters[i];
         
         if (curr.type == waste) {
-            cout << curr.posGraph.pos_X << " et " << curr.posGraph.pos_Y << endl;
-
             vectorQuadMonsters.push_back(newQuadVertical(float(curr.posGraph.pos_X)+0.5f, 0.f, float(curr.posGraph.pos_Y)));
             vectorQuadMonsters.push_back(newQuadVertical(float(curr.posGraph.pos_X)-0.5f, 0.f, float(curr.posGraph.pos_Y)));
             vectorQuadMonsters.push_back(newQuadHorizontal(float(curr.posGraph.pos_X), 0.f, float(curr.posGraph.pos_Y)-0.5f));
@@ -534,7 +532,7 @@ int main(int argc, char** argv) {
                     cm.moveAllMonsters();
                     quadMonster = remplirQuadMonster(cm.monsters, invertMap);
 
-                    cout << "___________________\n" << endl;
+                    /*cout << "___________________\n" << endl;
                     cout << "Je regarde vers " << cm.heroine.pos.orientation << endl;
                     cout << "Et ma position est (" << cm.heroine.pos.pos_X << ", " << cm.heroine.pos.pos_Y << ")" <<  endl;
                     cout << "Celle du monstre est (" << cm.monsters[0].pos.pos_X << ", " << cm.monsters[0].pos.pos_Y << ")" <<  endl;
@@ -545,6 +543,8 @@ int main(int argc, char** argv) {
                                 cout << "A";
                             else if(j == cm.monsters[0].pos.pos_Y && i == cm.monsters[0].pos.pos_X)
                                 cout << "H";
+                            else if(j == invertMap.objects[0].pos.pos_Y && i == invertMap.objects[0].pos.pos_X)
+                                cout << "Q";
                             else{
                                 if(invertMap.pixels[map.width*(j)+ i].type == getIn)
                                     cout << 8;
@@ -555,7 +555,7 @@ int main(int argc, char** argv) {
                             }
                         }
                         cout << endl;
-                    }
+                    }*/
 
                     switch( e.key.keysym.sym ){
                         case SDLK_LEFT: 
@@ -599,8 +599,12 @@ int main(int argc, char** argv) {
                                 }
                                 int indexObj = map.isObject(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y);
                                 if(indexObj != -1) {
+                                    cout << "YAYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY" << endl;
                                     cm.heroine.inven.objects.push_back(map.objects[indexObj]);
                                     cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
+                                    for(size_t i = 0; i<invertMap.objects.size(); i++){
+                                        cout << "Nous avons un objet dans la case : (" << invertMap.objects[i].pos.pos_X << ", " << invertMap.objects[i].pos.pos_Y << ")" << endl;
+                                    }
                                     map.objects.erase(map.objects.begin()+indexObj);
                                 }                              
                             }
@@ -640,7 +644,7 @@ int main(int argc, char** argv) {
                                 if(indexObj != -1) {
                                     cm.heroine.inven.objects.push_back(map.objects[indexObj]);
                                     cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
-                                    for(size_t i; i<invertMap.objects.size(); i++){
+                                    for(size_t i = 0; i<invertMap.objects.size(); i++){
                                         cout << "Nous avons un objet dans la case : (" << invertMap.objects[i].pos.pos_X << ", " << invertMap.objects[i].pos.pos_Y << ")" << endl;
                                     }
                                     map.objects.erase(map.objects.begin()+indexObj);
