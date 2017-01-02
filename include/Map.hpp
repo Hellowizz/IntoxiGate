@@ -40,4 +40,6 @@ class Map {
 		Square getEntrance();
 		int isObject(float x, float y);
 
+		~Map();
+
 };

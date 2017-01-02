@@ -85,11 +85,8 @@ void Map::loadObject(string line) {
 	obj.texture = stoi(tmp);
 	tmp = "";
 
-	cout << "pk la seg fault1" << endl;
 	Position graph(7,5);
-	cout << "pk la seg fault2" << endl;
 	obj.posGraph = graph;
-	cout << "pk la seg fault3" << endl;
 
 	objects.push_back(obj);
 }
@@ -234,7 +231,9 @@ void Map::loadMap(string fileName) {
 			cout << "je lis" << line[i] << endl; //#WTF
 			i++;
 		}
-		height = 9;
+		//height = 20;
+		height = stoi(tmp);
+		tmp = "";
 
 		pixels.resize(width*height);
 
@@ -253,7 +252,7 @@ void Map::loadMap(string fileName) {
 				getline(file, line);
 				col.append(line);
 				col.append(",");
-				getline(file, line);
+				getline(file, line); 
 				col.append(line);
 				
 				if(col.compare("0,0,0") == 0)
@@ -343,3 +342,5 @@ int Map::isObject(float x, float y) {
 	}
 	return -1;
 }
+
+Map::~Map(){}
