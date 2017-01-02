@@ -8,7 +8,6 @@ CharacterManager::CharacterManager(){}
 
 bool CharacterManager::monsterForward(){
 	for(size_t i=0; i<monsters.size(); i++){
-		cout << "voici les coordonnées de la poubelle : " << monsters[i].pos.pos_X << ", " << monsters[i].pos.pos_Y << endl;
 		if(heroine.pos.orientation == nord && heroine.pos.pos_X == monsters[i].pos.pos_X && heroine.pos.pos_Y-1 == monsters[i].pos.pos_Y){
 			return true;
 		}

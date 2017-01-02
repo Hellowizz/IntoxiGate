@@ -120,8 +120,6 @@ std::vector<QuadInstance> remplirQuadMonster(std::vector<Monster> monsters, Map 
         Monster curr = monsters[i];
         
         if (curr.type == waste) {
-            cout << curr.posGraph.pos_X << " et " << curr.posGraph.pos_Y << endl;
-
             vectorQuadMonsters.push_back(newQuadVertical(float(curr.posGraph.pos_X)+0.5f, 0.f, float(curr.posGraph.pos_Y)));
             vectorQuadMonsters.push_back(newQuadVertical(float(curr.posGraph.pos_X)-0.5f, 0.f, float(curr.posGraph.pos_Y)));
             vectorQuadMonsters.push_back(newQuadHorizontal(float(curr.posGraph.pos_X), 0.f, float(curr.posGraph.pos_Y)-0.5f));
@@ -546,6 +544,8 @@ int main(int argc, char** argv) {
                                 cout << "A";
                             else if(j == cm.monsters[0].pos.pos_Y && i == cm.monsters[0].pos.pos_X)
                                 cout << "H";
+                            else if(j == invertMap.objects[0].pos.pos_Y && i == invertMap.objects[0].pos.pos_X)
+                                cout << "Q";
                             else{
                                 if(invertMap.pixels[map.width*(j)+ i].type == getIn)
                                     cout << 8;
@@ -570,7 +570,7 @@ int main(int argc, char** argv) {
                             c.angle -= M_PI/2.f;
                             break;
                         case SDLK_UP:
-                            move = cm.heroine.movingForward(map);
+                            move = cm.heroine.movingForward(invertMap);
                             if(move && !cm.monsterForward()){
                                 if(cm.heroine.pos.orientation == 0){
                                     cm.heroine.pos.pos_Y -= 1.f;
@@ -605,12 +605,15 @@ int main(int argc, char** argv) {
                                     cout << "j'ai chopé la clé !" << endl;
                                     cm.heroine.inven.objects.push_back(map.objects[indexObj]);
                                     cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
+                                    for(size_t i = 0; i<invertMap.objects.size(); i++){
+                                        cout << "Nous avons un objet dans la case : (" << invertMap.objects[i].pos.pos_X << ", " << invertMap.objects[i].pos.pos_Y << ")" << endl;
+                                    }
                                     map.objects.erase(map.objects.begin()+indexObj);
                                 }                              
                             }
                             break;
                         case SDLK_DOWN:
-                            move = cm.heroine.movingBackward(map);
+                            move = cm.heroine.movingBackward(invertMap);
                             if(move && !cm.monsterBackward()){
                                 if(cm.heroine.pos.orientation == 0){
                                     cm.heroine.pos.pos_Y += 1.f;
@@ -645,6 +648,9 @@ int main(int argc, char** argv) {
                                     cout << "j'ai chopé la clé !" << endl;
                                     cm.heroine.inven.objects.push_back(map.objects[indexObj]);
                                     cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
+                                    for(size_t i = 0; i<invertMap.objects.size(); i++){
+                                        cout << "Nous avons un objet dans la case : (" << invertMap.objects[i].pos.pos_X << ", " << invertMap.objects[i].pos.pos_Y << ")" << endl;
+                                    }
                                     map.objects.erase(map.objects.begin()+indexObj);
                                 } 
                             }

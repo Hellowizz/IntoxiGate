@@ -84,6 +84,12 @@ void Map::loadObject(string line) {
 	obj.texture = stoi(tmp);
 	tmp = "";
 
+	cout << "pk la seg fault1" << endl;
+	//Position graph(7,5);
+	cout << "pk la seg fault2" << endl;
+	//obj.posGraph = graph;
+	cout << "pk la seg fault3" << endl;
+
 	objects.push_back(obj);
 }
 
