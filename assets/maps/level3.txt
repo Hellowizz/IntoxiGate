@@ -1,0 +1,4 @@
+#Level 3
+./assets/maps/levels/level3.ppm
+0
+0
