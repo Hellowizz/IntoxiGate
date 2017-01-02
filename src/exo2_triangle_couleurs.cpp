@@ -438,9 +438,13 @@ int main(int argc, char** argv) {
 
     CharacterManager cm;
     std::vector<Monster> m;
+    cout << "Je suis passé par ici 1" << endl;
     Hero h;
+    cout << "Je suis passé par ici 2" << endl;
     cm.heroine = h;
+    cout << "Je suis passé par ici 3" << endl;
     cm.monsters = m;
+    cout << "Je suis passé par ici 4" << endl;
 
     Map invertMap = map.invert();
     entrance = invertMap.getEntrance();
