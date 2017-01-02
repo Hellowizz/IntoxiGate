@@ -8,9 +8,8 @@
 #include <string>
 
 
-#include <Map.hpp>
+#include <MapManager.hpp>
 #include <Waste.hpp>
-#include <CharacterManager.hpp>
 
 // export MESA_GL_VERSION_OVERRIDE=3.30
 
@@ -185,16 +184,81 @@ int getIndexMonster(float x, float y, int orientation, Map map) {
     return map.monsters.size();
 }
 
+void fullAllVectors(MapManager mm, vector<QuadInstance> &quadWall, std::vector<QuadInstance> &quadGround, std::vector<QuadInstance> &quadRoof, std::vector<QuadInstance> &quadMonster, std::vector<QuadInstance> &quadDoor, std::vector<CubeInstance> &cubeObject){
+    
+    quadWall.clear();
+    quadGround.clear();
+    quadRoof.clear();
+    quadMonster.clear();
+    quadDoor.clear();
+    cubeObject.clear();
+
+    quadMonster = remplirQuadMonster(mm.cm.monsters, mm.invertMap);
+
+    for(int i = 1; i < mm.map.width-1; i++)
+        for(int j = 1; j < mm.map.height-1; j++) {
+            Square curr = mm.map.pixels[mm.map.width*j + i];
+
+            if(curr.type == hall || curr.type == getIn || curr.type == getOut || curr.type == door){
+                quadGround.push_back(QuadInstance(float(curr.pos.pos_X), -0.5f, float(curr.pos.pos_Y), M_PI/2.f, 0));
+                quadRoof.push_back(QuadInstance(float(curr.pos.pos_X), 0.5f, float(curr.pos.pos_Y), M_PI/2.f, 0));
+            }
+
+            if(curr.type != wall){
+
+                if(mm.map.pixels[mm.map.width*(j+1)+ i].type == wall){
+                    quadWall.push_back(newQuadVertical(float(curr.pos.pos_X)+0.5f, 0.f, float(curr.pos.pos_Y)));
+                }
+
+                if(mm.map.pixels[mm.map.width*(j+1)+ i].type == door){
+                    quadDoor.push_back(newQuadVertical(float(curr.pos.pos_X)+0.5f, 0.f, float(curr.pos.pos_Y)));
+                }
+
+                if(mm.map.pixels[mm.map.width*j + (i-1)].type == wall){
+                    quadWall.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)-0.5f));
+                }
+
+                if(mm.map.pixels[mm.map.width*j + (i-1)].type == door){
+                    quadDoor.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)-0.5f));
+                }
+
+                if(mm.map.pixels[mm.map.width*(j-1) + i].type == wall){
+                    quadWall.push_back(newQuadVertical(float(curr.pos.pos_X)-0.5f, 0.f, float(curr.pos.pos_Y)));
+                }
+
+                if(mm.map.pixels[mm.map.width*(j-1) + i].type == door){
+                    quadDoor.push_back(newQuadVertical(float(curr.pos.pos_X)-0.5f, 0.f, float(curr.pos.pos_Y)));
+                }
+
+                if(mm.map.pixels[mm.map.width*j + (i+1)].type == wall){
+                    quadWall.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)+0.5f));
+                }
+
+                if(mm.map.pixels[mm.map.width*j + (i+1)].type == door){
+                    quadDoor.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)+0.5f));
+                }
+                
+            }
+        }
+
+        for(unsigned int i = 0; i < mm.map.objects.size(); i++) {
+            cubeObject.push_back(CubeInstance(mm.map.objects[i].posGraph.pos_X, 0.f, mm.map.objects[i].posGraph.pos_Y, mm.map.objects[i].texture));
+        }
+}
+
 int main(int argc, char** argv) {
     // initialize SDL and open a window
-    SDLWindowManager windowManager(WIDTH, HEIGHT, "Meilleur jeu du monde");
+    SDLWindowManager windowManager(WIDTH, HEIGHT, "IntoxiGate");
 
     // création & initialisation d'une map
-    //cout << "OHEEEEEEEEEEE" <<  endl;
-    Map map = Map();
+    /*Map mapCreate = Map();
+    mapCreate.loadMap("level1.txt");
+    mm.map = mapCreate;*/
 
-    map.loadMap("assets/maps/level1.txt");  
+    MapManager mm;
+    mm.createMap("assets/maps/level1.txt"); 
 
+    cout << "Voici ma position : (" << mm.cm.heroine.pos.pos_X << ", " << mm.cm.heroine.pos.pos_Y << ")" <<  endl;
 
     // initialize glew for OpenGL3+ support
     GLenum glewInitError = glewInit();
@@ -448,88 +512,38 @@ int main(int argc, char** argv) {
 
         //INITIALISATIONS
 
-    Square entrance = map.getEntrance();
-    Camera c(entrance.pos.pos_X, entrance.pos.pos_Y);
+   
+    /*entrance = map.getEntrance();
 
+<<<<<<< HEAD:src/exo2_triangle_couleurs.cpp
     CharacterManager cm;
     std::vector<Monster> m;
     Hero h;
     cm.heroine = h;
     cm.monsters = m;
+=======
+    cm = CharacterManager();
+    cm.heroine = Hero();
+>>>>>>> b400770e0ed7b81297ff35814cadfffc81ca7cb8:src/main.cpp
 
-    Map invertMap = map.invert();
-    entrance = invertMap.getEntrance();
-    cm.heroine.putPos(entrance.pos);
+    invertMap = map.invert();
+    entranceInvert = invertMap.getEntrance();
+    cm.heroine.putPos(entranceInvert.pos);
 
     Waste poubelle;
     poubelle.type = waste;
     poubelle.pos.pos_X = 5;
-    poubelle.pos.pos_Y = 4;
-    poubelle.posGraph.pos_X = 4;
+    poubelle.pos.pos_Y = 9;
+    poubelle.posGraph.pos_X = 1;
     poubelle.posGraph.pos_Y = 9;
-
-        //POSITIONS GRAPHIQUE KEY
-    //invertMap.objects[0].pos.pos_X = 5;
-    //invertMap.objects[0].pos.pos_Y = 7;
-
-    cout << "La position de la clef est : " << invertMap.objects[0].pos.pos_X << " et " << invertMap.objects[0].pos.pos_Y << endl;
-
     cm.monsters.push_back(poubelle);
+    cm.heroine.changeOrientation(invertMap)*/
 
-
-    cm.heroine.changeOrientation(invertMap);
-    c.changeOrientation(cm.heroine.pos.orientation);
+    Camera c(mm.entrance.pos.pos_X, mm.entrance.pos.pos_Y);
+    c.changeOrientation(mm.cm.heroine.pos.orientation);
 
         //REMPLISSAGE DES VECTEURS DE QUADS
-
-    quadMonster = remplirQuadMonster(cm.monsters, invertMap);
-
-    for(int i = 1; i < map.width-1; i++)
-        for(int j = 1; j < map.height-1; j++) {
-            Square curr = map.pixels[map.width*j + i];
-
-            if(curr.type == hall || curr.type == getIn || curr.type == getOut || curr.type == door){
-                quadGround.push_back(QuadInstance(float(curr.pos.pos_X), -0.5f, float(curr.pos.pos_Y), M_PI/2.f, 0));
-                quadRoof.push_back(QuadInstance(float(curr.pos.pos_X), 0.5f, float(curr.pos.pos_Y), M_PI/2.f, 0));
-            }
-
-            if(curr.type == acid) {
-                quadAcid.push_back(QuadInstance(float(curr.pos.pos_X), -0.5f, float(curr.pos.pos_Y), M_PI/2.f, 0));
-                quadRoof.push_back(QuadInstance(float(curr.pos.pos_X), 0.5f, float(curr.pos.pos_Y), M_PI/2.f, 0));
-            }
-
-            if(curr.type != wall){
-
-                if(map.pixels[map.width*(j+1)+ i].type == wall){
-                    quadWall.push_back(newQuadVertical(float(curr.pos.pos_X)+0.5f, 0.f, float(curr.pos.pos_Y)));
-                }
-
-                if(map.pixels[map.width*(j+1)+ i].type == door){
-                    quadDoor.push_back(newQuadVertical(float(curr.pos.pos_X)+0.5f, 0.f, float(curr.pos.pos_Y)));
-                }
-
-                if(map.pixels[map.width*j + (i-1)].type == wall){
-                    quadWall.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)-0.5f));
-                }
-
-                if(map.pixels[map.width*(j-1) + i].type == wall){
-                    quadWall.push_back(newQuadVertical(float(curr.pos.pos_X)-0.5f, 0.f, float(curr.pos.pos_Y)));
-                }
-
-                if(map.pixels[map.width*j + (i+1)].type == wall){
-                    quadWall.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)+0.5f));
-                }
-
-                if(map.pixels[map.width*j + (i+1)].type == door){
-                    quadDoor.push_back(newQuadHorizontal(float(curr.pos.pos_X), 0.f, float(curr.pos.pos_Y)+0.5f));
-                }
-                
-            }
-        }
-
-        for(unsigned int i = 0; i < map.objects.size(); i++) {
-            cubeObject.push_back(CubeInstance(map.objects[i].posGraph.pos_X, 0.f, map.objects[i].posGraph.pos_Y, map.objects[i].texture));
-        }
+    fullAllVectors(mm, quadWall, quadGround, quadRoof, quadMonster, quadDoor, cubeObject);
 
     /* END INITIALIZATION CODE */
 
@@ -548,30 +562,39 @@ int main(int argc, char** argv) {
 
                 /* Pass the event data onto PrintKeyInfo() */
                 case SDL_KEYDOWN:
-                    cm.monstersAttack();
-                    cm.moveAllMonsters();
-                    quadMonster = remplirQuadMonster(cm.monsters, invertMap);
+                    mm.cm.monstersAttack();
+                    mm.cm.moveAllMonsters();
+                    quadMonster = remplirQuadMonster(mm.cm.monsters, mm.invertMap);
 
+                    if(mm.cm.heroine.atTheEndOfTheDungeon(mm.invertMap)){
+                        if(mm.level == 1){
+                            mm.createMap("assets/maps/level2.txt");
+                            Camera c2(mm.entrance.pos.pos_X, mm.entrance.pos.pos_Y);
+                            c2.changeOrientation(mm.cm.heroine.pos.orientation);
+                            c = c2;
+                            fullAllVectors(mm, quadWall, quadGround, quadRoof, quadMonster, quadDoor, cubeObject);
+                        }
+                    }
                     // cout << "___________________\n" << endl;
-                    // cout << "Je regarde vers " << cm.heroine.pos.orientation << endl;
-                    // cout << "Et ma position est (" << cm.heroine.pos.pos_X << ", " << cm.heroine.pos.pos_Y << ")" <<  endl;
-                    // cout << "Celle du monstre est (" << cm.monsters[0].pos.pos_X << ", " << cm.monsters[0].pos.pos_Y << ")" <<  endl;
-                    // cout << "Cette case est" << invertMap.pixels[invertMap.width*cm.heroine.pos.pos_Y + (cm.heroine.pos.pos_X-1)].type << endl; 
+                    // cout << "Je regarde vers " << mm.cm.heroine.pos.orientation << endl;
+                    // cout << "Et ma position est (" << mm.cm.heroine.pos.pos_X << ", " << mm.cm.heroine.pos.pos_Y << ")" <<  endl;
+                    // cout << "Celle du monstre est (" << mm.cm.monsters[0].pos.pos_X << ", " << mm.cm.monsters[0].pos.pos_Y << ")" <<  endl;
+                    // cout << "Cette case est" << mm.invertMap.pixels[mm.invertMap.width*mm.cm.heroine.pos.pos_Y + (mm.cm.heroine.pos.pos_X-1)].type << endl; 
 
-                    // for(int j = 0; j<invertMap.height; j++){
-                    //     for(int i = 0; i<invertMap.width; i++){
-                    //         if(j == cm.heroine.pos.pos_Y && i == cm.heroine.pos.pos_X)
+                    // for(int j = 0; j<mm.invertMap.height; j++){
+                    //     for(int i = 0; i<mm.invertMap.width; i++){
+                    //         if(j == mm.cm.heroine.pos.pos_Y && i == mm.cm.heroine.pos.pos_X)
                     //             cout << "A";
-                    //         else if(j == cm.monsters[0].pos.pos_Y && i == cm.monsters[0].pos.pos_X)
+                    //         else if(j == mm.cm.monsters[0].pos.pos_Y && i == mm.cm.monsters[0].pos.pos_X)
                     //             cout << "H";
-                    //         else if(j == invertMap.objects[0].pos.pos_Y && i == invertMap.objects[0].pos.pos_X)
+                    //         else if(j == mm.invertMap.objects[0].pos.pos_Y && i == mm.invertMap.objects[0].pos.pos_X)
                     //             cout << "Q";
                     //         else{
-                    //             if(invertMap.pixels[map.width*(j)+ i].type == getIn)
+                    //             if(mm.invertMap.pixels[mm.invertMap.width*(j)+ i].type == getIn)
                     //                 cout << 8;
-                    //             else if(invertMap.pixels[invertMap.width*(j)+ i].type == wall)
+                    //             else if(mm.invertMap.pixels[mm.invertMap.width*(j)+ i].type == wall)
                     //                 cout << 1;
-                    //             else if(invertMap.pixels[invertMap.width*(j)+ i].type == door)
+                    //             else if(mm.invertMap.pixels[mm.invertMap.width*(j)+ i].type == door)
                     //                 cout << 7;
                     //             else
                     //                  cout << 0;
@@ -582,87 +605,86 @@ int main(int argc, char** argv) {
 
                     switch( e.key.keysym.sym ){
                         case SDLK_LEFT: 
-                            cm.heroine.pos.orientation = (cm.heroine.pos.orientation + 3) % 4;
+                            mm.cm.heroine.pos.orientation = (mm.cm.heroine.pos.orientation + 3) % 4;
                             c.angle += M_PI/2.f;
                             break;
                         case SDLK_RIGHT:
-                            cm.heroine.pos.orientation = (cm.heroine.pos.orientation + 1) % 4;
+                            mm.cm.heroine.pos.orientation = (mm.cm.heroine.pos.orientation + 1) % 4;
                             c.angle -= M_PI/2.f;
                             break;
                         case SDLK_UP:
-                            move = cm.heroine.movingForward(invertMap);
-                            if(move && !cm.monsterForward()){
-                                if(cm.heroine.pos.orientation == 0){
-                                    cm.heroine.pos.pos_Y -= 1.f;
+                            move = mm.cm.heroine.movingForward(mm.invertMap);
+                            if(move && !mm.cm.monsterForward()){
+                                if(mm.cm.heroine.pos.orientation == 0){
+                                    mm.cm.heroine.pos.pos_Y -= 1.f;
                                     c.position.x += 1.f;
-                                }
-                                else if(cm.heroine.pos.orientation == 1){
-                                    cm.heroine.pos.pos_X -= 1.f;
+                                else if(mm.cm.heroine.pos.orientation == 1){
+                                    mm.cm.heroine.pos.pos_X -= 1.f;
                                     c.position.z += 1.f;
-                                }
-                                else if(cm.heroine.pos.orientation == 2){
-                                    cm.heroine.pos.pos_Y += 1.f;
+                                else if(mm.cm.heroine.pos.orientation == 2){
+                                    mm.cm.heroine.pos.pos_Y += 1.f;
                                     c.position.x -= 1.f;
-                                }
-                                else if(cm.heroine.pos.orientation == 3){
-                                    cm.heroine.pos.pos_X += 1.f;
+                                else if(mm.cm.heroine.pos.orientation == 3){
+                                    mm.cm.heroine.pos.pos_X += 1.f;
                                     c.position.z -= 1.f;
-                                }
 
-                                if(move == 2) {
-                                    quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
-                                    invertMap.eraseDoor(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y);
-                                }
-
-                                int indexObj = invertMap.isObject(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y);
+                                int indexObj = mm.invertMap.isObject(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y);
                                 if(indexObj != -1) {
                                     cm.heroine.inven.objects.push_back(map.objects[indexObj]);
                                     cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
                                     map.objects.erase(map.objects.begin()+indexObj);
                                 } 
-                                if(invertMap.isAcid(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y)) {
+                                if(mm.invertMap.isAcid(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y)) {
                                     cm.heroine.looseLife(10);
                                     if(cm.heroine.life <= 0){
                                         cout << "Vous êtes mort, veuillez réessayer" << endl;
                                         exit(5);
                                     }
                                     cout << "il ne vous reste plus que : " << cm.heroine.life << " pv" << endl;
-                                }                             
+                                }     
+                                    if(move == 2) {
+                                        quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y));
+                                    }
+                                }
+                                int indexObj = mm.invertMap.isObject(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y);
+                                if(indexObj != -1) {
+                                    cout << "j'ai chopé la clé !" << endl;
+                                    mm.cm.heroine.inven.objects.push_back(mm.invertMap.objects[indexObj]);
+                                    cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y));
+                                    mm.invertMap.objects.erase(mm.invertMap.objects.begin()+indexObj);
+                                    for(size_t i = 0; i<mm.invertMap.objects.size(); i++){
+                                        cout << "Nous avons un objet dans la case : (" << mm.invertMap.objects[i].pos.pos_X << ", " << mm.invertMap.objects[i].pos.pos_Y << ")" << endl;
+                                    }
+                                }                              
                             }
                             break;
                         case SDLK_DOWN:
-                            move = cm.heroine.movingBackward(invertMap);
-                            if(move && !cm.monsterBackward()){
-                                if(cm.heroine.pos.orientation == 0){
-                                    cm.heroine.pos.pos_Y += 1.f;
+                            move = mm.cm.heroine.movingBackward(mm.invertMap);
+                            if(move && !mm.cm.monsterBackward()){
+                                if(mm.cm.heroine.pos.orientation == 0){
+                                    mm.cm.heroine.pos.pos_Y += 1.f;
                                     c.position.x -= 1.f;
                                 }
-                                else if(cm.heroine.pos.orientation == 1){
-                                    cm.heroine.pos.pos_X += 1.f;
+                                else if(mm.cm.heroine.pos.orientation == 1){
+                                    mm.cm.heroine.pos.pos_X += 1.f;
                                     c.position.z -= 1.f;
                                 }
-                                else if(cm.heroine.pos.orientation == 2){
-                                    cm.heroine.pos.pos_Y -= 1.f;
+                                else if(mm.cm.heroine.pos.orientation == 2){
+                                    mm.cm.heroine.pos.pos_Y -= 1.f;
                                     c.position.x += 1.f;
                                 }
-                                else if(cm.heroine.pos.orientation == 3){
-                                    cm.heroine.pos.pos_X -= 1.f;
+                                else if(mm.cm.heroine.pos.orientation == 3){
+                                    mm.cm.heroine.pos.pos_X -= 1.f;
                                     c.position.z += 1.f;
-                                }
 
-                                if(move == 2) {
-                                    quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
-                                    invertMap.eraseDoor(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y);
-                                }
-
-                                int indexObj = invertMap.isObject(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y);
+                                int indexObj = mm.invertMap.isObject(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y);
                                 if(indexObj != -1) {
                                     cm.heroine.inven.objects.push_back(map.objects[indexObj]);
                                     cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
                                     map.objects.erase(map.objects.begin()+indexObj);
                                 }
 
-                                if(invertMap.isAcid(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y)) {
+                                if(mm.invertMap.isAcid(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y)) {
                                     cm.heroine.looseLife(10);
                                     if(cm.heroine.life <= 0){
                                         cout << "Vous êtes mort, veuillez réessayer" << endl;
@@ -670,6 +692,20 @@ int main(int argc, char** argv) {
                                     }
                                     cout << "il ne vous reste plus que : " << cm.heroine.life << " pv" << endl;
                                 }  
+                                    if(move == 2) {
+                                        quadDoor.erase(quadDoor.begin()+getIndexQuad(quadDoor, mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y));
+                                    }
+                                }
+                                int indexObj = mm.invertMap.isObject(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y);
+                                if(indexObj != -1) {
+                                    cout << "j'ai chopé la clé !" << endl;
+                                    mm.cm.heroine.inven.objects.push_back(mm.invertMap.objects[indexObj]);
+                                    cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y));
+                                    for(size_t i = 0; i<mm.invertMap.objects.size(); i++){
+                                        cout << "Nous avons un objet dans la case : (" << mm.invertMap.objects[i].pos.pos_X << ", " << mm.invertMap.objects[i].pos.pos_Y << ")" << endl;
+                                    }
+                                    mm.invertMap.objects.erase(mm.invertMap.objects.begin()+indexObj);
+                                } 
                             }
                             break;
                         case SDLK_SPACE:

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Position.hpp>
 #include <Character.hpp>
 #include <Weapon.hpp>
 #include <Inventory.hpp>
@@ -22,6 +21,8 @@ public:
 	void looseLife(int pain);
 	void gainExp(int exp);
 	void lvlUp();
+	void changeDungeon(Map m);
+	bool atTheEndOfTheDungeon(Map m);
 	void changeOrientation(Map m);
 	int movingForward(Map m);
 	int movingBackward(Map m);

@@ -34,6 +34,12 @@ void Hero::lvlUp(){
 	upLife(20);
 }
 
+bool Hero::atTheEndOfTheDungeon(Map m){
+	if(m.pixels[m.width*pos.pos_Y + (pos.pos_X)].type == getOut)
+		return true;
+	return false;
+}
+
 void Hero::changeOrientation(Map m){
 
 	if(m.pixels[m.width*pos.pos_Y + (pos.pos_X+1)].type == hall){

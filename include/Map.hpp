@@ -42,4 +42,6 @@ class Map {
 		bool isAcid(float x, float y);
 		void eraseDoor(float x, float y);
 
+		~Map();
+
 };

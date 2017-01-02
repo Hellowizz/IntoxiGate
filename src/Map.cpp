@@ -110,6 +110,12 @@ void Map::loadObject(string line) {
 	obj.texture = stoi(tmp);
 	tmp = "";
 
+<<<<<<< HEAD
+=======
+	Position graph(7,5);
+	obj.posGraph = graph;
+
+>>>>>>> b400770e0ed7b81297ff35814cadfffc81ca7cb8
 	objects.push_back(obj);
 }
 
@@ -272,7 +278,7 @@ void Map::loadMap(string fileName) {
 				getline(file, line);
 				col.append(line);
 				col.append(",");
-				getline(file, line);
+				getline(file, line); 
 				col.append(line);
 				
 				if(col.compare("0,0,0") == 0)
@@ -375,3 +381,5 @@ void Map::eraseDoor(float x, float y) {
 			pixels[i].type = hall;
 	}
 }
+
+Map::~Map(){}
