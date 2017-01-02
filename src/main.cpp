@@ -535,33 +535,33 @@ int main(int argc, char** argv) {
                     mm.cm.moveAllMonsters();
                     quadMonster = remplirQuadMonster(mm.cm.monsters, mm.invertMap);
 
-                    // cout << "___________________\n" << endl;
-                    // cout << "Je regarde vers " << mm.cm.heroine.pos.orientation << endl;
-                    // cout << "Et ma position est (" << mm.cm.heroine.pos.pos_X << ", " << mm.cm.heroine.pos.pos_Y << ")" <<  endl;
-                    // cout << "Celle du monstre est (" << mm.cm.monsters[0].pos.pos_X << ", " << mm.cm.monsters[0].pos.pos_Y << ")" <<  endl;
-                    // cout << "Cette case est" << mm.invertMap.pixels[mm.invertMap.width*mm.cm.heroine.pos.pos_Y + (mm.cm.heroine.pos.pos_X-1)].type << endl; 
+                    cout << "___________________\n" << endl;
+                    cout << "Je regarde vers " << mm.cm.heroine.pos.orientation << endl;
+                    cout << "Et ma position est (" << mm.cm.heroine.pos.pos_X << ", " << mm.cm.heroine.pos.pos_Y << ")" <<  endl;
+                    cout << "Celle du monstre est (" << mm.cm.monsters[0].pos.pos_X << ", " << mm.cm.monsters[0].pos.pos_Y << ")" <<  endl;
+                    cout << "Cette case est" << mm.invertMap.pixels[mm.invertMap.width*mm.cm.heroine.pos.pos_Y + (mm.cm.heroine.pos.pos_X-1)].type << endl; 
 
-                    // for(int j = 0; j<mm.invertMap.height; j++){
-                    //     for(int i = 0; i<mm.invertMap.width; i++){
-                    //         if(j == mm.cm.heroine.pos.pos_Y && i == mm.cm.heroine.pos.pos_X)
-                    //             cout << "A";
-                    //         else if(j == mm.cm.monsters[0].pos.pos_Y && i == mm.cm.monsters[0].pos.pos_X)
-                    //             cout << "H";
-                    //         else if(j == mm.invertMap.objects[0].pos.pos_Y && i == mm.invertMap.objects[0].pos.pos_X)
-                    //             cout << "Q";
-                    //         else{
-                    //             if(mm.invertMap.pixels[mm.invertMap.width*(j)+ i].type == getIn)
-                    //                 cout << 8;
-                    //             else if(mm.invertMap.pixels[mm.invertMap.width*(j)+ i].type == wall)
-                    //                 cout << 1;
-                    //             else if(mm.invertMap.pixels[mm.invertMap.width*(j)+ i].type == door)
-                    //                 cout << 7;
-                    //             else
-                    //                  cout << 0;
-                    //         }
-                    //     }
-                    //     cout << endl;
-                    // }
+                    for(int j = 0; j<mm.invertMap.height; j++){
+                        for(int i = 0; i<mm.invertMap.width; i++){
+                            if(j == mm.cm.heroine.pos.pos_Y && i == mm.cm.heroine.pos.pos_X)
+                                cout << "A";
+                            else if(j == mm.cm.monsters[0].pos.pos_Y && i == mm.cm.monsters[0].pos.pos_X)
+                                cout << "H";
+                            else if(j == mm.invertMap.objects[0].pos.pos_Y && i == mm.invertMap.objects[0].pos.pos_X)
+                                cout << "Q";
+                            else{
+                                if(mm.invertMap.pixels[mm.invertMap.width*(j)+ i].type == getIn)
+                                    cout << 8;
+                                else if(mm.invertMap.pixels[mm.invertMap.width*(j)+ i].type == wall)
+                                    cout << 1;
+                                else if(mm.invertMap.pixels[mm.invertMap.width*(j)+ i].type == door)
+                                    cout << 7;
+                                else
+                                     cout << 0;
+                            }
+                        }
+                        cout << endl;
+                    }
 
                     switch( e.key.keysym.sym ){
                         case SDLK_SPACE:

@@ -33,7 +33,7 @@ void Map::loadObject(string line) {
 
 	switch(type) {
 		case 1:
-			obj = Weapon();
+			obj = Life();
 			break;
 
 		case 2:
