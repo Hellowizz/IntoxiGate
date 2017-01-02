@@ -534,10 +534,11 @@ int main(int argc, char** argv) {
                     cm.moveAllMonsters();
                     quadMonster = remplirQuadMonster(cm.monsters, invertMap);
 
-                    cout << "___________________\n" << endl;
+                    /*cout << "___________________\n" << endl;
                     cout << "Je regarde vers " << cm.heroine.pos.orientation << endl;
                     cout << "Et ma position est (" << cm.heroine.pos.pos_X << ", " << cm.heroine.pos.pos_Y << ")" <<  endl;
                     cout << "Celle du monstre est (" << cm.monsters[0].pos.pos_X << ", " << cm.monsters[0].pos.pos_Y << ")" <<  endl;
+                    cout << "Cette case est" << invertMap.pixels[invertMap.width*cm.heroine.pos.pos_Y + (cm.heroine.pos.pos_X-1)].type << endl; 
 
                     for(int j = 0; j<invertMap.height; j++){
                         for(int i = 0; i<invertMap.width; i++){
@@ -550,12 +551,14 @@ int main(int argc, char** argv) {
                                     cout << 8;
                                 else if(invertMap.pixels[invertMap.width*(j)+ i].type == wall)
                                     cout << 1;
+                                else if(invertMap.pixels[invertMap.width*(j)+ i].type == door)
+                                    cout << 7;
                                 else
                                      cout << 0;
                             }
                         }
                         cout << endl;
-                    }
+                    }*/
 
                     switch( e.key.keysym.sym ){
                         case SDLK_LEFT: 
@@ -599,6 +602,7 @@ int main(int argc, char** argv) {
                                 }
                                 int indexObj = map.isObject(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y);
                                 if(indexObj != -1) {
+                                    cout << "j'ai chopé la clé !" << endl;
                                     cm.heroine.inven.objects.push_back(map.objects[indexObj]);
                                     cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
                                     map.objects.erase(map.objects.begin()+indexObj);
@@ -638,6 +642,7 @@ int main(int argc, char** argv) {
                                 }
                                 int indexObj = map.isObject(cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y);
                                 if(indexObj != -1) {
+                                    cout << "j'ai chopé la clé !" << endl;
                                     cm.heroine.inven.objects.push_back(map.objects[indexObj]);
                                     cubeObject.erase(cubeObject.begin()+getIndexCube(cubeObject, cm.heroine.pos.pos_X, cm.heroine.pos.pos_Y));
                                     map.objects.erase(map.objects.begin()+indexObj);
