@@ -80,14 +80,13 @@ int CharacterManager::heroAttack(){
 				break;
 			}
 		}
-	}
-	
-	if(attack) {
-		monsters[i].looseLife(heroine.attack);
-		cout << "Le monstre n'a plus que " << monsters[i].life << " pv" << endl;
-		return heroine.pos.orientation;
-	}
 
+		if(attack) {
+			monsters[i].looseLife(heroine.attack);
+			cout << "Le monstre n'a plus que " << monsters[i].life << " pv" << endl;
+			return heroine.pos.orientation;
+		}
+	}
 	return -1;
 }
 
