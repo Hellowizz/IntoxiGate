@@ -11,7 +11,6 @@ void MapManager::createMap(string name){
 	level++;
 
 	Map mapCreate = Map();
-	cout<< "ON VA CREER LA MAP..." << endl;
     mapCreate.loadMap(name);
     map = mapCreate;  
     entrance = map.getEntrance();
@@ -27,8 +26,6 @@ void MapManager::createMap(string name){
         cm.monsters.push_back(map.monsters[i]);
     }
     cm.heroine.changeOrientation(invertMap);
-
-    cout << "Voici ma position : (" << cm.heroine.pos.pos_X << ", " << cm.heroine.pos.pos_Y << ")" <<  endl;
 	
 }
 

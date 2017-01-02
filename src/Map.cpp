@@ -33,7 +33,7 @@ void Map::loadObject(string line) {
 
 	switch(type) {
 		case 1:
-			obj = Weapon();
+			obj = Life();
 			break;
 
 		case 2:
@@ -229,7 +229,6 @@ void Map::loadMap(string fileName) {
 		nbObj = stoi(line);
 
 		for(i = 0; i < nbObj; i++) {
-			cout<< "PALAPAPAPA : " << i << endl;
 			getline(file, line);
 			loadObject(line);
 		}

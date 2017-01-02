@@ -6,6 +6,7 @@
 #include <glimac/Image.hpp>
 #include <vector>
 #include <string>
+#include <SDL/SDL_ttf.h>
 
 
 #include <MapManager.hpp>
@@ -181,7 +182,7 @@ std::vector<QuadInstance> remplirQuadMonster(std::vector<Monster> monsters, Map 
     return vectorQuadMonsters;
 }
 
-void fullAllVectors(MapManager mm, vector<QuadInstance> &quadAcid, vector<QuadInstance> &quadWall, std::vector<QuadInstance> &quadGround, std::vector<QuadInstance> &quadRoof, std::vector<QuadInstance> &quadMonster, std::vector<QuadInstance> &quadDoor, std::vector<CubeInstance> &cubeObject){
+void fullAllVectors(MapManager mm, vector<QuadInstance> &quadEnd, vector<QuadInstance> &quadAcid, vector<QuadInstance> &quadWall, std::vector<QuadInstance> &quadGround, std::vector<QuadInstance> &quadRoof, std::vector<QuadInstance> &quadMonster, std::vector<QuadInstance> &quadDoor, std::vector<CubeInstance> &cubeObject){
     
     quadWall.clear();
     quadGround.clear();
@@ -189,6 +190,7 @@ void fullAllVectors(MapManager mm, vector<QuadInstance> &quadAcid, vector<QuadIn
     quadMonster.clear();
     quadDoor.clear();
     quadAcid.clear();
+    quadEnd.clear();
     cubeObject.clear();
 
     quadMonster = remplirQuadMonster(mm.cm.monsters, mm.invertMap);
@@ -197,12 +199,16 @@ void fullAllVectors(MapManager mm, vector<QuadInstance> &quadAcid, vector<QuadIn
         for(int j = 1; j < mm.map.height-1; j++) {
             Square curr = mm.map.pixels[mm.map.width*j + i];
 
-            if(curr.type == hall || curr.type == getIn || curr.type == getOut || curr.type == door){
+            if(curr.type == hall || curr.type == getIn || curr.type == door){
                 quadGround.push_back(QuadInstance(float(curr.pos.pos_X), -0.5f, float(curr.pos.pos_Y), M_PI/2.f, 0));
                 quadRoof.push_back(QuadInstance(float(curr.pos.pos_X), 0.5f, float(curr.pos.pos_Y), M_PI/2.f, 0));
             }
             else if(curr.type == acid){
                 quadAcid.push_back(QuadInstance(float(curr.pos.pos_X), -0.5f, float(curr.pos.pos_Y), M_PI/2.f, 0));
+                quadRoof.push_back(QuadInstance(float(curr.pos.pos_X), 0.5f, float(curr.pos.pos_Y), M_PI/2.f, 0));
+            }
+            else if(curr.type == getOut){
+                quadEnd.push_back(QuadInstance(float(curr.pos.pos_X), -0.5f, float(curr.pos.pos_Y), M_PI/2.f, 0));
                 quadRoof.push_back(QuadInstance(float(curr.pos.pos_X), 0.5f, float(curr.pos.pos_Y), M_PI/2.f, 0));
             }
 
@@ -238,7 +244,6 @@ void fullAllVectors(MapManager mm, vector<QuadInstance> &quadAcid, vector<QuadIn
         for(unsigned int i = 0; i < mm.map.objects.size(); i++) {
             cubeObject.push_back(CubeInstance(mm.map.objects[i].posGraph.pos_X, 0.f, mm.map.objects[i].posGraph.pos_Y, mm.map.objects[i].texture));
         }
-        cout << "Nb de monstres : " << quadMonster.size() << endl;
 }
 
 int main(int argc, char** argv) {
@@ -246,9 +251,6 @@ int main(int argc, char** argv) {
     SDLWindowManager windowManager(WIDTH, HEIGHT, "IntoxiGate");
 
     // création & initialisation d'une map
-    /*Map mapCreate = Map();
-    mapCreate.loadMap("level1.txt");
-    mm.map = mapCreate;*/
 
     MapManager mm;
     mm.createMap("assets/maps/level1.txt");
@@ -329,8 +331,14 @@ int main(int argc, char** argv) {
         cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
     }
 
-    GLuint texturesBuffer[10];
-    glGenTextures(10, texturesBuffer);
+    imagePath = applicationPath.dirPath()+"../assets/textures/groundFinish.png";
+    std::unique_ptr<Image> EndTexture = loadImage(imagePath);
+    if(!keyTexture) {
+        cerr << "Le chemin spécifié n'est pas le bon : " << imagePath << endl;
+    }
+
+    GLuint texturesBuffer[11];
+    glGenTextures(11, texturesBuffer);
 
     //Texture 1
 
@@ -452,6 +460,18 @@ int main(int argc, char** argv) {
 
     glBindTexture( GL_TEXTURE_2D, 0);
 
+    //Texture 11
+
+    glBindTexture( GL_TEXTURE_2D, texturesBuffer[10]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+        EndTexture->getWidth(), EndTexture->getHeight(), 
+        0, GL_RGBA, GL_FLOAT, EndTexture->getPixels());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture( GL_TEXTURE_2D, 0);
+
 
     ///////////////////FIN TEXTURES////////////////////
 
@@ -502,6 +522,7 @@ int main(int argc, char** argv) {
     std::vector<QuadInstance> quadMonster;
     std::vector<QuadInstance> quadDoor;
     std::vector<QuadInstance> quadAcid;
+    std::vector<QuadInstance> quadEnd;
 
     std::vector<CubeInstance> cubeObject;
 
@@ -510,7 +531,7 @@ int main(int argc, char** argv) {
     c.changeOrientation(mm.cm.heroine.pos.orientation);
 
         //REMPLISSAGE DES VECTEURS DE QUADS
-    fullAllVectors(mm, quadAcid, quadWall, quadGround, quadRoof, quadMonster, quadDoor, cubeObject);
+    fullAllVectors(mm, quadEnd, quadAcid, quadWall, quadGround, quadRoof, quadMonster, quadDoor, cubeObject);
 
     // cout << "Nb de monstres : " << quadMonster.size() << endl;
 
@@ -535,33 +556,33 @@ int main(int argc, char** argv) {
                     mm.cm.moveAllMonsters();
                     quadMonster = remplirQuadMonster(mm.cm.monsters, mm.invertMap);
 
-                    // cout << "___________________\n" << endl;
-                    // cout << "Je regarde vers " << mm.cm.heroine.pos.orientation << endl;
-                    // cout << "Et ma position est (" << mm.cm.heroine.pos.pos_X << ", " << mm.cm.heroine.pos.pos_Y << ")" <<  endl;
-                    // cout << "Celle du monstre est (" << mm.cm.monsters[0].pos.pos_X << ", " << mm.cm.monsters[0].pos.pos_Y << ")" <<  endl;
-                    // cout << "Cette case est" << mm.invertMap.pixels[mm.invertMap.width*mm.cm.heroine.pos.pos_Y + (mm.cm.heroine.pos.pos_X-1)].type << endl; 
+                    cout << "___________________\n" << endl;
+                    cout << "Je regarde vers " << mm.cm.heroine.pos.orientation << endl;
+                    cout << "Et ma position est (" << mm.cm.heroine.pos.pos_X << ", " << mm.cm.heroine.pos.pos_Y << ")" <<  endl;
+                    cout << "Celle du monstre est (" << mm.cm.monsters[0].pos.pos_X << ", " << mm.cm.monsters[0].pos.pos_Y << ")" <<  endl;
+                    cout << "Celle de la clef est (" << mm.invertMap.objects[0].pos.pos_X << ", " << mm.invertMap.objects[0].pos.pos_Y << ")" <<  endl;
 
-                    // for(int j = 0; j<mm.invertMap.height; j++){
-                    //     for(int i = 0; i<mm.invertMap.width; i++){
-                    //         if(j == mm.cm.heroine.pos.pos_Y && i == mm.cm.heroine.pos.pos_X)
-                    //             cout << "A";
-                    //         else if(j == mm.cm.monsters[0].pos.pos_Y && i == mm.cm.monsters[0].pos.pos_X)
-                    //             cout << "H";
-                    //         else if(j == mm.invertMap.objects[0].pos.pos_Y && i == mm.invertMap.objects[0].pos.pos_X)
-                    //             cout << "Q";
-                    //         else{
-                    //             if(mm.invertMap.pixels[mm.invertMap.width*(j)+ i].type == getIn)
-                    //                 cout << 8;
-                    //             else if(mm.invertMap.pixels[mm.invertMap.width*(j)+ i].type == wall)
-                    //                 cout << 1;
-                    //             else if(mm.invertMap.pixels[mm.invertMap.width*(j)+ i].type == door)
-                    //                 cout << 7;
-                    //             else
-                    //                  cout << 0;
-                    //         }
-                    //     }
-                    //     cout << endl;
-                    // }
+                    for(int j = 0; j<mm.invertMap.height; j++){
+                        for(int i = 0; i<mm.invertMap.width; i++){
+                            if(j == mm.cm.heroine.pos.pos_Y && i == mm.cm.heroine.pos.pos_X)
+                                cout << "A";
+                            else if(j == mm.cm.monsters[0].pos.pos_Y && i == mm.cm.monsters[0].pos.pos_X)
+                                cout << "H";
+                            else if(j == mm.invertMap.objects[0].pos.pos_Y && i == mm.invertMap.objects[0].pos.pos_X)
+                                cout << "Q";
+                            else{
+                                if(mm.invertMap.pixels[mm.invertMap.width*(j)+ i].type == getIn)
+                                    cout << 8;
+                                else if(mm.invertMap.pixels[mm.invertMap.width*(j)+ i].type == wall)
+                                    cout << "|";
+                                else if(mm.invertMap.pixels[mm.invertMap.width*(j)+ i].type == door)
+                                    cout << 7;
+                                else
+                                    cout << "O";
+                            }
+                        }
+                        cout << endl;
+                    }
 
                     switch( e.key.keysym.sym ){
                         case SDLK_SPACE:
@@ -569,7 +590,6 @@ int main(int argc, char** argv) {
                             if(att != -1) {
                                 int indexMons = getIndexMonster(mm.cm.heroine.pos.pos_X, mm.cm.heroine.pos.pos_Y, att, mm);
                                 if(mm.cm.monsters[indexMons].life <= 0) {
-                                    cout << "Le monstre n'a plus de vie" << endl;
                                     mm.cm.monsters.erase(mm.cm.monsters.begin() + indexMons);
                                     quadMonster = remplirQuadMonster(mm.cm.monsters, mm.invertMap);
                                 }
@@ -621,9 +641,11 @@ int main(int argc, char** argv) {
                                         mm.createMap("assets/maps/level3.txt");
                                     else if(mm.level == 3)
                                         mm.createMap("assets/maps/level4.txt");
-                                    else if(mm.level == 4){
+                                    else if(mm.level == 4)
                                         mm.createMap("assets/maps/level5.txt");
-                                    }
+                                    else if(mm.level == 5)
+                                        mm.createMap("assets/maps/level6.txt");
+                                    
                                     else{
                                         cout << "VOUS AVEZ GAGNE WOUHOUUUUUUUUUU" << endl;
                                         exit(10);
@@ -632,7 +654,7 @@ int main(int argc, char** argv) {
                                     Camera c2(mm.entrance.pos.pos_X, mm.entrance.pos.pos_Y);
                                     c2.changeOrientation(mm.cm.heroine.pos.orientation);
                                     c = c2;
-                                    fullAllVectors(mm, quadAcid, quadWall, quadGround, quadRoof, quadMonster, quadDoor, cubeObject);
+                                    fullAllVectors(mm, quadEnd, quadAcid, quadWall, quadGround, quadRoof, quadMonster, quadDoor, cubeObject);
 
                                 }   
                                 if(move == 2) {
@@ -684,13 +706,25 @@ int main(int argc, char** argv) {
                                 } 
 
                                 if(mm.cm.heroine.atTheEndOfTheDungeon(mm.invertMap)){
-                                    if(mm.level == 1){
+                                    if(mm.level == 1)
                                         mm.createMap("assets/maps/level2.txt");
-                                        Camera c2(mm.entrance.pos.pos_X, mm.entrance.pos.pos_Y);
-                                        c2.changeOrientation(mm.cm.heroine.pos.orientation);
-                                        c = c2;
-                                        fullAllVectors(mm, quadAcid, quadWall, quadGround, quadRoof, quadMonster, quadDoor, cubeObject);
+                                    else if(mm.level == 2)
+                                        mm.createMap("assets/maps/level3.txt");
+                                    else if(mm.level == 3)
+                                        mm.createMap("assets/maps/level4.txt");
+                                    else if(mm.level == 4)
+                                        mm.createMap("assets/maps/level5.txt");
+                                    else if(mm.level == 5)
+                                        mm.createMap("assets/maps/level6.txt");
+                                    else{
+                                        cout << "VOUS AVEZ GAGNE WOUHOUUUUUUUUUU" << endl;
+                                        exit(10);
                                     }
+
+                                    Camera c2(mm.entrance.pos.pos_X, mm.entrance.pos.pos_Y);
+                                    c2.changeOrientation(mm.cm.heroine.pos.orientation);
+                                    c = c2;
+                                    fullAllVectors(mm, quadEnd, quadAcid, quadWall, quadGround, quadRoof, quadMonster, quadDoor, cubeObject);
                                 }
                             }
                             break;
@@ -839,6 +873,23 @@ int main(int argc, char** argv) {
             }
         }
 
+        for(unsigned int i=0; i<quadEnd.size(); i++){
+            MVPMatrix = c.getViewProjectionMatrix() * quadEnd[i].model; // changer ici en fonction de la texture
+        
+            glUniformMatrix4fv(uMVPMatrixLoc, 1, GL_FALSE, value_ptr(MVPMatrix));
+
+            glActiveTexture(GL_TEXTURE0 + 4);
+            glBindTexture(GL_TEXTURE_2D, texturesBuffer[10]); // changer ici en fonction de la texture
+            glActiveTexture(GL_TEXTURE0);
+            glUniform1i(uTextureLoc, 4);
+
+            glBindVertexArray(vao);
+
+            glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glBindVertexArray(0);
+        }
+
 
         /* END RENDERING CODE */
 
@@ -849,5 +900,6 @@ int main(int argc, char** argv) {
     glDeleteBuffers(1, &vbo);
     glDeleteVertexArrays(1, &vao);
     glDeleteTextures(1, texturesBuffer);
+
     return EXIT_SUCCESS;
 }
