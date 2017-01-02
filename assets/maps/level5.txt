@@ -1,6 +1,7 @@
 #Level 5
-./assets/maps/levels/level5_helo.ppm
-2	
-1:2:19:16:2:10:key:9:
-2:3:9:9:10:20:key:9:
-0
+./assets/maps/levels/level7_helo.ppm
+2
+1:2:23:3:16:6:key:9:
+2:1:1:6:13:28:life:5:
+1
+1:1:10:13:6:19:waste:2:
