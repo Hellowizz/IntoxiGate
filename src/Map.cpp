@@ -54,12 +54,14 @@ void Map::loadObject(string line) {
 
 	obj.id = id;
 
+	// Position
+
 	while(line[i] != ':') {
 		tmp.append(1, line[i]);
 		i++;
 	}
 	i++;
-	obj.pos.pos_X = (float)stoi(tmp);
+	obj.pos.pos_X = stoi(tmp);
 	tmp = "";
 
 	while(line[i] != ':') {
@@ -67,8 +69,29 @@ void Map::loadObject(string line) {
 		i++;
 	}
 	i++;
-	obj.pos.pos_Y = (float)stoi(tmp);
+	obj.pos.pos_Y = stoi(tmp);
 	tmp = "";
+
+	// Position graphique
+
+	while(line[i] != ':') {
+		tmp.append(1, line[i]);
+		i++;
+	}
+	i++;
+	obj.posGraph.pos_X = stoi(tmp);
+	tmp = "";
+
+	while(line[i] != ':') {
+		tmp.append(1, line[i]);
+		i++;
+	}
+	i++;
+	obj.posGraph.pos_Y = stoi(tmp);
+	tmp = "";
+
+
+	// Nom de l'objet
 
 	while(line[i] != ':') {
 		tmp.append(1, line[i]);
@@ -78,15 +101,14 @@ void Map::loadObject(string line) {
 	obj.name = tmp;
 	tmp = "";
 
+	// Numéro de texture
+
 	while(line[i] != ':') {
 		tmp.append(1, line[i]);
 		i++;
 	}
 	obj.texture = stoi(tmp);
 	tmp = "";
-
-	Position graph(7,5);
-	obj.posGraph = graph;
 
 	objects.push_back(obj);
 }
@@ -230,10 +252,8 @@ void Map::loadMap(string fileName) {
 
 		while(line[i] != ' ') {
 			tmp.append(1, line[i]);
-			cout << "je lis" << line[i] << endl; //#WTF
 			i++;
 		}
-		//height = 20;
 		height = stoi(tmp);
 		tmp = "";
 
@@ -285,7 +305,6 @@ void Map::loadMap(string fileName) {
 			}
 		}
 		file.close();
-		cout << width << "," << height << endl;
 	} 
 	else{
 		cout << "Unable to open file." << endl;
@@ -295,7 +314,6 @@ void Map::loadMap(string fileName) {
 
 Square Map::getEntrance() {
 	Square ret;
-	cout << pixels.size() << endl;
 
 	for(unsigned int i = 0; i < pixels.size(); i++) {
 		if(pixels[i].type == 5) {
@@ -343,6 +361,21 @@ int Map::isObject(float x, float y) {
 			return i;
 	}
 	return -1;
+}
+
+bool Map::isAcid(float x, float y) {
+	for(unsigned int i = 0; i < pixels.size(); i++) {
+		if(pixels[i].pos.pos_X == x && pixels[i].pos.pos_Y == y && pixels[i].type == acid)
+			return true;
+	}
+	return false;
+}
+
+void Map::eraseDoor(float x, float y) {
+	for(unsigned int i = 0; i < pixels.size(); i++) {
+		if(pixels[i].pos.pos_X == x && pixels[i].pos.pos_Y == y)
+			pixels[i].type = hall;
+	}
 }
 
 Map::~Map(){}
