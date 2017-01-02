@@ -16,10 +16,13 @@ public:
  	monsterType type;
 	int givenExperience;
 	Position posGraph;
+	string name;
+	int text;
 
 	Monster();
 
 	void move(Position heroPos);
+	void looseLife(int lifeLose);
 
 	~Monster();
 	//Monstre qui meurt et donne de l'expérience au héro

@@ -39,5 +39,9 @@ class Map {
 
 		Square getEntrance();
 		int isObject(float x, float y);
+		bool isAcid(float x, float y);
+		void eraseDoor(float x, float y);
+
+		~Map();
 
 };

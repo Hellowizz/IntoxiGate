@@ -26,4 +26,8 @@ void Monster::move(Position heroPos){
 	}
 }
 
+void Monster::looseLife(int lifeLose) {
+	life -= lifeLose;	
+}
+
 Monster::~Monster() {}

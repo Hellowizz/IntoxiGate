@@ -64,24 +64,28 @@ void CharacterManager::monstersAttack(){
 	}
 }
 
-void CharacterManager::heroAttack(){
+int CharacterManager::heroAttack(){
 	for(size_t i = 0; i < monsters.size(); i++){
 
 		bool attack = false;
 
 		if(monsters[i].pos.pos_X == heroine.pos.pos_X){
-			if(monsters[i].pos.pos_Y == heroine.pos.pos_Y+1 || monsters[i].pos.pos_Y == heroine.pos.pos_Y-1){
+			if((monsters[i].pos.pos_Y == heroine.pos.pos_Y+1 && heroine.pos.orientation == sud) || (monsters[i].pos.pos_Y == heroine.pos.pos_Y-1 && heroine.pos.orientation == nord)){
 				attack = true;
 			}		
 		}else if(monsters[i].pos.pos_Y == heroine.pos.pos_Y){
-			if(monsters[i].pos.pos_X == heroine.pos.pos_X+1 || monsters[i].pos.pos_X == heroine.pos.pos_X-1){
+			if((monsters[i].pos.pos_X == heroine.pos.pos_X+1 && heroine.pos.orientation == ouest)|| (monsters[i].pos.pos_X == heroine.pos.pos_X-1 && heroine.pos.orientation == est)){
 				attack = true;
 			}
 		}
 
-		if(attack)
+		if(attack) {
 			monsters[i].looseLife(heroine.attack);
+			cout << "Le monstre n'a plus que " << monsters[i].life << " pv" << endl;
+			return heroine.pos.orientation;
+		}
 	}
+	return -1;
 }
 
 void CharacterManager::moveAllMonsters(){
